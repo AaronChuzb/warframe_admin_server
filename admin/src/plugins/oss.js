@@ -2,7 +2,7 @@
  * @Author: AaronChu
  * @Date: 2021-08-21 16:11:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-21 18:10:47
+ * @LastEditTime: 2021-08-21 19:19:33
  * @FilePath: /warframe_admin_server/admin/src/plugins/oss.js
  */
 
@@ -11,10 +11,10 @@
 import { Message } from 'element-ui'
 const OSS = require('ali-oss');
 const client = new OSS({
-  region: '<oss区域>',
-  accessKeyId: '<阿里云用户keyid>',
-  accessKeySecret: '<阿里云用户keyidSecret>',
-  bucket: '<oss bucket名称>'
+  region: 'oss-cn-shenzhen',
+  accessKeyId: 'LTAI5tQD5pRwTeejAHrCgrmo',
+  accessKeySecret: 'TDYUw1iNyF75RpBjFISZYTbSWKOhX4',
+  bucket: 'img-api'
 });
 
 const uploader = e =>{

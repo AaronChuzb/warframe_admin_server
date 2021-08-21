@@ -1,12 +1,12 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-21 18:03:27
+ * @LastEditTime: 2021-08-21 23:45:32
 -->
 <template>
   <div class="page">
     <div class="form">
-      <h1>新增战甲</h1>
+      <h1>{{id?'编辑战甲':'新增战甲'}}</h1>
       <el-form ref="form" :model="form" label-width="100px" label-position="top">
         <div class="item">
           <el-divider class="title" >基本属性</el-divider>
@@ -18,10 +18,10 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="战甲类型">
-                <el-select v-model="form.region" placeholder="请选择战甲类型">
-                  <el-option label="普通" value="shanghai"></el-option>
-                  <el-option label="圣装" value="beijing"></el-option>
-                  <el-option label="暗影" value="beijing"></el-option>
+                <el-select v-model="form.type" placeholder="请选择战甲类型">
+                  <el-option label="普通" value="普通"></el-option>
+                  <el-option label="圣装" value="圣装"></el-option>
+                  <el-option label="暗影" value="暗影"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -29,27 +29,27 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="段位需求">
-                <el-input v-model="form.level"></el-input>
+                <el-input type="number" v-model="form.level"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="血量(30级)">
-                <el-input v-model="form.hp"></el-input>
+                <el-input type="number" v-model="form.hp"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="护盾(30级)">
-                <el-input v-model="form.sheild"></el-input>
+                <el-input type="number" v-model="form.sheild"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="能量(30级)">
-                <el-input v-model="form.energy"></el-input>
+                <el-input type="number" v-model="form.energy"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="护甲(30级)">
-                <el-input v-model="form.armor"></el-input>
+                <el-input type="number" v-model="form.armor"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -60,9 +60,9 @@
         <div class="item">
           <el-divider class="title" >极性</el-divider>
           <el-form-item label="极性槽">
-            <el-checkbox-group v-model="form.temp_type" class="checkgroup" @change="checkBoxChange">
+            <el-checkbox-group v-model="form.self_pole" class="checkgroup" @change="checkBoxChange">
               <div v-for="(item, index) in self_pole_list" :key="index">
-                <el-checkbox :label="item" name="type"><div><i class="iconfont" :class="item.className"></i> 数量：</div> </el-checkbox>
+                <el-checkbox :label="item" :checked="item.checked" name="type"><div><i class="iconfont" :class="item.className"></i> 数量：</div> </el-checkbox>
                 <el-input-number v-model="item.num" :min="1" :max="6" label="描述文字"></el-input-number>
               </div>
             </el-checkbox-group>
@@ -107,16 +107,8 @@
             action="https://www.hualigs.cn/api/upload"
             list-type="picture-card"
             :http-request="uploader"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-divider class="title" >其他图片</el-divider>
-          <el-upload
-            action="https://www.hualigs.cn/api/upload"
-            list-type="picture-card"
-            :http-request="uploader"
-            :on-preview="handlePictureCardPreview"
+            :file-list="[{name: '',url: form.img[0]}]"
+            :limit="1"
             :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -141,21 +133,26 @@ import uploader from '../../plugins/oss'
 import wangEditor from "wangeditor"
 
 export default {
+  props: {
+    id: { type: String }
+  },
   data(){
     return{
+      
       editor: null,
       self_pole_list: [
-        { className: 'icon-naramon', num: 1 },
-        { className: 'icon-madurai', num: 1 },
-        { className: 'icon-vazarin', num: 1 },
-        { className: 'icon-zenurik', num: 1 },
-        { className: 'icon-umbra', num: 1 },
+        { className: 'icon-naramon', num: 1, checked: false },
+        { className: 'icon-madurai', num: 1, checked: false },
+        { className: 'icon-vazarin', num: 1, checked: false },
+        { className: 'icon-zenurik', num: 1, checked: false },
+        { className: 'icon-umbra', num: 1, checked: false },
       ],
       dialogImageUrl: "",
       dialogVisible: "",
       halo_pole_list: ['icon-naramon','icon-madurai','icon-vazarin','icon-zenurik','icon-aura'],
       form: {
         name: '', // 战甲名称
+        type: '', // 战甲类型
         img: [], // 图片列表
         level: '', // 战甲段位需求
         hp: '', // 血量
@@ -165,14 +162,14 @@ export default {
         speed: '',  // 冲刺速度读
         self_pole: [], // 极性槽
         halo_pole: '', // 光环极性槽
-        temp_type: [], // 临时数组
         passive_skill: '', // 被动技能
         skills: [ // 技能列表
           { name: "", spend: "", des: ""},
         ],
         editorData: '' // 富文本内容
       },
-      num: 0
+      num: 0,
+      
     }
   },
   mounted(){
@@ -203,16 +200,43 @@ export default {
     // 创建编辑器
     editor.create()
     this.editor = editor
+    this.id && this.getData()
   },
   methods:{
-    handlePictureCardPreview() {
-      
+    async getData(){
+      const res = await this.$http.get('rest/warframes/'+this.id)
+      console.log(res)
+      this.form = res.data
+      res.data.self_pole.forEach((item)=>{
+        this.self_pole_list.forEach((child, index)=>{
+          if(item.className == child.className){
+            this.self_pole_list[index] = item
+          }
+        })
+      })
+      this.editor.txt.html(res.data.editorData)
     },
     handleRemove() {
-      
+      // TODO: 处理图片删除事件
     },
-    onSubmit(){
-      console.log(this.form)
+    async onSubmit(){
+      let res
+      if(this.id){
+        res = await this.$http.put('rest/warframes/'+this.id, this.form)
+        this.$message({
+          type: 'success',
+          message: '编辑成功'
+        })
+      } else {
+        res = await this.$http.post('rest/warframes', this.form)
+        this.$message({
+          type: 'success',
+          message: '创建成功'
+        })
+      }
+      console.log(res)
+      this.$router.push('/warframe/list')
+      
     },
     newSkill(){
       this.form.skills.push({ name: "", spend: "", des: ""})
@@ -221,12 +245,19 @@ export default {
       this.form.skills.splice(index, 1)
     },
     checkBoxChange(e){
-      console.log('变化',e)
+      this.form.self_pole = e
+      e.forEach((item)=>{
+        this.self_pole_list.forEach(child=>{
+          if(item.className == child.className){
+            child = item
+          }
+        })
+      })
     },
     uploader(e){
       console.log(e)
       uploader(e.file).then(res=>{
-        console.log(res)
+        this.form.img.push(res)
       })
     }
   },

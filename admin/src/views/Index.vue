@@ -1,20 +1,28 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-20 23:37:41
+ * @LastEditTime: 2021-08-22 03:01:57
 -->
 <template>
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-        <el-menu router :default-openeds="['1', '3']" style="min-height: 100vh">
+        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path">
           <el-submenu index="1">
             <template slot="title"><i class="el-icon-message"></i>内容管理</template>
             <el-menu-item-group>
               <template slot="title">战甲</template>
               <el-menu-item index="/warframe/list">战甲列表</el-menu-item>
               <el-menu-item index="/warframe/edit">新增战甲</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="2">
+            <template slot="title"><i class="el-icon-message"></i>系统设置</template>
+            <el-menu-item-group>
+              <template slot="title">用户管理</template>
+              <el-menu-item index="/user/list">管理员列表</el-menu-item>
+              <el-menu-item index="/user/edit">新增管理员</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -35,7 +43,7 @@
         </el-header>
         <!-- 页面内容 -->
         <el-main style="padding: 0 2vw">
-          <router-view></router-view>
+          <router-view :key="$route.path"></router-view>
         </el-main>
       </el-container>
     </el-container>

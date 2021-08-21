@@ -1,22 +1,22 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 00:55:42
+ * @LastEditTime: 2021-08-22 00:55:40
 -->
 <template>
   <div>
-    <h1>战甲列表</h1>
-     <el-table :data="warframes">
+    <h1>管理员列表</h1>
+     <el-table :data="users">
       <el-table-column prop="_id" label="ID" width="220">
       </el-table-column>
-      <el-table-column prop="name" label="战甲名称">
+      <el-table-column prop="username" label="战甲名称">
       </el-table-column>
       <el-table-column
         fixed="right"
         label="操作"
         width="180">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="$router.push(`/warframe/edit/id=${scope.row._id}}`)">编辑</el-button>
+          <el-button type="primary" size="small" @click="$router.push(`/user/edit/id=${scope.row._id}}`)">编辑</el-button>
           <el-button type="danger" size="small" @click=" remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -28,14 +28,14 @@
 export default {
   data(){
     return{
-      warframes:[]
+      users:[]
     }
   },
   methods:{
     async getData(){
-      const res = await this.$http.get('rest/warframes')
+      const res = await this.$http.get('rest/users')
       console.log(res)
-      this.warframes = res.data
+      this.users = res.data
     },
     async remove(row){
       this.$confirm(`是否删除 "${row.name}"`, '警告', {
@@ -43,7 +43,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then( async () => {
-        const res = await this.$http.delete('rest/warframes/'+row._id)
+        const res = await this.$http.delete('rest/users/'+row._id)
         console.log(res)
         this.$message({
           type: 'success',
