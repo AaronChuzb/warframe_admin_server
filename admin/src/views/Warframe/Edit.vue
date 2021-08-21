@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-21 00:41:41
+ * @LastEditTime: 2021-08-21 18:03:27
 -->
 <template>
   <div class="page">
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import uploader from '../../http/uploader'
+import uploader from '../../plugins/oss'
 import wangEditor from "wangeditor"
 
 export default {
@@ -189,31 +189,15 @@ export default {
       'fontName',
       'todo'
     ]
+    editor.config.uploadImgMaxSize = .5 * 1024 * 1024
     editor.config.uploadImgMaxLength = 1
+    editor.config.showLinkImg = false
+    var upload = uploader
     editor.config.customUploadImg = function (resultFiles, insertImgFn) {
-      console.log(window)
-      var formData = new FormData()
-      formData.append('image', resultFiles[0])
-      formData.append('apiType', 'sina')
-      formData.append('token', '714795f91c16e3e2a98345d2534b0775')
-       var httpRequest = new XMLHttpRequest();
-        httpRequest.open("POST", "https://www.hualigs.cn/api/upload", true);
-        httpRequest.onload = (e) =>{
-          let res = JSON.parse(e.target.responseText)
-          console.log(res);
-          if(res.code === 200){
-            insertImgFn(res.data.url.sina)
-          }
-        }
-        httpRequest.send(formData);
-     /*  let config = {
-        'Content-type': 'multipart/form-data'
-      }
-      window.$http.post('https://www.hualigs.cn/api/upload', formData, config).then(res=>{
-        if(res.data.code == 200){
-         insertImgFn(res.data.data.url.bilibili)
-        }
-      }) */
+      console.log(resultFiles[0])
+      upload(resultFiles[0]).then(res=>{
+        insertImgFn(res)
+      })
     }
     editor.config.height = 650
     // 创建编辑器
@@ -240,8 +224,8 @@ export default {
       console.log('变化',e)
     },
     uploader(e){
-      /* this.form.imgs = uploader(e) */
-      uploader(e).then(res=>{
+      console.log(e)
+      uploader(e.file).then(res=>{
         console.log(res)
       })
     }
