@@ -1,16 +1,19 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 03:01:57
+ * @LastEditTime: 2021-08-22 17:47:47
 -->
 <template>
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path">
+        <div class="title" >
+          <img src="../assets/logo.png" alt="">
+        </div>
+        <el-menu router style="min-height: calc(100vh - 100px)" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
           <el-submenu index="1">
-            <template slot="title"><i class="el-icon-message"></i>内容管理</template>
+            <template slot="title"><i class="el-icon-edit-outline"></i>内容管理</template>
             <el-menu-item-group>
               <template slot="title">战甲</template>
               <el-menu-item index="/warframe/list">战甲列表</el-menu-item>
@@ -18,7 +21,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
-            <template slot="title"><i class="el-icon-message"></i>系统设置</template>
+            <template slot="title"><i class="el-icon-s-operation"></i>系统设置</template>
             <el-menu-item-group>
               <template slot="title">用户管理</template>
               <el-menu-item index="/user/list">管理员列表</el-menu-item>
@@ -30,16 +33,19 @@
       <!-- 内容区 -->
       <el-container>
         <!-- 头部 -->
-        <el-header style="text-align: right; font-size: 12px">
-          <el-dropdown>
-            <i class="el-icon-setting" style="margin-right: 15px"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>查看</el-dropdown-item>
-              <el-dropdown-item>新增</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+        <el-header>
+          <div>
+            <div class="nickname">{{ user.nickname }}</div>
+            <div class="username">{{ user.username }}</div>
+          </div>
+          <el-dropdown @command="handleCommand">
+            <el-avatar size="large" :src="user.avatar"></el-avatar>
+            <el-dropdown-menu >
+              <!-- <div style="height: 50px;width: 50px"></div> -->
+              <el-dropdown-item command="profile"><i class="el-icon-s-operation"></i>个人中心</el-dropdown-item>
+              <el-dropdown-item command="logout"><i class="el-icon-s-operation"></i> 退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <span>王小虎</span>
         </el-header>
         <!-- 页面内容 -->
         <el-main style="padding: 0 2vw">
@@ -53,13 +59,28 @@
 <script>
 export default {
   data() {
-    const item = {
-      date: '2016-05-02',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1518 弄'
-    };
     return {
-      tableData: Array(20).fill(item)
+      user: {
+        username: 'aaronchu',
+        nickname: 'AaronChu',
+        avatar: ''
+      }
+    }
+  },
+  created(){
+    this.user = JSON.parse(sessionStorage.getItem('user'))
+  },
+  methods:{
+    handleCommand(e){
+      console.log(e)
+      if(e === 'logout'){
+        sessionStorage.clear()
+        this.$router.push('/login')
+        this.$message({
+          type: 'success',
+          message: '退出登录成功'
+        })
+      }
     }
   }
 }
@@ -69,10 +90,37 @@ export default {
   .el-header {
     background-color: #B3C0D1;
     color: #333;
-    line-height: 60px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .nickname{
+      font-size: 16px;
+      color: #222222;
+      font-weight: bold;
+    }
+    .username{
+      font-size: 14px;
+      color: #333333;
+    }
+    .el-avatar{
+      margin-left: 15px;
+    }
   }
   
   .el-aside {
     color: #333;
+    padding: 0;
+  }
+  .title{
+    height: 100px; 
+    background-color:#545c64; 
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img{
+      width: 150px;
+      display: block;
+    }
   }
 </style>

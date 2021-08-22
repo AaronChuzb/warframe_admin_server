@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 00:55:21
+ * @LastEditTime: 2021-08-22 17:08:29
 -->
 <template>
   <div class="page">
@@ -9,9 +9,29 @@
       <h1>{{id?'编辑管理员':'新增管理员'}}</h1>
       <el-form ref="form" :model="form" label-width="100px" label-position="top">
         <div class="item">
-          <el-form-item label="用户名">
-            <el-input type="text" v-model="form.username"></el-input>
+          <el-form-item label="头像">
+           <el-upload
+            action=""
+            list-type="picture-card"
+            :http-request="uploader"
+            :file-list="file_list"
+            :limit="1"
+            :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+          </el-upload>
           </el-form-item>
+          <el-row :gutter="10">
+            <el-col :span="12">
+              <el-form-item label="昵称">
+                <el-input type="text" v-model="form.nickname"></el-input>
+              </el-form-item>
+            </el-col>
+             <el-col :span="12">
+              <el-form-item label="用户名">
+                <el-input type="text" v-model="form.username"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="密码">
             <el-input type="password" v-model="form.password"></el-input>
           </el-form-item>
@@ -28,6 +48,7 @@
 </template>
 
 <script>
+import uploader from '../../plugins/oss'
 export default {
   props: {
     id: { type: String }
@@ -35,9 +56,12 @@ export default {
   data(){
     return{
       form: {
+        nickname: '',
         username: '',
-        password: ''
+        password: '',
+        avatar: ''
       },
+      file_list: []
     }
   },
   mounted(){
@@ -46,27 +70,32 @@ export default {
   methods:{
     async getData(){
       const res = await this.$http.get('rest/users/'+this.id)
-      console.log(res)
       this.form = res.data
     },
     async onSubmit(){
-      let res
       if(this.id){
-        res = await this.$http.put('rest/users/'+this.id, this.form)
+        await this.$http.put('rest/users/'+this.id, this.form)
         this.$message({
           type: 'success',
           message: '编辑成功'
         })
       } else {
-        res = await this.$http.post('rest/users', this.form)
+        await this.$http.post('rest/users', this.form)
         this.$message({
           type: 'success',
           message: '创建成功'
         })
       }
-      console.log(res)
       this.$router.push('/user/list')
-      
+    },
+    uploader(e){
+      uploader(e.file).then(res=>{
+        this.form.avatar = res
+      })
+    },
+    handleRemove() {
+      this.form.avatar = ''
+      this.file_list = []
     },
   }
 }

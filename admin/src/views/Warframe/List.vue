@@ -1,17 +1,27 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 00:55:42
+ * @LastEditTime: 2021-08-22 23:07:03
 -->
 <template>
   <div>
     <h1>战甲列表</h1>
-     <el-table :data="warframes">
-      <el-table-column prop="_id" label="ID" width="220">
+    <div></div>
+    <el-table :data="warframes">
+      <el-table-column align="center" prop="_id" label="ID" width="220"></el-table-column>
+      <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
+      <el-table-column align="center" prop="createdAt" label="创建时间" >
+        <template slot-scope="scope">
+          <p>{{ formatTime(scope.row.createdAt) }}</p>
+        </template>
       </el-table-column>
-      <el-table-column prop="name" label="战甲名称">
+      <el-table-column align="center" prop="updatedAt" label="更新时间">
+        <template slot-scope="scope">
+          <p>{{ formatTime(scope.row.updatedAt) }}</p>
+        </template>
       </el-table-column>
       <el-table-column
+        align="center"
         fixed="right"
         label="操作"
         width="180">
@@ -32,10 +42,20 @@ export default {
     }
   },
   methods:{
+    formatTime(time){
+      var date = new Date(time); // 初始化日期
+      var year = date.getFullYear(); //获取年份
+      var month = date.getMonth() + 1; // 获取月份
+      var day = date.getDate(); // 获取具体日
+      var hour = date.getHours(); // 获取时
+      var minutes = date.getMinutes(); // 获取分
+      var seconds = date.getSeconds(); // 获取秒
+      return year + '年' + month + '月' + day + '日 ' +  hour + '时' + minutes + '分' + seconds + '秒'
+    },
     async getData(){
-      const res = await this.$http.get('rest/warframes')
+      const res = await this.$http.get('rest/warframes', { params: { page: 1, pageSize: 10, params: { name: '圣剑1' } } } )
       console.log(res)
-      this.warframes = res.data
+      this.warframes = res.data.data
     },
     async remove(row){
       this.$confirm(`是否删除 "${row.name}"`, '警告', {

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:19:08
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-21 21:44:23
+ * @LastEditTime: 2021-08-22 21:22:46
  */
 const mongoose = require('mongoose')
 
@@ -19,7 +19,10 @@ const schema = new mongoose.Schema({
   halo_pole: { type: String }, // 光环极性槽
   passive_skill: { type: String }, // 被动技能
   skills: { type: Array }, // 技能列表
-  editorData: { type: String } // 富文本内容
+  editorData: { type: String }, // 富文本内容
+  editorUserId: { type: String } // 创建者id
+}, {
+  timestamps: true
 })
 
 module.exports = mongoose.model('Warframe', schema)

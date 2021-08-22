@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-22 00:35:08
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 01:25:37
+ * @LastEditTime: 2021-08-22 17:46:39
 -->
 <template>
   <div>
@@ -37,7 +37,9 @@ export default {
   methods:{
     async login(){
       const res = await this.$http.post('login', this.form)
+      let user = JSON.stringify(res.data.user)
       sessionStorage.setItem('token', res.data.token)
+      sessionStorage.setItem('user', user)
       this.$router.push('/')
       this.$message({
         type: 'success',

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-21 23:45:32
+ * @LastEditTime: 2021-08-22 21:25:12
 -->
 <template>
   <div class="page">
@@ -214,6 +214,7 @@ export default {
           }
         })
       })
+      
       this.editor.txt.html(res.data.editorData)
     },
     handleRemove() {
