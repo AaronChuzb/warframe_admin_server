@@ -1,27 +1,44 @@
+/*
+ * @Date: 2021-08-23 11:08:42
+ * @LastEditors: AaronChu
+ * @LastEditTime: 2021-08-23 16:47:22
+ */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Index from '../views/Index'
+import Login from '../views/Login'
+import WarframeEdit from '../views/Warframe/Edit.vue'
+import WarframeList from '../views/Warframe/List.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: { isPublic: true }
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+    path: '/',
+    name: 'Home',
+    component: Index,
+    redirect: '/warframe/list',
+    children: [
+      { path: '/warframe/list', component: WarframeList },
+      { path: '/warframe/edit', component: WarframeEdit },
+    ]
+  },
 ]
 
 const router = new VueRouter({
   routes
 })
-
+// 路由守卫
+/* router.beforeEach((to, from, next)=>{
+  if( !to.meta.isPublic && !sessionStorage.getItem('token')){
+    return next('/login')
+  }
+  next()
+}) */
 export default router
