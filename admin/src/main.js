@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 11:08:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-23 12:09:23
+ * @LastEditTime: 2021-08-23 18:13:26
  */
 import Vue from 'vue'
 import App from './App.vue'
@@ -10,7 +10,6 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import http from './http/request.js'
 import message from 'vuetify-message-snackbar';
-
 Vue.use(message,{});
 Vue.config.productionTip = false
 Vue.prototype.http = http

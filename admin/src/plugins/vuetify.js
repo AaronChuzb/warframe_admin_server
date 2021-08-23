@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-23 11:27:08
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-23 13:03:19
+ * @LastEditTime: 2021-08-23 18:04:31
  */
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';

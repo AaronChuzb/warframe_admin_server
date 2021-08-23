@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-23 11:32:08
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-23 17:47:54
+ * @LastEditTime: 2021-08-23 18:28:50
 -->
 <template>
   <v-app>
@@ -18,8 +18,8 @@
         </v-btn>
       </v-list-item>
       <v-divider></v-divider>
-      <v-list flat>
-        <v-list-group v-for="(item, index) in menuList" :key="index" :value="$route.path" :prepend-icon="item.icon">
+      <v-list dense>
+        <v-list-group v-for="(item, index) in menuList" :key="index" :prepend-icon="item.icon">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -28,7 +28,7 @@
 
           <v-list-item v-for="(subItem, index) in item.items" :key="'child' + index" :to="item.path + subItem.path" class="pl-6">
             <v-list-item-action>
-              <v-icon>{{ subItem.icon }}</v-icon>
+              <v-icon></v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title v-text="subItem.title"></v-list-item-title>
