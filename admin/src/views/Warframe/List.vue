@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 23:07:03
+ * @LastEditTime: 2021-08-23 10:08:35
 -->
 <template>
   <div>
@@ -53,7 +53,7 @@ export default {
       return year + '年' + month + '月' + day + '日 ' +  hour + '时' + minutes + '分' + seconds + '秒'
     },
     async getData(){
-      const res = await this.$http.get('rest/warframes', { params: { page: 1, pageSize: 10, params: { name: '圣剑1' } } } )
+      const res = await this.$http.get('rest/warframes', { params: { page: 1, pageSize: 10, params: { name: '圣剑' } } } )
       console.log(res)
       this.warframes = res.data.data
     },
