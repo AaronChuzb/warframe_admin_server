@@ -7,13 +7,13 @@
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-        <div class="title" >
-          <img src="../assets/logo.png" alt="">
-        </div>
-        <el-menu router style="min-height: calc(100vh - 100px)" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+      <el-aside style="background-color: rgb(238, 241, 246)" class="el-side" >
+        <el-menu router  style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
           <el-submenu index="1">
-            <template slot="title"><i class="el-icon-edit-outline"></i>内容管理</template>
+            <template slot="title">
+              <i class="el-icon-edit-outline"></i>
+              <span slot="title">内容管理</span>
+            </template>
             <el-menu-item-group>
               <template slot="title">战甲</template>
               <el-menu-item index="/warframe/list">战甲列表</el-menu-item>
@@ -21,7 +21,10 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
-            <template slot="title"><i class="el-icon-s-operation"></i>系统设置</template>
+            <template slot="title">
+              <i class="el-icon-s-operation"></i>
+              <span slot="title">系统设置</span>
+            </template>
             <el-menu-item-group>
               <template slot="title">用户管理</template>
               <el-menu-item index="/user/list">管理员列表</el-menu-item>
@@ -34,18 +37,27 @@
       <el-container>
         <!-- 头部 -->
         <el-header>
-          <div>
-            <div class="nickname">{{ user.nickname }}</div>
-            <div class="username">{{ user.username }}</div>
+          <el-breadcrumb separator="/" class="left">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="right">
+            <div>
+              <div class="nickname">{{ user.nickname }}</div>
+              <div class="username">{{ user.username }}</div>
+            </div>
+            <el-dropdown @command="handleCommand">
+              <el-avatar size="large" :src="user.avatar"></el-avatar>
+              <el-dropdown-menu >
+                <!-- <div style="height: 50px;width: 50px"></div> -->
+                <el-dropdown-item command="profile"><i class="el-icon-s-operation"></i>个人中心</el-dropdown-item>
+                <el-dropdown-item command="logout"><i class="el-icon-s-operation"></i> 退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
-          <el-dropdown @command="handleCommand">
-            <el-avatar size="large" :src="user.avatar"></el-avatar>
-            <el-dropdown-menu >
-              <!-- <div style="height: 50px;width: 50px"></div> -->
-              <el-dropdown-item command="profile"><i class="el-icon-s-operation"></i>个人中心</el-dropdown-item>
-              <el-dropdown-item command="logout"><i class="el-icon-s-operation"></i> 退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+
         </el-header>
         <!-- 页面内容 -->
         <el-main style="padding: 0 2vw">
@@ -63,8 +75,9 @@ export default {
       user: {
         username: 'aaronchu',
         nickname: 'AaronChu',
-        avatar: ''
-      }
+        avatar: '',
+      },
+      isCollapse: true
     }
   },
   created(){
@@ -87,12 +100,18 @@ export default {
 </script>
 
 <style lang="less">
+
   .el-header {
-    background-color: #B3C0D1;
+    background-color: #ffffff;
     color: #333;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    .right{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
     .nickname{
       font-size: 16px;
       color: #222222;

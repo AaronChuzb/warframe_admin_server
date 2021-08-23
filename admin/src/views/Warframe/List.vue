@@ -6,8 +6,19 @@
 <template>
   <div>
     <h1>战甲列表</h1>
-    <div></div>
-    <el-table :data="warframes">
+    <div>
+      <el-row :gutter="10">
+        <el-col :span="6">
+          <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search"></el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-select v-model="type" placeholder="请选择">
+            <el-option v-for="item in types" :key="item" :label="item" :value="item"></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+    </div>
+    <el-table :data="warframes" size="small">
       <el-table-column align="center" prop="_id" label="ID" width="220"></el-table-column>
       <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间" >
@@ -31,6 +42,20 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="text-align: center;margin-top: 10px">
+      <el-pagination
+          background
+          layout="sizes, prev, pager, next, jumper"
+          :page-sizes="[5, 10, 15, 20]"
+          @prev-click="pageChange"
+          @next-click="pageChange"
+          @current-change="pageChange"
+          @size-change="pageSizeChange"
+          :page-size="pageSize"
+          :total="dataTotal">
+      </el-pagination>
+    </div>
+
   </div>
 </template>
 
@@ -38,24 +63,51 @@
 export default {
   data(){
     return{
-      warframes:[]
+      warframes:[],
+      page: 1,
+      pageSize: 5,
+      dataTotal: 0,
+      search: '',
+      type: '',
+      dateRange: '',
+      types: ['普通','圣装','暗影']
     }
   },
   methods:{
+    /**
+     * 跳页
+     * @param e {Number} 当前页
+     */
+    pageChange(e){
+      console.log(e)
+      this.page = e
+      this.getData()
+    },
+    /**
+     * 更改页大小
+     * @param e {Number} 一页的大小
+     */
+    pageSizeChange(e){
+      console.log(e)
+      this.page = 1
+      this.pageSize = e
+      this.getData()
+    },
     formatTime(time){
-      var date = new Date(time); // 初始化日期
-      var year = date.getFullYear(); //获取年份
-      var month = date.getMonth() + 1; // 获取月份
-      var day = date.getDate(); // 获取具体日
-      var hour = date.getHours(); // 获取时
-      var minutes = date.getMinutes(); // 获取分
-      var seconds = date.getSeconds(); // 获取秒
+      const date = new Date(time); // 初始化日期
+      const year = date.getFullYear(); //获取年份
+      const month = date.getMonth() + 1; // 获取月份
+      const day = date.getDate(); // 获取具体日
+      const hour = date.getHours(); // 获取时
+      const minutes = date.getMinutes(); // 获取分
+      const seconds = date.getSeconds(); // 获取秒
       return year + '年' + month + '月' + day + '日 ' +  hour + '时' + minutes + '分' + seconds + '秒'
     },
     async getData(){
-      const res = await this.$http.get('rest/warframes', { params: { page: 1, pageSize: 10, params: { name: '圣剑1' } } } )
+      const res = await this.$http.get('rest/warframes', { params: { page: this.page, pageSize: this.pageSize } } )
       console.log(res)
       this.warframes = res.data.data
+      this.dataTotal = res.data.counts
     },
     async remove(row){
       this.$confirm(`是否删除 "${row.name}"`, '警告', {
@@ -69,7 +121,7 @@ export default {
           type: 'success',
           message: '删除成功!'
         })
-        this.getData()
+        await this.getData()
       })
     }
   },
@@ -80,5 +132,27 @@ export default {
 </script>
 
 <style>
-
+.el-row {
+  margin-bottom: 20px;
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
 </style>

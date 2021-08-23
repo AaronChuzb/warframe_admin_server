@@ -1,3 +1,5 @@
+
+.idea
 admin/dist
 admin/src/plugins/oss.js.backup
 server/node_modules

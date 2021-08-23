@@ -35,27 +35,30 @@ module.exports = app =>{
   })
   // 查询列表
   router.get('/', async(req, res)=>{
-    const start = (parseInt(req.query.page) - 1 || 0) * (parseInt(req.query.pageSize) || 10) // 从什么地方开始查
-    const counts = await req.Model.countDocuments(req.query.queryParams || {}).exec() // 查出总条数
-    const pageCount = counts / (parseInt(req.query.pageSize) || 10) // 页数
-    const models = await req.Model.find(JSON.parse(req.query.params) || {}).skip(start).sort({ updatedAt: -1 } || req.query.sort).limit(parseInt(req.query.pageSize) || 10).exec() // 一页的内容
-    res.send({ data: models, pageCount: pageCount})
+    const params = JSON.parse(req.query.params || '{}') // 查询的参数，默认{}
+    const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认1
+    const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
+    const sort = (JSON.parse(req.query.sort || '{}')) // 查询排序的依据
+    const start = page * pageSize // 从什么地方开始查
+    const counts = await req.Model.countDocuments(params).exec() // 查出某个参数总条数
+    const models = await req.Model.find(params).skip(start).sort(sort).limit(pageSize).exec() // 一页的内容
+    res.send({ data: models, counts: counts})
   })
   // 查询操作
   router.get('/:id', async(req, res)=>{
-    var id = formatId(req.params.id)
+    const id = formatId(req.params.id)
     const model = await req.Model.findById(id)
     res.send(model)
   })
   // 修改操作
   router.put('/:id', async(req, res)=>{
-    var id = formatId(req.params.id)
+    const id = formatId(req.params.id)
     const model = await req.Model.findByIdAndUpdate(id, req.body)
     res.send(model)
   })
   // 删除操作
   router.delete('/:id', async(req, res)=>{
-    var id = formatId(req.params.id)
+    const id = formatId(req.params.id)
     await req.Model.findByIdAndDelete(id)
     res.send({
       success: true
