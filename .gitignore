@@ -1,3 +1,4 @@
 admin/dist
+admin/node_modules
 admin/src/plugins/oss.js.backup
 server/node_modules
