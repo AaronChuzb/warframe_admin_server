@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 14:10:40
+ * @LastEditTime: 2021-08-24 17:35:41
  */
 module.exports = app => {
   const express = require('express')
@@ -44,6 +44,7 @@ module.exports = app => {
     const start = page * pageSize // 从什么地方开始查
     const counts = await req.Model.countDocuments(params).exec() // 查出某个参数总条数
     const models = await req.Model.find(req.find).populate('creator').populate('updater').skip(start).sort(sort).limit(pageSize).exec() // 一页的内容
+    console.log(models)
     res.send({
       data: models,
       counts: counts
@@ -77,7 +78,6 @@ module.exports = app => {
 
 
   app.use('/admin/api/rest/:resource', auth(), resource(), router)
-
   // 用户登录接口
   app.post('/admin/api/login', async (req, res) => {
     const {
@@ -103,7 +103,14 @@ module.exports = app => {
       user: user
     })
   })
-
+  // oss上传秘钥接口
+  app.get('/admin/api/oss', auth(), async (req, res)=>{
+    const Model = require('../../models/Oss')
+    const model = Model.find({})
+    console.log(model)
+    res.send(model)
+  })
+  
   //错误处理函数
   app.use(async (err, req, res, next) => {
     res.status(err.statusCode || 500).send({
