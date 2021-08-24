@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-22 00:02:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 21:27:25
+ * @LastEditTime: 2021-08-24 10:44:43
  */
 const mongoose = require('mongoose')
 
@@ -16,7 +16,8 @@ const schema = new mongoose.Schema({
       return require('bcrypt').hashSync(val, 10)
     } 
   },
-  editorUesrId: { type: String }
+  creator: { type: String, ref: 'User' }, // 创建者id
+  updater: { type: String, ref: 'User' } // 更新者id
 })
 
 module.exports = mongoose.model('User', schema)

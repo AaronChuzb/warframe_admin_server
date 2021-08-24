@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 17:08:29
+ * @LastEditTime: 2021-08-24 10:58:12
 -->
 <template>
   <div class="page">
@@ -73,6 +73,7 @@ export default {
       this.form = res.data
     },
     async onSubmit(){
+      console.log('提交')
       if(this.id){
         await this.$http.put('rest/users/'+this.id, this.form)
         this.$message({

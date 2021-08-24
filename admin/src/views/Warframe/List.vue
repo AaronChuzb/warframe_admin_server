@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 23:07:03
+ * @LastEditTime: 2021-08-24 14:14:44
 -->
 <template>
   <div>
@@ -9,7 +9,7 @@
     <div>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search"></el-input>
+          <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search" @change="searchContent"></el-input>
         </el-col>
         <el-col :span="6">
           <el-select v-model="type" placeholder="请选择">
@@ -93,6 +93,10 @@ export default {
       this.pageSize = e
       this.getData()
     },
+    searchContent(){
+      this.page = 1
+      this.getData()
+    },
     formatTime(time){
       const date = new Date(time); // 初始化日期
       const year = date.getFullYear(); //获取年份
@@ -104,7 +108,7 @@ export default {
       return year + '年' + month + '月' + day + '日 ' +  hour + '时' + minutes + '分' + seconds + '秒'
     },
     async getData(){
-      const res = await this.$http.get('rest/warframes', { params: { page: this.page, pageSize: this.pageSize } } )
+      const res = await this.$http.get('rest/warframes', { params: { page: this.page, pageSize: this.pageSize, search: { feilds: [ 'name', 'editorData' ], content: this.search } } } )
       console.log(res)
       this.warframes = res.data.data
       this.dataTotal = res.data.counts

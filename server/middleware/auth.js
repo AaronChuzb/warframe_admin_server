@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-22 02:36:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 22:03:19
+ * @LastEditTime: 2021-08-24 10:35:02
  */
 
 module.exports = () =>{
@@ -15,7 +15,6 @@ module.exports = () =>{
     assert(_id, 401, '请先登录')
     req.user = await User.findById(_id)
     assert(req.user, 401, '请先登录')
-    req.body.editorUserId = _id
     await next()
   }
 }
