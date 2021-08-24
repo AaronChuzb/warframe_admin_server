@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 16:00:42
+ * @LastEditTime: 2021-08-24 16:23:20
 -->
 <template>
   <div>
@@ -95,10 +95,18 @@ export default {
       this.pageSize = e
       this.getData()
     },
+    
+    /**
+     * @description: 搜索
+     */
     searchContent(){
       this.page = 1
       this.getData()
     },
+
+    /**
+     * @description: 获取数据
+     */
     async getData(){
       const res = await this.$api.getWarframe(this.page, this.pageSize, [ 'name', 'editorData' ], this.search)
       console.log(res)
@@ -111,8 +119,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then( async () => {
-        const res = await this.$api.delWarframe(row._id)
-        console.log(res)
+        await this.$api.delWarframe(row._id)
         this.$message({
           type: 'success',
           message: '删除成功!'

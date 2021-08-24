@@ -1,15 +1,19 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 17:47:47
+ * @LastEditTime: 2021-08-24 17:29:36
 -->
 <template>
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
-      <el-aside style="background-color: rgb(238, 241, 246)" class="el-side" >
-        <el-menu router  style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-          <el-submenu index="1">
+      <el-aside style="background-color: rgb(238, 241, 246);width: 230px">
+        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+          <el-menu-item index="/">
+            <i class="el-icon-s-home"></i>
+            <span slot="title">首页</span>
+          </el-menu-item>
+          <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-edit-outline"></i>
               <span slot="title">内容管理</span>
@@ -20,15 +24,20 @@
               <el-menu-item index="/warframe/edit">新增战甲</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="2">
+          <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-s-operation"></i>
+              <i class="el-icon-setting"></i>
               <span slot="title">系统设置</span>
             </template>
             <el-menu-item-group>
               <template slot="title">用户管理</template>
               <el-menu-item index="/user/list">管理员列表</el-menu-item>
               <el-menu-item index="/user/edit">新增管理员</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <template slot="title">秘钥管理</template>
+              <el-menu-item index="/secret/miniapp">小程序</el-menu-item>
+              <el-menu-item index="/secret/oss">OSS</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -50,14 +59,13 @@
             </div>
             <el-dropdown @command="handleCommand">
               <el-avatar size="large" :src="user.avatar"></el-avatar>
-              <el-dropdown-menu >
+              <el-dropdown-menu>
                 <!-- <div style="height: 50px;width: 50px"></div> -->
                 <el-dropdown-item command="profile"><i class="el-icon-s-operation"></i>个人中心</el-dropdown-item>
                 <el-dropdown-item command="logout"><i class="el-icon-s-operation"></i> 退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-
         </el-header>
         <!-- 页面内容 -->
         <el-main style="padding: 0 2vw">
@@ -73,73 +81,73 @@ export default {
   data() {
     return {
       user: {
-        username: 'aaronchu',
-        nickname: 'AaronChu',
-        avatar: '',
+        username: "aaronchu",
+        nickname: "AaronChu",
+        avatar: "",
       },
-      isCollapse: true
-    }
+      isCollapse: true,
+    };
   },
-  created(){
-    this.user = JSON.parse(sessionStorage.getItem('user'))
+  created() {
+    this.user = JSON.parse(sessionStorage.getItem("user"));
   },
-  methods:{
-    handleCommand(e){
-      console.log(e)
-      if(e === 'logout'){
-        sessionStorage.clear()
-        this.$router.push('/login')
+  methods: {
+    handleCommand(e) {
+      console.log(e);
+      if (e === "logout") {
+        sessionStorage.clear();
+        this.$router.push("/login");
         this.$message({
-          type: 'success',
-          message: '退出登录成功'
-        })
+          type: "success",
+          message: "退出登录成功",
+        });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="less">
+.el-header {
+  background-color: #ffffff;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .nickname {
+    font-size: 16px;
+    color: #222222;
+    font-weight: bold;
+  }
+  .username {
+    font-size: 14px;
+    color: #333333;
+  }
+  .el-avatar {
+    margin-left: 15px;
+  }
+}
 
-  .el-header {
-    background-color: #ffffff;
-    color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .right{
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-    }
-    .nickname{
-      font-size: 16px;
-      color: #222222;
-      font-weight: bold;
-    }
-    .username{
-      font-size: 14px;
-      color: #333333;
-    }
-    .el-avatar{
-      margin-left: 15px;
-    }
+.el-aside {
+  color: #333;
+  padding: 0;
+  width: 200px;
+}
+.title {
+  height: 100px;
+  background-color: #545c64;
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 150px;
+    display: block;
   }
-  
-  .el-aside {
-    color: #333;
-    padding: 0;
-  }
-  .title{
-    height: 100px; 
-    background-color:#545c64; 
-    width: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    img{
-      width: 150px;
-      display: block;
-    }
-  }
+}
 </style>
