@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 10:58:12
+ * @LastEditTime: 2021-08-24 22:23:48
 -->
 <template>
   <div class="page">
@@ -89,10 +89,9 @@ export default {
       }
       this.$router.push('/user/list')
     },
-    uploader(e){
-      uploader(e.file).then(res=>{
-        this.form.avatar = res
-      })
+    async uploader(e){
+      const avatar = await uploader(e.file)
+      this.form.avatar = avatar
     },
     handleRemove() {
       this.form.avatar = ''

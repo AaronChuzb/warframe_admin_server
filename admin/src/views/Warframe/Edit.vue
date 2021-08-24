@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 21:25:12
+ * @LastEditTime: 2021-08-24 22:21:29
 -->
 <template>
   <div class="page">
@@ -173,6 +173,7 @@ export default {
     }
   },
   mounted(){
+    console.log()
     const editor = new wangEditor(`#editor`)
     // 配置 onchange 回调函数，将数据同步到 vue 中
     editor.config.onchange = (newHtml) => {
@@ -255,11 +256,14 @@ export default {
         })
       })
     },
-    uploader(e){
+    async uploader(e){
       console.log(e)
-      uploader(e.file).then(res=>{
-        this.form.img.push(res)
-      })
+      /* if(this.$store.getters.getOss.accessKeyId === ''){
+       
+      } */
+      const url = await uploader(e.file)
+      this.form.img.push(url)
+     
     }
   },
   beforeDestroy() {

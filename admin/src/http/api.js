@@ -5,6 +5,13 @@
  */
 import request from './request'
 const api = {
+  /**
+   * @description: 获取oss秘钥
+   * @return {Promise}  
+   */ 
+  getOss() {
+    return request.get('rest/osses')
+  },
   
   /**
    * @description: 获取战甲列表
