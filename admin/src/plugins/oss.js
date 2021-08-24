@@ -2,15 +2,14 @@
  * @Author: AaronChu
  * @Date: 2021-08-21 16:11:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 16:48:43
+ * @LastEditTime: 2021-08-24 18:33:27
  * @FilePath: /warframe_admin_server/admin/src/plugins/oss.js
  */
 
 // 图片上传阿里云oss
 
 import { Message } from 'element-ui'
-import Vue from 'vue'
-console.log(Vue.prototype.$api)
+// import store from '../store'
 const OSS = require('ali-oss');
 const client = new OSS({
   region: 'oss-cn-shenzhen',
