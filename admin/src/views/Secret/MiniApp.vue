@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-24 17:21:10
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 17:32:24
+ * @LastEditTime: 2021-08-24 22:30:55
 -->
 <template>
   <div class="page">
@@ -17,7 +17,7 @@
             </el-col>
              <el-col :span="12">
               <el-form-item label="AppSecret">
-                <el-input type="text" v-model="form.appSecret"></el-input>
+                <el-input type="password" v-model="form.appSecret"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -53,16 +53,17 @@ export default {
   methods:{
     async getData(){
       const res = await this.$http.get('rest/apps')
-      this.form = res.data
+      this.form = res.data.data[0]
     },
     async onSubmit(){
-      if(this.id){
+      // 有app秘钥信息，编辑
+      if(this.form.appId !== ''){
         await this.$http.put('rest/apps/'+this.id, this.form)
         this.$message({
           type: 'success',
           message: '编辑成功'
         })
-      } else {
+      } else { // 没有秘钥信息，修改
         await this.$http.post('rest/apps', this.form)
         this.$message({
           type: 'success',

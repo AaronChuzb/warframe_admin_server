@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 22:23:48
+ * @LastEditTime: 2021-08-24 23:09:29
 -->
 <template>
   <div class="page">
@@ -11,6 +11,8 @@
         <div class="item">
           <el-form-item label="头像">
            <el-upload
+            class="avatar-uploader"
+            :class="[form.avatar !== ''?'disabled':'' ]"
             action=""
             list-type="picture-card"
             :http-request="uploader"
@@ -71,6 +73,7 @@ export default {
     async getData(){
       const res = await this.$http.get('rest/users/'+this.id)
       this.form = res.data
+      this.file_list = [{name: '',url: this.form.avatar}]
     },
     async onSubmit(){
       console.log('提交')
@@ -115,19 +118,10 @@ export default {
         font-weight: bold !important;
         
       }
-      .skills{
-        clear: both;
-        padding: 2vw;
-        border: 1px solid #DCDFE6;
-        border-radius: 10px;
-        margin-bottom: 2vw;
-      }
-      
     }
   }
 }
-.editor{
-  width: 375px;
-  margin: 0 auto;
+.disabled .el-upload--picture-card {
+  display: none;
 }
 </style>

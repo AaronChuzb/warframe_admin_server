@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 22:21:29
+ * @LastEditTime: 2021-08-24 22:49:06
 -->
 <template>
   <div class="page">
@@ -104,13 +104,15 @@
         <div class="item">
           <el-divider class="title" >列表封面图</el-divider>
           <el-upload
+            class="avatar-uploader"
+            :class="[form.img.length > 0?'disabled':'' ]"
             action="https://www.hualigs.cn/api/upload"
             list-type="picture-card"
             :http-request="uploader"
-            :file-list="[{name: '',url: form.img[0]}]"
+            :file-list="file_list"
             :limit="1"
             :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
+            <i class="el-icon-plus" ></i>
           </el-upload>
         </div>
         <div class="item">
@@ -138,7 +140,7 @@ export default {
   },
   data(){
     return{
-      
+      file_list: [],
       editor: null,
       self_pole_list: [
         { className: 'icon-naramon', num: 1, checked: false },
@@ -173,7 +175,7 @@ export default {
     }
   },
   mounted(){
-    console.log()
+    
     const editor = new wangEditor(`#editor`)
     // 配置 onchange 回调函数，将数据同步到 vue 中
     editor.config.onchange = (newHtml) => {
@@ -206,7 +208,6 @@ export default {
   methods:{
     async getData(){
       const res = await this.$http.get('rest/warframes/'+this.id)
-      console.log(res)
       this.form = res.data
       res.data.self_pole.forEach((item)=>{
         this.self_pole_list.forEach((child, index)=>{
@@ -215,30 +216,27 @@ export default {
           }
         })
       })
-      
+      this.file_list = [{name: '',url: this.form.img[0]}]
       this.editor.txt.html(res.data.editorData)
     },
     handleRemove() {
       // TODO: 处理图片删除事件
     },
     async onSubmit(){
-      let res
       if(this.id){
-        res = await this.$http.put('rest/warframes/'+this.id, this.form)
+        await this.$http.put('rest/warframes/'+this.id, this.form)
         this.$message({
           type: 'success',
           message: '编辑成功'
         })
       } else {
-        res = await this.$http.post('rest/warframes', this.form)
+        await this.$http.post('rest/warframes', this.form)
         this.$message({
           type: 'success',
           message: '创建成功'
         })
       }
-      console.log(res)
       this.$router.push('/warframe/list')
-      
     },
     newSkill(){
       this.form.skills.push({ name: "", spend: "", des: ""})
@@ -302,5 +300,8 @@ export default {
 .editor{
   width: 375px;
   margin: 0 auto;
+}
+.disabled .el-upload--picture-card {
+  display: none;
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-22 00:02:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 10:44:43
+ * @LastEditTime: 2021-08-24 23:01:29
  */
 const mongoose = require('mongoose')
 
@@ -18,6 +18,9 @@ const schema = new mongoose.Schema({
   },
   creator: { type: String, ref: 'User' }, // 创建者id
   updater: { type: String, ref: 'User' } // 更新者id
+}, {
+  timestamps: true
+  
 })
 
 module.exports = mongoose.model('User', schema)

@@ -1,26 +1,22 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 16:23:20
+ * @LastEditTime: 2021-08-24 22:56:37
 -->
 <template>
   <div>
     <h1>战甲列表</h1>
     <div>
       <el-row :gutter="10">
-        <el-col :span="6">
+        <el-col :span="8">
           <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search" @change="searchContent"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-select v-model="type" placeholder="请选择">
-            <el-option v-for="item in types" :key="item" :label="item" :value="item"></el-option>
-          </el-select>
         </el-col>
       </el-row>
     </div>
     <el-table :data="warframes" size="small">
-      <el-table-column align="center" prop="_id" label="ID" width="220"></el-table-column>
+      <!-- <el-table-column align="center" prop="_id" label="ID" width="220"></el-table-column> -->
       <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
+      <el-table-column align="center" prop="type" label="战甲类型"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间" >
         <template slot-scope="scope">
           <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
@@ -72,7 +68,7 @@ export default {
       search: '',
       type: '',
       dateRange: '',
-      types: ['全部','普通','圣装','暗影']
+      feilds: [ 'name', 'editorData', 'type' ]
     }
   },
   methods:{
@@ -108,12 +104,13 @@ export default {
      * @description: 获取数据
      */
     async getData(){
-      const res = await this.$api.getWarframe(this.page, this.pageSize, [ 'name', 'editorData' ], this.search)
+      const res = await this.$api.getWarframe(this.page, this.pageSize, this.feilds, this.search)
       console.log(res)
       this.warframes = res.data.data
       this.dataTotal = res.data.counts
     },
     async remove(row){
+      console.log(row)
       this.$confirm(`是否删除 "${row.name}"`, '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

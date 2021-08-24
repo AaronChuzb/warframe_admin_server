@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-24 17:21:10
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 17:55:21
+ * @LastEditTime: 2021-08-24 22:29:10
 -->
 <template>
   <div class="page">
@@ -29,14 +29,14 @@
             </el-col>
              <el-col :span="12">
               <el-form-item label="accessKeySecret">
-                <el-input type="text" v-model="form.accessKeySecret"></el-input>
+                <el-input type="password" v-model="form.accessKeySecret"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </div>
         <el-form-item>
           <div style="text-align: right">
-            <el-button type="primary" @click="onSubmit">提交数据</el-button>
+            <el-button type="primary" @click="onSubmit">{{ form.accessKeyId === ''?'添加':'修改' }}</el-button>
             <el-button>取消</el-button>
           </div>
         </el-form-item>
@@ -67,10 +67,10 @@ export default {
   methods:{
     async getData(){
       const res = await this.$http.get('rest/osses')
-      this.form = res.data
+      this.form = res.data.data[0]
     },
     async onSubmit(){
-      if(this.id){
+      if(this.form.accessKeyId !== ''){
         await this.$http.put('rest/osses/'+this.id, this.form)
         this.$message({
           type: 'success',
