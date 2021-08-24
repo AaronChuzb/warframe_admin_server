@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 14:14:44
+ * @LastEditTime: 2021-08-24 16:00:42
 -->
 <template>
   <div>
@@ -23,14 +23,16 @@
       <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间" >
         <template slot-scope="scope">
-          <p>{{ formatTime(scope.row.createdAt) }}</p>
+          <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="updatedAt" label="更新时间">
         <template slot-scope="scope">
-          <p>{{ formatTime(scope.row.updatedAt) }}</p>
+          <p>{{ $util.formatTime(scope.row.updatedAt) }}</p>
         </template>
       </el-table-column>
+      <el-table-column align="center" prop="creator.nickname" label="创建者"></el-table-column>
+      <el-table-column align="center" prop="updater.nickname" label="更新者"></el-table-column>
       <el-table-column
         align="center"
         fixed="right"
@@ -70,7 +72,7 @@ export default {
       search: '',
       type: '',
       dateRange: '',
-      types: ['普通','圣装','暗影']
+      types: ['全部','普通','圣装','暗影']
     }
   },
   methods:{
@@ -97,18 +99,8 @@ export default {
       this.page = 1
       this.getData()
     },
-    formatTime(time){
-      const date = new Date(time); // 初始化日期
-      const year = date.getFullYear(); //获取年份
-      const month = date.getMonth() + 1; // 获取月份
-      const day = date.getDate(); // 获取具体日
-      const hour = date.getHours(); // 获取时
-      const minutes = date.getMinutes(); // 获取分
-      const seconds = date.getSeconds(); // 获取秒
-      return year + '年' + month + '月' + day + '日 ' +  hour + '时' + minutes + '分' + seconds + '秒'
-    },
     async getData(){
-      const res = await this.$http.get('rest/warframes', { params: { page: this.page, pageSize: this.pageSize, search: { feilds: [ 'name', 'editorData' ], content: this.search } } } )
+      const res = await this.$api.getWarframe(this.page, this.pageSize, [ 'name', 'editorData' ], this.search)
       console.log(res)
       this.warframes = res.data.data
       this.dataTotal = res.data.counts
@@ -119,7 +111,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then( async () => {
-        const res = await this.$http.delete('rest/warframes/'+row._id)
+        const res = await this.$api.delWarframe(row._id)
         console.log(res)
         this.$message({
           type: 'success',
