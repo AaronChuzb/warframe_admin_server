@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-24 14:34:39
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 15:00:55
+ * @LastEditTime: 2021-08-24 23:06:12
  */
 const util = {
   formatTime(time){
@@ -12,7 +12,7 @@ const util = {
     const hour = date.getHours(); // 获取时
     const minutes = date.getMinutes(); // 获取分
     const seconds = date.getSeconds(); // 获取秒
-    return year + '-' + month + '-' + day + ' ' +  hour + ':' + minutes + ':' + seconds
+    return year + '-' + month + '-' + day + ' ' +  hour + ':' + (minutes<10?('0'+minutes): minutes) + ':' + seconds
   }
 }
 export default util
