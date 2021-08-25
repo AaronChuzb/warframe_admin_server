@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 16:11:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 22:22:21
+ * @LastEditTime: 2021-08-25 09:45:52
  */
 
 // 图片上传阿里云oss
@@ -16,7 +16,7 @@ const uploader = async e => {
   let fileName = file.name.substr(0,file.name.lastIndexOf('.'))
   let date = new Date().getTime()
   let fileNames = `${date}_${fileName}` // 拼接文件名，保证唯一，这里使用时间戳+原文件名
-  // 上传文件,这里是上传到OSS的 uploads文件夹下
+  // 看看store里边有没有配置信息，没有就请求一次
   if(store.getters.getOss.accessKeyId === ''){
     const res = await Vue.prototype.$api.getOss()
     store.commit('updataOss', res.data.data[0])

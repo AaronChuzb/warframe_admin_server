@@ -1,12 +1,12 @@
 /*
  * @Date: 2021-08-21 20:19:08
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 13:51:36
+ * @LastEditTime: 2021-08-25 15:21:23
  */
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-  name: { type: String }, // 战甲名称
+  name: { type: String, unique: true }, // 战甲名称
   type: { type: String },
   img: { type: Array }, // 图片列表
   level: { type: String }, // 战甲段位需求
@@ -24,7 +24,6 @@ const schema = new mongoose.Schema({
   updater: { type: String, ref: 'User' } // 更新者id
 }, {
   timestamps: true
-  
 })
 
 module.exports = mongoose.model('Warframe', schema)

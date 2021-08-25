@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 17:29:36
+ * @LastEditTime: 2021-08-25 17:05:02
 -->
 <template>
   <div>
@@ -18,10 +18,13 @@
               <i class="el-icon-edit-outline"></i>
               <span slot="title">内容管理</span>
             </template>
-            <el-menu-item-group>
-              <template slot="title">战甲</template>
-              <el-menu-item index="/warframe/list">战甲列表</el-menu-item>
-              <el-menu-item index="/warframe/edit">新增战甲</el-menu-item>
+            <el-menu-item index="/warframe/list">战甲</el-menu-item>
+            <el-menu-item index="/remain/list">遗物</el-menu-item>
+             <el-menu-item-group>
+              <template slot="title">基础内容</template>
+              <el-menu-item index="/pole/list">极性槽</el-menu-item>
+              <el-menu-item index="/type/list">类型</el-menu-item>
+              <el-menu-item index="/primepart/list">遗物部件</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 17:35:41
+ * @LastEditTime: 2021-08-25 15:33:46
  */
 module.exports = app => {
   const express = require('express')
@@ -13,6 +13,7 @@ module.exports = app => {
   // 获取模型中间件
   const resource = require('../../middleware/resource')
   const search = require('../../middleware/search')
+  const unrepeat = require('../../middleware/unrepeat')
   const router = express.Router({
     mergeParams: true
   })
@@ -27,7 +28,7 @@ module.exports = app => {
   }
 
   // 创建操作(给每一次新建都加上创建者的id,更新者也是)
-  router.post('/', async (req, res, next) => {
+  router.post('/', unrepeat(), async (req, res, next) => {
     req.body.creator = req.user._id
     req.body.updater = req.user._id
     next()
@@ -37,14 +38,12 @@ module.exports = app => {
   })
   // 查询列表
   router.get('/', search(), async (req, res) => {
-    const params = JSON.parse(req.query.params || '{}') // 查询的参数，默认{}
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认1
     const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
     const sort = (JSON.parse(req.query.sort || '{}')) // 查询排序的依据
     const start = page * pageSize // 从什么地方开始查
-    const counts = await req.Model.countDocuments(params).exec() // 查出某个参数总条数
+    const counts = await req.Model.countDocuments(req.find).exec() // 查出某个参数总条数
     const models = await req.Model.find(req.find).populate('creator').populate('updater').skip(start).sort(sort).limit(pageSize).exec() // 一页的内容
-    console.log(models)
     res.send({
       data: models,
       counts: counts
@@ -107,14 +106,20 @@ module.exports = app => {
   app.get('/admin/api/oss', auth(), async (req, res)=>{
     const Model = require('../../models/Oss')
     const model = Model.find({})
-    console.log(model)
     res.send(model)
   })
   
   //错误处理函数
   app.use(async (err, req, res, next) => {
-    res.status(err.statusCode || 500).send({
-      message: err.message
-    })
+    console.log(err.code)
+    if(err.code == 11000){
+      res.status(403).send({
+        message: '已存在条目，请不要重复创建'
+      })
+    } else {
+      res.status(err.statusCode || 500).send({
+        message: err.message
+      })
+    }
   })
 }

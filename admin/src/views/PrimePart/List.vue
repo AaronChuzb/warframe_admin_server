@@ -1,25 +1,23 @@
 <!--
- * @Date: 2021-08-20 22:39:09
+ * @Date: 2021-08-25 11:46:02
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-25 10:36:09
+ * @LastEditTime: 2021-08-25 17:58:38
 -->
 <template>
   <div>
-    <h1>战甲列表</h1>
+    <h1>遗物部件列表</h1>
     <div>
       <el-row :gutter="10">
         <el-col :span="8">
           <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search" @change="searchContent"></el-input>
         </el-col>
         <el-col :span="4" :offset="12">
-          <el-button style="width: 100%" type="primary" @click="$router.push('/warframe/edit')">新增战甲</el-button>
+          <el-button style="width: 100%" type="primary" @click="$router.push('/primepart/edit')">新增部件</el-button>
         </el-col>
       </el-row>
     </div>
-    <el-table :data="warframes" size="small">
-      <!-- <el-table-column align="center" prop="_id" label="ID" width="220"></el-table-column> -->
-      <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
-      <el-table-column align="center" prop="type" label="战甲类型"></el-table-column>
+    <el-table :data="types" size="small">
+      <el-table-column align="center" prop="name" label="部件名"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间" >
         <template slot-scope="scope">
           <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
@@ -38,7 +36,7 @@
         label="操作"
         width="180">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="$router.push(`/warframe/edit/id=${scope.row._id}}`)">编辑</el-button>
+          <el-button type="primary" size="small" @click="$router.push(`/primepart/edit/${scope.row._id}`)">编辑</el-button>
           <el-button type="danger" size="small" @click=" remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -64,14 +62,12 @@
 export default {
   data(){
     return{
-      warframes:[],
+      types:[],
       page: 1,
       pageSize: 5,
       dataTotal: 0,
       search: '',
-      type: '',
-      dateRange: '',
-      feilds: [ 'name', 'editorData', 'type', 'img']
+      feilds: [ 'name' ]
     }
   },
   methods:{
@@ -102,16 +98,16 @@ export default {
       this.page = 1
       this.getData()
     },
-
     /**
      * @description: 获取数据
      */
     async getData(){
-      const res = await this.$api.getWarframe(this.page, this.pageSize, this.feilds, this.search)
+      const res = await this.$api.getPrimePart(this.page, this.pageSize, this.feilds, this.search)
       console.log(res)
-      this.warframes = res.data.data
+      this.types = res.data.data
       this.dataTotal = res.data.counts
     },
+
     async remove(row){
       console.log(row)
       this.$confirm(`是否删除 "${row.name}"`, '警告', {
@@ -119,7 +115,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then( async () => {
-        await this.$api.delWarframe(row._id)
+        await this.$api.delPrimePart(this.select, row._id)
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -128,6 +124,7 @@ export default {
       })
     }
   },
+
   created(){
     this.getData()
   }
@@ -158,4 +155,10 @@ export default {
   padding: 10px 0;
   background-color: #f9fafc;
 }
+.el-select .el-input {
+    width: 130px;
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
 </style>

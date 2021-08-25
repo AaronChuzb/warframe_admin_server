@@ -1,14 +1,14 @@
 /*
  * @Date: 2021-08-22 00:02:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 23:01:29
+ * @LastEditTime: 2021-08-25 15:20:47
  */
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
   nickname: { type: String }, // 用户昵称
   avatar: { type: String }, // 用户头像
-  username: { type: String }, // 用户名
+  username: { type: String, unique: true }, // 用户名
   password: { 
     type: String,
     select: false,

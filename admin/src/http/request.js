@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 23:00:17
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-22 15:24:22
+ * @LastEditTime: 2021-08-25 15:35:35
  */
 import axios from 'axios'
 import Vue from 'vue'
@@ -16,10 +16,18 @@ http.interceptors.response.use((res)=>{
   return res
 }, (err)=>{
   if(err.response.data.message){
-    Vue.prototype.$message({
-      type: 'error',
-      message: err.response.data.message
-    })
+    if(err.response.status === 403){
+      Vue.prototype.$message({
+        type: 'warning',
+        message: err.response.data.message
+      })
+    } else {
+      Vue.prototype.$message({
+        type: 'error',
+        message: err.response.data.message
+      })
+    }
+    
   }
   if(err.response.status === 401){
    router.push('/login')
