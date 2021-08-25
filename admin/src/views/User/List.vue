@@ -1,14 +1,12 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 23:04:13
+ * @LastEditTime: 2021-08-25 20:15:12
 -->
 <template>
   <div>
     <h1>管理员列表</h1>
      <el-table :data="users">
-      <!-- <el-table-column align="center" prop="_id" label="ID" width="220">
-      </el-table-column> -->
       <el-table-column align="center" prop="nickname" label="管理员昵称"></el-table-column>
       <el-table-column align="center" prop="avatar" label="管理员头像">
         <template slot-scope="scope">
@@ -32,6 +30,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      background
+      layout="sizes, prev, pager, next, jumper"
+      :page-sizes="[5, 10, 15, 20]"
+      @prev-click="pageChange"
+      @next-click="pageChange"
+      @current-change="pageChange"
+      @size-change="pageSizeChange"
+      :page-size="pageSize"
+      :total="dataTotal">
+  </el-pagination>
   </div>
 </template>
 
@@ -39,10 +48,32 @@
 export default {
   data(){
     return{
-      users:[]
+      users:[],
+      page: 1,
+      pageSize: 5,
+      dataTotal: 0,
     }
   },
   methods:{
+    /**
+     * 跳页
+     * @param e {Number} 当前页
+     */
+    pageChange(e){
+      console.log(e)
+      this.page = e
+      this.getData()
+    },
+    /**
+     * 更改页大小
+     * @param e {Number} 一页的大小
+     */
+    pageSizeChange(e){
+      console.log(e)
+      this.page = 1
+      this.pageSize = e
+      this.getData()
+    },
     async getData(){
       const res = await this.$http.get('rest/users')
       console.log(res)
