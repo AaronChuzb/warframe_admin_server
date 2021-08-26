@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-25 19:40:55
+ * @LastEditTime: 2021-08-26 11:57:53
  */
 module.exports = app => {
   const express = require('express')
@@ -12,19 +12,18 @@ module.exports = app => {
   const auth = require('../../middleware/auth')
   // 获取模型中间件
   const resource = require('../../middleware/resource')
+  // 获取搜索字符串的参数
+  const search = require('../../middleware/search')
+  // 分页中间件
+  const pages = require('../../middleware/pages')
+  // 特殊查询拦截中间件
+  const option = require('../../middleware/option')
   const router = express.Router({
     mergeParams: true
   })
   
   // token转换秘钥
   app.set('secret', 'maliho123.')
-
-  // 转换id
-  function formatId(paramsId) {
-    var id = paramsId.replace(/id=/g, '')
-    id = id.replace(/}/g, '')
-    return id
-  }
 
   // 创建操作(给每一次新建都加上创建者的id,更新者也是)
   router.post('/', async (req, res, next) => {
@@ -36,22 +35,16 @@ module.exports = app => {
     res.send(model)
   })
   // 查询列表
-  router.get('/', async (req, res) => {
-    const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认1
-    const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
-    const sort = (JSON.parse(req.query.sort || '{}')) // 查询排序的依据
-    const start = page * pageSize // 从什么地方开始查
-    const counts = await req.Model.countDocuments(req.find).exec() // 查出某个参数总条数
-    const models = await req.Model.find().skip(start).sort(sort).limit(pageSize).exec() // 一页的内容
+  router.get('/', pages(), search(), option(), async (req, res) => {
+    const models = await req.Model.find(req.find).populate('creator').populate('updater').skip(req.start).limit(req.pageSize).exec() // 一页的内容
     res.send({
       data: models,
-      counts: counts
+      counts: req.counts
     })
   })
   // 查询操作
   router.get('/:id', async (req, res) => {
-    const id = formatId(req.params.id)
-    const model = await req.Model.findById(id)
+    const model = await req.Model.findById(req.params.id)
     res.send(model)
   })
   // 修改操作
@@ -59,14 +52,12 @@ module.exports = app => {
     req.body.updater = req.user._id
     next()
   }, async (req, res) => {
-    const id = formatId(req.params.id)
-    const model = await req.Model.findByIdAndUpdate(id, req.body)
+    const model = await req.Model.findByIdAndUpdate(req.params.id, req.body)
     res.send(model)
   })
   // 删除操作
   router.delete('/:id', async (req, res) => {
-    const id = formatId(req.params.id)
-    await req.Model.findByIdAndDelete(id)
+    await req.Model.findByIdAndDelete(req.params.id)
     res.send({
       success: true
     })

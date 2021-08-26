@@ -1,38 +1,38 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 11:26:20
+ * @LastEditTime: 2021-08-26 13:16:08
 -->
 <template>
   <div>
     <h1>管理员列表</h1>
     <el-row :gutter="10">
       <el-col :span="8">
-        <el-input placeholder="请输入用户名或昵称搜索" v-model="search" @change="searchContent">
+        <el-input placeholder="请输入分类名称搜索" v-model="search" @change="searchContent">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
       </el-col>
       <el-col :span="4" :offset="12">
-        <el-button style="width: 100%" type="primary" @click="$router.push('/user/edit')">新增管理员</el-button>
+        <el-button style="width: 100%" type="primary" @click="$router.push('/category/edit')">新建分类</el-button>
       </el-col>
     </el-row>
-    <el-table :data="users" style="margin-top: 1vw">
-      <el-table-column align="center" prop="nickname" label="管理员昵称"></el-table-column>
-      <el-table-column align="center" prop="avatar" label="管理员头像">
-        <template slot-scope="scope">
-          <el-avatar size="small" :src="scope.row.avatar"></el-avatar>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="username" label="管理员账号"></el-table-column>
-      <el-table-column align="center" prop="createdAt" label="注册时间">
+    <el-table :data="categorys" style="margin-top: 1vw">
+      <el-table-column align="center" prop="name" label="分类名称"></el-table-column>
+      <el-table-column align="center" prop="parent.name" label="上级分类"></el-table-column>
+      <el-table-column align="center" prop="createdAt" label="创建时间">
         <template slot-scope="scope">
           <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
         </template>
       </el-table-column>
+      <el-table-column align="center" prop="updatedAt" label="更新时间">
+        <template slot-scope="scope">
+          <p>{{ $util.formatTime(scope.row.updatedAt) }}</p>
+        </template>
+      </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="180">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="$router.push(`/user/edit/${scope.row._id}`)">编辑</el-button>
-          <el-button type="danger" size="small" @click="remove(scope.row)" v-if="!(scope.row.username == 'aaronchu')">删除</el-button>
+          <el-button type="primary" size="small" @click="$router.push(`/category/edit/${scope.row._id}`)">编辑</el-button>
+          <el-button type="danger" size="small" @click="remove(scope.row)" >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -46,7 +46,7 @@
 export default {
   data() {
     return {
-      users: [],
+      categorys: [],
       page: 1,
       pageSize: 5,
       dataTotal: 0,
@@ -78,17 +78,17 @@ export default {
       this.getData()
     },
     async getData() {
-      const res = await this.$api.getUsers(this.page, this.pageSize, ["username", "nickname"], this.search);
-      this.users = res.data.data;
+      const res = await this.$api.getCategorys(this.page, this.pageSize, ["name"], this.search, 'category');
+      this.categorys = res.data.data;
       this.dataTotal = res.data.counts;
     },
     async remove(row) {
-      this.$confirm(`是否删除 "${row.nickname}"`, "警告", {
+      this.$confirm(`是否删除"${row.name}"分类`, "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(async () => {
-        await this.$api.deleteUser(row._id)
+        await this.$api.deleteCategory(row._id)
         this.$message({
           type: "success",
           message: "删除成功!",

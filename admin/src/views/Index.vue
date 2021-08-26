@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-25 19:38:23
+ * @LastEditTime: 2021-08-26 11:34:03
 -->
 <template>
   <div>
@@ -13,14 +13,17 @@
             <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <!-- <el-submenu index="2">
+          <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-edit-outline"></i>
               <span slot="title">内容管理</span>
             </template>
-            <el-menu-item index="/warframe/list">战甲</el-menu-item>
-            <el-menu-item index="/remain/list">遗物</el-menu-item>
-          </el-submenu> -->
+            <el-menu-item-group>
+              <template slot="title">基础内容</template>
+              <el-menu-item index="/category/list">分类列表</el-menu-item>
+              <el-menu-item index="/type/list">部件列表</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-setting"></i>
@@ -29,7 +32,6 @@
             <el-menu-item-group>
               <template slot="title">用户管理</template>
               <el-menu-item index="/user/list">管理员列表</el-menu-item>
-              <el-menu-item index="/user/edit">新增管理员</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
               <template slot="title">秘钥管理</template>

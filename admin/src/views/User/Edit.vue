@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:38:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-24 23:09:29
+ * @LastEditTime: 2021-08-26 11:08:07
 -->
 <template>
   <div class="page">
@@ -71,20 +71,21 @@ export default {
   },
   methods:{
     async getData(){
-      const res = await this.$http.get('rest/users/'+this.id)
+      const res = await this.$api.getUser(this.id)
+      // const res = await this.$http.get('rest/users/'+this.id)
       this.form = res.data
       this.file_list = [{name: '',url: this.form.avatar}]
     },
     async onSubmit(){
       console.log('提交')
       if(this.id){
-        await this.$http.put('rest/users/'+this.id, this.form)
+        await this.$api.updateUser(this.id, this.form)
         this.$message({
           type: 'success',
           message: '编辑成功'
         })
       } else {
-        await this.$http.post('rest/users', this.form)
+        await this.$api.createUser(this.form)
         this.$message({
           type: 'success',
           message: '创建成功'
