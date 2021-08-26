@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-24 13:42:17
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 10:09:10
+ * @LastEditTime: 2021-08-26 16:44:25
  */
 
 module.exports = () =>{
@@ -20,7 +20,7 @@ module.exports = () =>{
         find =  { $or: feilds }
       }
     }
-    
+    req.search = search
     req.find = find
     await next()
   }

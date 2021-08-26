@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 23:00:23
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 12:02:09
+ * @LastEditTime: 2021-08-26 16:34:17
  */
 import request from './request'
 const api = {
@@ -35,6 +35,9 @@ const api = {
     return request.delete(`rest/users/${id}`)
   },
 
+
+  
+
   // 新建分类
   createCategory(data){
     return request.post('rest/categorys', data)
@@ -56,6 +59,64 @@ const api = {
   // 删除分类
   deleteCategory(id){
     return request.delete(`rest/categorys/${id}`)
+  },
+  
+  
+
+
+  // 新建部件
+  createPart(data){
+    return request.post('rest/parts', data)
+  },
+  // 获取部件列表
+  getParts(page, pageSize, feilds, serach) {
+    return request.get('rest/parts', { 
+      params: { page: page, pageSize: pageSize, search: { feilds: feilds, content: serach } }
+    })
+  },
+  // 获取单个部件
+  getPart(id){
+    return request.get(`rest/parts/${id}`)
+  },
+  // 更新部件信息
+  updatePart(id, data){
+    return request.put(`rest/parts/${id}`, data)
+  },
+  // 删除部件
+  deletePart(id){
+    return request.delete(`rest/parts/${id}`)
+  },
+
+
+
+
+  // 新建遗物
+  createRemain(data){
+    return request.post('rest/remains', data)
+  },
+  // 获取遗物列表
+  getRemains(page, pageSize, feilds, serach, option) {
+    return request.get('rest/remains', { 
+      params: { page: page, pageSize: pageSize, search: { feilds: feilds, content: serach }, option }
+    })
+  },
+  // 获取遗物分类
+  getRemainsType() {
+    return request.get('rest/categorys', {
+      params: { page: 1, pageSize: 99, search: { feilds: ['name'], content: '遗物' }, option: 'remainType' }
+    })
+  },
+  // 获取单个遗物
+  getRemain(id){
+    return request.get(`rest/remains/${id}`)
+  },
+  // 更新遗物信息
+  updateRemain(id, data){
+    return request.put(`rest/remains/${id}`, data)
+  },
+  // 删除遗物
+  deleteRemain(id){
+    return request.delete(`rest/remains/${id}`)
   }
 }
 

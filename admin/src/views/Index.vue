@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 11:34:03
+ * @LastEditTime: 2021-08-26 16:12:57
 -->
 <template>
   <div>
@@ -20,8 +20,15 @@
             </template>
             <el-menu-item-group>
               <template slot="title">基础内容</template>
-              <el-menu-item index="/category/list">分类列表</el-menu-item>
-              <el-menu-item index="/type/list">部件列表</el-menu-item>
+              <el-menu-item index="/category/list">分类</el-menu-item>
+              <el-menu-item index="/part/list">部件</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <template slot="title">进阶内容</template>
+              <el-menu-item index="/remain/list">遗物</el-menu-item>
+              <el-menu-item index="/part/list">战甲</el-menu-item>
+              <el-menu-item index="/part/list">武器</el-menu-item>
+              <el-menu-item index="/part/list">Mod</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -45,12 +52,7 @@
       <el-container>
         <!-- 头部 -->
         <el-header>
-          <el-breadcrumb separator="/" class="left">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
-            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-          </el-breadcrumb>
+          <div class="left"></div>
           <div class="right">
             <div>
               <div class="nickname">{{ user.nickname }}</div>
@@ -79,6 +81,7 @@
 export default {
   data() {
     return {
+      routerList: [],
       user: {
         username: "aaronchu",
         nickname: "AaronChu",

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 11:57:53
+ * @LastEditTime: 2021-08-26 16:26:11
  */
 module.exports = app => {
   const express = require('express')
@@ -35,7 +35,7 @@ module.exports = app => {
     res.send(model)
   })
   // 查询列表
-  router.get('/', pages(), search(), option(), async (req, res) => {
+  router.get('/',  search(), pages(), option(), async (req, res) => {
     const models = await req.Model.find(req.find).populate('creator').populate('updater').skip(req.start).limit(req.pageSize).exec() // 一页的内容
     res.send({
       data: models,
