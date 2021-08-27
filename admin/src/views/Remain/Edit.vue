@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-26 11:26:48
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 18:00:41
+ * @LastEditTime: 2021-08-27 17:33:18
 -->
 <template>
   <div>
@@ -23,23 +23,21 @@
           </el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="铜一档">
               <el-select v-model="form.cu1" filterable remote reserve-keyword placeholder="请选择铜一档部件" :remote-method="searchPart" :loading="loading">
                 <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="铜二档">
-              <el-select v-model="cu2" filterable remote reserve-keyword placeholder="请选择铜二档部件" :remote-method="searchPart" :loading="loading">
+              <el-select v-model="form.cu2" filterable remote reserve-keyword placeholder="请选择铜二档部件" :remote-method="searchPart" :loading="loading">
                 <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="铜三档">
               <el-select v-model="form.cu3" filterable remote reserve-keyword placeholder="请选择铜三档部件" :remote-method="searchPart" :loading="loading">
                 <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
@@ -48,16 +46,25 @@
           </el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="银一档">
-              <el-select v-model="ag1" filterable remote reserve-keyword placeholder="请选择银一档部件" :remote-method="searchPart" :loading="loading">
+              <el-select v-model="form.ag1" filterable remote reserve-keyword placeholder="请选择银一档部件" :remote-method="searchPart" :loading="loading">
                 <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="银二档">
-              <el-select v-model="ag2" filterable remote reserve-keyword placeholder="请选择银二档部件" :remote-method="searchPart" :loading="loading">
+              <el-select v-model="form.ag2" filterable remote reserve-keyword placeholder="请选择银二档部件" :remote-method="searchPart" :loading="loading">
+                <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <el-form-item label="金档">
+              <el-select v-model="form.au" filterable remote reserve-keyword placeholder="请选择金档部件" :remote-method="searchPart" :loading="loading">
                 <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
               </el-select>
             </el-form-item>
@@ -65,10 +72,8 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="金档">
-              <el-select v-model="au" filterable remote reserve-keyword placeholder="请选择金档部件" :remote-method="searchPart" :loading="loading">
-                <el-option v-for="item in partList" :key="item._id" :label="item.name" :value="item._id"> </el-option>
-              </el-select>
+            <el-form-item label="获取遗物的方式">
+              <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" placeholder="请输入内容" v-model="form.getways"> </el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -90,6 +95,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       remainTypeList: [],
       partList: [],
       form: {
@@ -100,7 +106,8 @@ export default {
         cu3: "",
         ag1: "",
         ag2: "",
-        au: ""
+        au: "",
+        getways: "",
       },
     };
   },
@@ -120,26 +127,30 @@ export default {
       this.form.name = this.form.name.toUpperCase();
     },
     // 根据关键词获取数据库中部件
-    async searchPart(name){
-      const res = await this.$api.getParts(1, 5, ['name'], name)
-      this.partList = res.data.data
+    async searchPart(name) {
+      this.loading = true;
+      if(name){
+        const res = await this.$api.getParts(1, 5, ["name"], name);
+        this.loading = false
+        this.partList = res.data.data;
+      }
     },
     async getData() {
-      const res = await this.$api.getPart(this.id);
+      const res = await this.$api.getRemain(this.id);
       this.form = res.data;
     },
     async onSubmit() {
       console.log("提交");
       console.log(this.form);
       if (this.id) {
-        await this.$api.updatePart(this.id, this.form);
+        await this.$api.updateRemain(this.id, this.form);
         this.$message({
           type: "success",
           message: "编辑成功",
         });
         this.$router.push("/part/list");
       } else {
-        await this.$api.createPart(this.form);
+        await this.$api.createRemain(this.form);
         this.$message({
           type: "success",
           message: "创建成功",
@@ -151,4 +162,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.el-select{
+  width: 100%;
+}
+</style>

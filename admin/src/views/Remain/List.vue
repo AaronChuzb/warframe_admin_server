@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 16:14:19
+ * @LastEditTime: 2021-08-27 17:15:28
 -->
 <template>
   <div>
@@ -16,7 +16,7 @@
         <el-button style="width: 100%" type="primary" @click="$router.push('/remain/edit')">新增遗物</el-button>
       </el-col>
     </el-row>
-    <el-table :data="categorys" style="margin-top: 1vw">
+    <el-table :data="remains" style="margin-top: 1vw">
       <el-table-column align="center" prop="name" label="遗物名称"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间">
         <template slot-scope="scope">
@@ -45,7 +45,7 @@
 export default {
   data() {
     return {
-      categorys: [],
+      remains: [],
       page: 1,
       pageSize: 5,
       dataTotal: 0,
@@ -78,7 +78,7 @@ export default {
     },
     async getData() {
       const res = await this.$api.getRemains(this.page, this.pageSize, ["name"], this.search, 'remain');
-      this.categorys = res.data.data;
+      this.remains = res.data.data;
       this.dataTotal = res.data.counts;
     },
     async remove(row) {
