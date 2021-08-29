@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-29 16:54:06
+ * @LastEditTime: 2021-08-29 17:14:12
 -->
 <template>
   <div>
@@ -18,6 +18,12 @@
     </el-row>
     <el-table :data="resources" style="margin-top: 1vw" :key="Math.random()">
       <el-table-column align="center" prop="name" label="资源名称"></el-table-column>
+      <el-table-column align="center" prop="avatar" label="资源图像">
+        <template slot-scope="scope" >
+          <img :src="scope.row.img" alt="" style="width: 50px; height: 31px; line-height: 23px">
+          <!-- <el-avatar shape="square" size="large" fit="cover" :src="scope.row.img"></el-avatar> -->
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间">
         <template slot-scope="scope">
           <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
@@ -30,7 +36,7 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="220">
         <template slot-scope="scope">
-          <el-button size="small">编辑</el-button>
+          <el-button size="small" @click="editResource(scope.row._id)">编辑</el-button>
           <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -81,6 +87,8 @@ export default {
       search: "",
       selectList: {},
       file_list: [],
+      isEdit: false,
+      editId: '',
       form: {
         name: "",
         img: "",
@@ -137,33 +145,41 @@ export default {
     async createResource(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          await this.$api.createResource(this.form);
+          if(!this.isEdit){
+            await this.$api.createResource(this.form);
+            this.$message({
+              type: "success",
+              message: "创建成功",
+            });
+            this.form = {
+              name: "",
+              img: "",
+              type: "",
+              from: "",
+            };
+            this.page = 1;
+            this.getData();
+          } else {
+            await this.$api.updateResource(this.editId, this.form)
+            this.$message({
+              type: "success",
+              message: "编辑成功",
+            });
+            this.getData();
+          }
           this.showNewResource = false;
-          this.$message({
-            type: "success",
-            message: "创建成功",
-          });
-          this.form.name = "";
-          this.page = 1;
-          this.getData();
         } else {
           return false;
         }
       });
     },
-    async upDatePart(index, id, name) {
-      if (name == "") {
-        this.$message({
-          type: "warning",
-          message: "名称不能为空",
-        });
-        return;
-      }
-      await this.$api.updatePart(id, { name });
-      this.$message({
-        type: "success",
-        message: "编辑成功",
-      });
+    async editResource(id){
+      this.isEdit = true
+      this.editId = id
+      const res = await this.$api.getResource(id)
+      this.form = res.data
+      this.file_list = [{ name: '', url: res.data.img }]
+      this.showNewResource = true;
     },
     async getData() {
       const res = await this.$api.getResources(this.page, this.pageSize, ["name"], this.search);
