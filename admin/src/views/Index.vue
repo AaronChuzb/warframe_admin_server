@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 16:12:57
+ * @LastEditTime: 2021-08-29 16:14:27
 -->
 <template>
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
-      <el-aside style="background-color: rgb(238, 241, 246);width: 230px">
-        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+      <el-aside style="width: 230px">
+        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#1e1e1e" text-color="#fff" active-text-color="#41b883">
           <el-menu-item index="/">
             <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
@@ -20,15 +20,17 @@
             </template>
             <el-menu-item-group>
               <template slot="title">基础内容</template>
-              <el-menu-item index="/category/list">分类</el-menu-item>
-              <el-menu-item index="/part/list">部件</el-menu-item>
+              <el-menu-item index="/category/list">所有分类</el-menu-item>
+              <el-menu-item index="/part/list">遗物部件</el-menu-item>
+              <el-menu-item index="/resource/list">资源</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
               <template slot="title">进阶内容</template>
+              <el-menu-item index="/part/list">星球&比邻星域</el-menu-item>
               <el-menu-item index="/remain/list">遗物</el-menu-item>
-              <el-menu-item index="/part/list">战甲</el-menu-item>
-              <el-menu-item index="/part/list">武器</el-menu-item>
-              <el-menu-item index="/part/list">Mod</el-menu-item>
+              <el-menu-item index="/warframe/list">战甲</el-menu-item>
+              <el-menu-item index="/weapon/list">武器</el-menu-item>
+              <el-menu-item index="/mod/list">Mod</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-26 11:26:20
+ * @LastEditTime: 2021-08-28 18:14:16
 -->
 <template>
   <div>
@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="180">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="$router.push(`/user/edit/${scope.row._id}`)">编辑</el-button>
+          <el-button type="primary" size="small" @click="$router.push(`/user/edit/${scope.row._id}`)" v-if="!(scope.row.username == 'aaronchu')">编辑</el-button>
           <el-button type="danger" size="small" @click="remove(scope.row)" v-if="!(scope.row.username == 'aaronchu')">删除</el-button>
         </template>
       </el-table-column>

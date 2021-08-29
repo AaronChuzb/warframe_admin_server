@@ -1,26 +1,23 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-29 01:04:00
+ * @LastEditTime: 2021-08-29 14:41:14
 -->
 <template>
   <div>
-    <h1>遗物列表</h1>
+    <h1>战甲列表</h1>
     <el-row :gutter="10">
       <el-col :span="8">
-        <el-input placeholder="请输入部件名称或遗物名称" v-model="search" @change="searchContent">
+        <el-input placeholder="请输入战甲名称" v-model="search" @change="searchContent">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
       </el-col>
-      <el-col :span="4" :offset="7">
-        <el-button style="width: 100%" :type="isEdit?'danger':''" @click="isEdit = !isEdit">{{isEdit?'关闭':''}}入库编辑</el-button>
-      </el-col>
-      <el-col :span="4" :offset="1">
-        <el-button style="width: 100%" type="primary" @click="$router.push('/remain/edit')">新增遗物</el-button>
+      <el-col :span="4" :offset="12">
+        <el-button style="width: 100%" type="primary" @click="$router.push('/warframe/edit')">新增战甲</el-button>
       </el-col>
     </el-row>
     <el-table :data="remains" style="margin-top: 1vw">
-      <el-table-column align="center" prop="name" label="遗物名称"></el-table-column>
+      <el-table-column align="center" prop="name" label="战甲名称"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="是否入库" v-if="isEdit">
         <template slot-scope="scope">
           <el-radio-group v-model="scope.row.stock" size="small" @change="updateRemainStatus(scope.row._id, scope.row.stock)">

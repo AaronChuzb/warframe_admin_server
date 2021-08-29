@@ -1,28 +1,23 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-28 00:39:57
+ * @LastEditTime: 2021-08-29 16:48:19
 -->
 <template>
   <div>
-    <h1>部件列表</h1>
+    <h1>资源列表</h1>
     <el-row :gutter="10">
       <el-col :span="8">
-        <el-input placeholder="请输入部件名称搜索" v-model="search" @change="searchContent">
+        <el-input placeholder="请输入资源名称搜索" v-model="search" @change="searchContent">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
       </el-col>
       <el-col :span="4" :offset="12">
-        <el-button style="width: 100%" type="primary" @click="showNewPart = true">新建部件</el-button>
+        <el-button style="width: 100%" type="primary" @click="showNewResource = true">新建资源</el-button>
       </el-col>
     </el-row>
-    <el-table :data="parts" style="margin-top: 1vw" :key="Math.random()">
-      <el-table-column align="center" prop="name" label="部件名称">
-        <template scope="scope">
-          <el-input style="text-align: center;" v-model="scope.row.name" placeholder="请输入内容" v-if="parts[scope.$index].isEdit"></el-input>
-          <p v-else>{{ scope.row.name }}</p>
-        </template>
-      </el-table-column>
+    <el-table :data="resources" style="margin-top: 1vw" :key="Math.random()">
+      <el-table-column align="center" prop="name" label="资源名称"></el-table-column>
       <el-table-column align="center" prop="createdAt" label="创建时间">
         <template slot-scope="scope">
           <p>{{ $util.formatTime(scope.row.createdAt) }}</p>
@@ -35,48 +30,65 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="220">
         <template slot-scope="scope">
-          <el-button size="small" @click="(parts[scope.$index].isEdit = true), parts.splice(1, 0)" v-if="!parts[scope.$index].isEdit">编辑</el-button>
-          <el-button type="primary" size="small" @click="upDatePart(scope.$index, scope.row._id, scope.row.name)" v-if="parts[scope.$index].isEdit">保存</el-button>
-          <el-button size="small" @click="(parts[scope.$index].isEdit = false), parts.splice(1, 0)" v-if="parts[scope.$index].isEdit">取消</el-button>
-          <el-button type="danger" size="small" @click="remove(scope.row)" v-if="!parts[scope.$index].isEdit">删除</el-button>
+          <el-button size="small" >编辑</el-button>
+          <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div style="text-align: center;margin-top:1vw">
       <el-pagination background layout="sizes, prev, pager, next, jumper" :page-sizes="[5, 10, 15, 20]" @prev-click="pageChange" @next-click="pageChange" @current-change="pageChange" @size-change="pageSizeChange" :page-size="pageSize" :total="dataTotal"> </el-pagination>
     </div>
-    <!-- 新建部件 -->
-    <el-dialog title="新增部件" :visible.sync="showNewPart">
+    <!-- 新建资源 -->
+    <el-dialog title="新增资源" :visible.sync="showNewResource">
       <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item label="部件名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入部件名称"></el-input>
+        </el-form-item>
+        <el-form-item label="图标">
+          <el-upload class="img-uploader" :class="[form.img !== '' ? 'disabled' : '']" action="" list-type="picture-card" :http-request="uploader" :file-list="file_list" :limit="1" :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="类型">
+          <el-select v-model="form.type" filterable placeholder="请选择类型" style="width: 100%">
+            <el-option v-for="item in selectList.types" :key="item._id" :label="item.name" :value="item._id"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="来源">
+           <el-select v-model="form.from" filterable placeholder="请选择来源" style="width: 100%">
+            <el-option v-for="item in selectList.froms" :key="item._id" :label="item.name" :value="item._id"> </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="showNewPart = false">取 消</el-button>
-        <el-button type="primary" @click="createPart('form')">确 定</el-button>
+        <el-button @click="showNewResource = false">取 消</el-button>
+        <el-button type="primary" @click="createResource('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import uploader from '../../plugins/oss'
 export default {
   data() {
     return {
-      showNewPart: false,
-      parts: [],
+      showNewResource: false,
+      resources: [],
       page: 1,
       pageSize: 5,
       dataTotal: 0,
       search: "",
+      selectList: {},
+      file_list: [],
       form: {
         name: "",
+        img: "",
+        type: "",
+        from: ""
       },
       rules: {
-        name: [
-          { required: true, message: "请输入部件名称", trigger: "blur" }
-        ],
+        name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
       },
     };
   },
@@ -104,11 +116,23 @@ export default {
       this.page = 1;
       this.getData();
     },
-    async createPart(formName) {
-      this.$refs[formName].validate( async (valid) => {
+
+    // 图片上传
+    async uploader(e){
+      const img = await uploader(e.file)
+      this.form.img = img
+    },
+    // 移除图片
+    handleRemove() {
+      this.form.img = ''
+      this.file_list = []
+    },
+    // 创建一个资源
+    async createResource(formName) {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          await this.$api.createPart(this.form);
-          this.showNewPart = false;
+          await this.$api.createResource(this.form);
+          this.showNewResource = false;
           this.$message({
             type: "success",
             message: "创建成功",
@@ -134,16 +158,10 @@ export default {
         type: "success",
         message: "编辑成功",
       });
-      this.parts[index].isEdit = false;
-      this.parts.splice(1, 0);
     },
     async getData() {
-      const res = await this.$api.getParts(this.page, this.pageSize, ["name"], this.search);
-      this.parts = res.data.data;
-      this.parts.map((item) => {
-        item.isEdit = false;
-        return item;
-      });
+      const res = await this.$api.getResources(this.page, this.pageSize, ["name"], this.search);
+      this.resources = res.data.data;
       this.dataTotal = res.data.counts;
     },
     async remove(row) {
@@ -161,7 +179,9 @@ export default {
       });
     },
   },
-  created() {
+  async created() {
+    const res = await this.$api.getResourcesTypeAndFrom();
+    this.selectList = res.data.data
     this.getData();
   },
 };
@@ -169,5 +189,8 @@ export default {
 
 <style>
 .test {
+}
+.disabled .el-upload--picture-card {
+  display: none;
 }
 </style>
