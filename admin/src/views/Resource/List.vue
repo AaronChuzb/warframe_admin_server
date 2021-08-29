@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 22:39:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-29 16:48:19
+ * @LastEditTime: 2021-08-29 16:54:06
 -->
 <template>
   <div>
@@ -30,7 +30,7 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="220">
         <template slot-scope="scope">
-          <el-button size="small" >编辑</el-button>
+          <el-button size="small">编辑</el-button>
           <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -55,7 +55,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="来源">
-           <el-select v-model="form.from" filterable placeholder="请选择来源" style="width: 100%">
+          <el-select v-model="form.from" filterable placeholder="请选择来源" style="width: 100%">
             <el-option v-for="item in selectList.froms" :key="item._id" :label="item.name" :value="item._id"> </el-option>
           </el-select>
         </el-form-item>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import uploader from '../../plugins/oss'
+import uploader from "../../plugins/oss";
 export default {
   data() {
     return {
@@ -85,7 +85,7 @@ export default {
         name: "",
         img: "",
         type: "",
-        from: ""
+        from: "",
       },
       rules: {
         name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
@@ -116,16 +116,22 @@ export default {
       this.page = 1;
       this.getData();
     },
-
+    beforeUpload(file) {
+      const isLtK = file.size / 1024 / 1024 < 0.1;
+      if (!isLtK) {
+        this.$message.error("上传资源图片大小不能超过 100kb!");
+      }
+      return isLtK;
+    },
     // 图片上传
-    async uploader(e){
-      const img = await uploader(e.file)
-      this.form.img = img
+    async uploader(e) {
+      const img = await uploader(e.file);
+      this.form.img = img;
     },
     // 移除图片
     handleRemove() {
-      this.form.img = ''
-      this.file_list = []
+      this.form.img = "";
+      this.file_list = [];
     },
     // 创建一个资源
     async createResource(formName) {
@@ -181,7 +187,7 @@ export default {
   },
   async created() {
     const res = await this.$api.getResourcesTypeAndFrom();
-    this.selectList = res.data.data
+    this.selectList = res.data.data;
     this.getData();
   },
 };
