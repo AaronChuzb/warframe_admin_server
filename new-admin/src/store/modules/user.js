@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-01 23:34:48
+ * @LastEditTime: 2021-09-01 23:49:42
  */
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
@@ -42,6 +42,15 @@ const actions = {
     commit('SET_NAME', 'Super Admin')
     commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
     setToken(res.token)
+  },
+
+  async getInfo({ commit }) {
+    /* const { username, password } = userInfo
+    const res = await login(username, password)
+    console.log(res)
+    commit('SET_TOKEN', res.token) */
+    commit('SET_NAME', 'Super Admin')
+    commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
   },
 
   // 用户登出
