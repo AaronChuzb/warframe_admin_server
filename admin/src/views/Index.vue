@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-29 16:14:27
+ * @LastEditTime: 2021-08-31 19:28:12
 -->
 <template>
   <div>
@@ -16,24 +16,24 @@
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-edit-outline"></i>
-              <span slot="title">内容管理</span>
+              <span slot="title">基础内容</span>
             </template>
-            <el-menu-item-group>
-              <template slot="title">基础内容</template>
-              <el-menu-item index="/category/list">所有分类</el-menu-item>
-              <el-menu-item index="/part/list">遗物部件</el-menu-item>
-              <el-menu-item index="/resource/list">资源</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <template slot="title">进阶内容</template>
-              <el-menu-item index="/part/list">星球&比邻星域</el-menu-item>
-              <el-menu-item index="/remain/list">遗物</el-menu-item>
-              <el-menu-item index="/warframe/list">战甲</el-menu-item>
-              <el-menu-item index="/weapon/list">武器</el-menu-item>
-              <el-menu-item index="/mod/list">Mod</el-menu-item>
-            </el-menu-item-group>
+            <el-menu-item index="/category/list">基础分类</el-menu-item>
+            <el-menu-item index="/part/list">遗物部件</el-menu-item>
+            <el-menu-item index="/resource/list">基本资源</el-menu-item>
           </el-submenu>
           <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-edit-outline"></i>
+              <span slot="title">进阶内容</span>
+            </template>
+            <el-menu-item index="/part/list">星球&比邻星域</el-menu-item>
+            <el-menu-item index="/remain/list">遗物</el-menu-item>
+            <el-menu-item index="/warframe/list">战甲</el-menu-item>
+            <el-menu-item index="/weapon/list">武器</el-menu-item>
+            <el-menu-item index="/mod/list">Mod</el-menu-item>
+          </el-submenu>
+          <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-setting"></i>
               <span slot="title">系统设置</span>
