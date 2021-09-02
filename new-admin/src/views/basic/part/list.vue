@@ -1,28 +1,35 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 18:30:11
+ * @LastEditTime: 2021-09-03 00:10:27
 -->
 <template>
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="search" placeholder="按名称搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
-      <el-select v-model="sort" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
+      <el-tooltip class="item" effect="dark" content="排序方式" placement="top-start">
+        <el-select v-model="sort" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in sortOptions" :key="item.id" :label="item.label" :value="item.id" />
+        </el-select>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="更新者" placement="top-start">
+        <el-select v-model="user" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in userOptions" :key="item._id" :label="item.nickname" :value="item.index" />
+        </el-select>
+      </el-tooltip>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="newPart">
-        添加
+      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">
+        新增部件
       </el-button>
     </div>
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
-      <el-table-column width="300px" label="Title">
+      <el-table-column width="300px" align="center" label="部件名称">
         <template slot-scope="{ row }">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button class="cancel-btn" size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(row)">
+            <el-button class="cancel-btn" size="small" icon="el-icon-document-remove" type="warning" @click="cancelEdit(row)">
               取消
             </el-button>
           </template>
@@ -31,66 +38,134 @@
       </el-table-column>
       <el-table-column width="120px" align="center" label="创建人">
         <template slot-scope="{ row }">
-          <span>{{ row.creator.nickname }}</span>
+          <span>{{ row.creator ? row.creator.nickname : "" }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="修改人">
         <template slot-scope="{ row }">
-          <span>{{ row.updater.nickname }}</span>
+          <span>{{ row.updater ? row.updater.nickname : "" }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="修改时间">
+      <el-table-column align="center" label="修改时间">
         <template slot-scope="{ row }">
           <span>{{ $parseTime(row.updatedAt) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
-          <el-button v-if="row.edit" type="success" size="small" icon="el-icon-circle-check-outline" @click="confirmEdit(row)">
+          <el-button v-if="row.edit" type="success" size="small" icon="el-icon-document-checked" @click="confirmEdit(row)">
             保存
           </el-button>
-          <el-button v-else type="primary" size="small" icon="el-icon-edit" @click="(row.edit = !row.edit), (row.tempName = row.name)">
+          <el-button v-else type="primary" size="small" icon="el-icon-edit-outline" @click="(row.edit = !row.edit), (row.tempName = row.name)">
             编辑
+          </el-button>
+          <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
+            删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
+    <!-- 新增 -->
+    <el-dialog title="新增部件" :visible.sync="showNewItem">
+      <el-form :model="part" :rules="rules" ref="part">
+        <el-form-item label="部件名称" prop="name">
+          <el-input v-model="part.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showNewItem = false">取 消</el-button>
+        <el-button type="primary" @click="newItem('part')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { create, list, change, deleted } from "@/api/part";
-
+import Pagination from "@/components/Pagination";
 export default {
   name: "InlineEditTable",
+
+  components: { Pagination },
   data() {
     return {
+      part: {
+        name: "",
+      },
       table: [],
-      sortOptions: [],
-      sort: '',
+      sortOptions: [
+        { key: { updatedAt: -1 }, label: "更新时间倒序", id: 0 },
+        { key: { updatedAt: 1 }, label: "更新时间正序", id: 1 },
+        { key: { createdAt: 1 }, label: "创建时间正序", id: 2 },
+        { key: { createdAt: -1 }, label: "创建时间倒叙", id: 3 },
+      ],
+      userOptions: [{ _id: "", index: 0, nickname: "所有人" }],
+      user: 0,
+      sort: 0,
       page: 1,
       pageSize: 10,
       search: "",
       counts: 0,
       listLoading: false,
+      showNewItem: false,
+      rules: {
+        name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
+      },
     };
   },
   created() {
     this.getData();
   },
   methods: {
-    newPart(){
-
+    newItem(formName) {
+      this.showNewItem = false
+      this.$refs[formName].validate( async (valid) => {
+        if (valid) {
+          await create(this.part.name)
+          this.$message({
+            type: "success",
+            message: "添加成功!",
+          });
+          this.getData()
+        } else {
+          return false;
+        }
+      });
     },
-    searchList(e){
-      
+    deleteItem(row) {
+      this.$confirm(`确定删除“${row.name}”`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then( async () => {
+        await deleted(row._id)
+        this.$message({
+          type: "success",
+          message: "删除成功!",
+        });
+        this.getData()
+      });
+    },
+    searchList(e) {
+      this.page = 1;
+      this.getData();
     },
     async getData() {
       this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search);
+      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id);
       this.table = res.data.map((e) => {
         e.edit = false;
         return e;
       });
+      if (this.userOptions.length < 2) {
+        this.userOptions = this.userOptions.concat(
+          res.userOptions.map((e, index) => {
+            e.index = index + 1;
+            return e;
+          })
+        );
+      }
+
       this.counts = res.counts;
       this.listLoading = false;
     },
@@ -124,7 +199,9 @@ export default {
   right: 15px;
   top: 50%;
 }
-.filter-container{
+.filter-container {
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
 }
 </style>

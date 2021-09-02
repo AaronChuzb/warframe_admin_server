@@ -1,11 +1,12 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 16:25:18
+ * @LastEditTime: 2021-09-02 23:22:57
  */
 module.exports = app => {
   const express = require('express')
   const Part = require('../../models/Part')
+  const User = require('../../models/User')
   // 登录校验中间件
   const auth = require('../../middleware/auth')
   // 添加用户记录中间件(一定要放在auth之后)
@@ -26,25 +27,34 @@ module.exports = app => {
     const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
     const start = page * pageSize // 从什么地方开始查
     const reg = new RegExp(req.query.search, 'i');
-    // 查出某个参数总条数
-    const counts = await Part.countDocuments({
-      $or: [{
+    const users = await User.find({},{nickname: 1})
+    let params = {}
+    if(req.query.user != ''){
+      params = {
         name: {
           $regex: reg
-        }
-      }]
+        },
+        updater: req.query.user
+      }
+    } else {
+      params = {
+        name: {
+          $regex: reg
+        },
+      }
+    }
+    // 查出某个参数总条数
+    const counts = await Part.countDocuments({
+      $or: [params]
     }).exec()
     // 查出内容
     const models = await Part.find({
-      $or: [{
-        name: {
-          $regex: reg
-        }
-      }]
-    }, { __v: 0 }).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).skip(start).limit(pageSize).exec() // 一页的内容
+      $or: [params]
+    }, { __v: 0 }).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).sort(JSON.parse(req.query.sort)).skip(start).limit(pageSize).exec() // 一页的内容
     res.send({
       data: models,
-      counts: counts
+      counts: counts,
+      userOptions: users
     })
   })
   // 修改部件名

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 00:33:53
+ * @LastEditTime: 2021-09-03 00:32:36
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -29,7 +29,7 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: '首页',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard', affix: true }
     }]
@@ -39,19 +39,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/content/category',
     name: 'Content',
-    meta: { title: '基础内容', icon: 'el-icon-s-help' },
+    meta: { title: '基础内容', icon: 'basic' },
     children: [
       {
         path: 'category',
         name: 'part',
         component: () => import('@/views/basic/category/list'),
-        meta: { title: '基础分类', icon: 'form' }
+        meta: { title: '基础分类', icon: 'category' }
       },
       {
         path: 'part',
         name: 'part',
         component: () => import('@/views/basic/part/list'),
-        meta: { title: '遗物部件', icon: 'form' }
+        meta: { title: '遗物部件', icon: 'part' }
       }
     ]
   },
@@ -60,19 +60,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/setting/user/list',
     name: 'Content',
-    meta: { title: '设置管理', icon: 'el-icon-s-help' },
+    meta: { title: '设置管理', icon: 'el-icon-set-up' },
     children: [
       {
         path: 'user',
         name: 'user',
         component: () => import('@/views/setting/user/list'),
-        meta: { title: '用户管理', icon: 'form' }
+        meta: { title: '管理员管理', icon: 'admin' }
       },
       {
         path: 'oss',
         name: 'oss',
         component: () => import('@/views/setting/oss/index'),
-        meta: { title: 'oss配置', icon: 'form' }
+        meta: { title: 'oss配置', icon: 'oss' }
       }
     ]
   },

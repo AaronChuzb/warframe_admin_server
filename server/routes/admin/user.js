@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 16:30:00
+ * @LastEditTime: 2021-09-03 00:01:39
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -39,6 +39,40 @@ module.exports = app => {
   // 获取用户信息与权限
   router.get('/info', auth(), async (req, res) => {
     res.send({ _id: req.user._id, nickname: req.user.nickname, avatar: req.user.avatar })
+  })
+
+  // 用户列表
+  router.get('/list', auth(), async (req, res) => {
+    const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
+    const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
+    const start = page * pageSize // 从什么地方开始查
+    const reg = new RegExp(req.query.search, 'i');
+    // 查出某个参数总条数
+    const counts = await User.countDocuments({
+      $or: [{
+        nickname: {
+          $regex: reg
+        },
+        username: {
+          $regex: reg
+        },
+      }]
+    }).exec()
+    // 查出内容
+    const models = await User.find({
+      $or: [{
+        nickname: {
+          $regex: reg
+        },
+        username: {
+          $regex: reg
+        },
+      }]
+    }, { __v: 0 }).skip(start).limit(pageSize).exec() // 一页的内容
+    res.send({
+      data: models,
+      counts: counts,
+    })
   })
 
   app.use('/admin/api/user', router)

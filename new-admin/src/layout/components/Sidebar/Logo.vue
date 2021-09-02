@@ -1,3 +1,8 @@
+<!--
+ * @Date: 2021-09-01 22:15:06
+ * @LastEditors: AaronChu
+ * @LastEditTime: 2021-09-03 00:37:09
+-->
 <template>
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
@@ -24,8 +29,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Admin Template',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: '战甲秘典后台管理系统',
+      logo: require('../../../assets/headerLogo.png')
     }
   }
 }
@@ -55,8 +60,8 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      // width: 32px;
+      height: 20px;
       vertical-align: middle;
       margin-right: 12px;
     }
