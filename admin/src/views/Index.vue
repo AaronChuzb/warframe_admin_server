@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-08-20 21:03:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-31 19:28:12
+ * @LastEditTime: 2021-09-01 15:28:11
 -->
 <template>
   <div>
     <!-- 导航列表 -->
     <el-container style="height: 100vh;">
       <el-aside style="width: 230px">
-        <el-menu router style="min-height: 100vh" unique-opened :default-active="$route.path" background-color="#1e1e1e" text-color="#fff" active-text-color="#41b883">
+        <el-menu router style="min-height: 100vh" :default-active="$route.path" background-color="#1e1e1e" text-color="#fff" active-text-color="#41b883">
           <el-menu-item index="/">
             <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
@@ -27,11 +27,11 @@
               <i class="el-icon-edit-outline"></i>
               <span slot="title">进阶内容</span>
             </template>
-            <el-menu-item index="/part/list">星球&比邻星域</el-menu-item>
+            <!-- <el-menu-item index="/part/list">星球&比邻星域</el-menu-item> -->
             <el-menu-item index="/remain/list">遗物</el-menu-item>
-            <el-menu-item index="/warframe/list">战甲</el-menu-item>
+            <!-- <el-menu-item index="/warframe/list">战甲</el-menu-item>
             <el-menu-item index="/weapon/list">武器</el-menu-item>
-            <el-menu-item index="/mod/list">Mod</el-menu-item>
+            <el-menu-item index="/mod/list">Mod</el-menu-item> -->
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">

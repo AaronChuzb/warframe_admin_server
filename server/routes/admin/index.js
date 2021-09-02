@@ -1,14 +1,10 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-29 00:58:39
+ * @LastEditTime: 2021-09-02 14:22:13
  */
 module.exports = app => {
   const express = require('express')
-  const jwt = require('jsonwebtoken')
-  const User = require('../../models/User')
-  const assert = require('http-assert')
-  const httpRequest = require('../../http/request')
   // 登录校验中间件
   const auth = require('../../middleware/auth')
   // 获取模型中间件
@@ -71,63 +67,11 @@ module.exports = app => {
 
   app.use('/admin/api/rest/:resource', auth(), resource(), router)
 
-  // 用户登录接口
-  app.post('/admin/api/login', async (req, res) => {
-    const {
-      username,
-      password
-    } = req.body
-    // 1.根据用户名找用户
-    const user = await User.findOne({
-      username
-    }).select('+password')
-    assert(user, 422, '用户不存在')
-
-    // 2.校验密码
-    const isValid = require('bcrypt').compareSync(password, user.password)
-    assert(isValid, 422, '密码不正确')
-
-    // 3.返回token
-    const token = jwt.sign({
-      _id: user._id
-    }, app.get('secret'))
-    res.send({
-      token: token,
-      user: user
-    })
-  })
   // 获取oss上传秘钥接口
   app.get('/admin/api/oss', auth(), async (req, res)=>{
     const Model = require('../../models/Oss')
     const model = await Model.find({})
     res.send(model)
-  })
-
-  // 获取AccessToken
-  app.get('/admin/api/access_token', async (req, res)=>{
-    const Model = require('../../models/App')
-    const model = await Model.find()
-    const Access = require('../../models/Access')
-    // 如果不存在配置信息
-    assert(model.length > 0, 206, '不存在小程序配置信息')
-    // const access = await app.get('access_token')
-    const access = await Access.find()
-    // 如果有AccessToken直接返回
-    if(access.length > 0){
-      res.send(access[0])
-    } else { // 没有创建定时任务去定时获取新的AccessToken
-      let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${model[0].appId}&secret=${model[0].appSecret}`
-      const wechat = await httpRequest('get', url, '' )
-      await Access.create({access_token: wechat.access_token})
-      const access_new = await Access.find()
-      res.send(access_new[0])
-      // 创建定时任务执行获取
-      setInterval( async () => {
-        const new_wechat = await await httpRequest('get', url, '' )
-        const new_access = await Access.find()
-        await Access.findByIdAndUpdate(new_access._id, {access_token: new_wechat.access_token})
-      }, 7100);
-    }
   })
   
   //错误处理函数

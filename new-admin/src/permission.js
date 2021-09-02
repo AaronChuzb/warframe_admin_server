@@ -1,3 +1,8 @@
+/*
+ * @Date: 2021-09-02 12:27:52
+ * @LastEditors: AaronChu
+ * @LastEditTime: 2021-09-02 17:07:23
+ */
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
@@ -13,10 +18,8 @@ const whiteList = ['/login'] // no redirect whitelist
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
-
   // set page title
   document.title = getPageTitle(to.meta.title)
-
   // determine whether the user has logged in
   const hasToken = getToken()
 
@@ -30,13 +33,13 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
-          // get user info
-          await store.dispatch('user/getInfo')
+          // 获取用户信息
+          await store.dispatch('user/userInfo')
           next()
         } catch (error) {
-          // remove token and go to login page to re-login
+          // 失败后代表有人篡改token，删除token后返回登录页
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
+          Message.error('用户信息错误，需要重新登录！')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
@@ -44,7 +47,6 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()

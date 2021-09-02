@@ -14,7 +14,7 @@ export function parseTime(time, cFormat) {
   }
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date
-  if (typeof time === 'object') {
+  /* if (typeof time === 'object') {
     date = time
   } else {
     if ((typeof time === 'string')) {
@@ -31,8 +31,9 @@ export function parseTime(time, cFormat) {
     if ((typeof time === 'number') && (time.toString().length === 10)) {
       time = time * 1000
     }
-    date = new Date(time)
-  }
+    
+  } */
+  date = new Date(time)
   const formatObj = {
     y: date.getFullYear(),
     m: date.getMonth() + 1,

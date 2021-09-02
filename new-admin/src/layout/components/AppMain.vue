@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 00:20:23
+ * @LastEditTime: 2021-09-02 17:44:04
 -->
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <!-- <router-view :key="key" /> -->
       <keep-alive :include="cachedViews">
-        <router-view />
+        <router-view :key="key" /> 
       </keep-alive>
     </transition>
   </section>
@@ -18,9 +18,9 @@
 export default {
   name: 'AppMain',
   computed: {
-   /*  key() {
+    key() {
       return this.$route.path
-    }, */
+    },
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
     },

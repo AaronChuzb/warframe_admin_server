@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-01 23:49:42
+ * @LastEditTime: 2021-09-02 16:58:59
  */
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
@@ -9,7 +9,7 @@ import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
-    token: getToken(),
+    token: '',
     name: '',
     avatar: ''
   }
@@ -37,20 +37,14 @@ const actions = {
   async login({ commit }, userInfo) {
     const { username, password } = userInfo
     const res = await login(username, password)
-    console.log(res)
     commit('SET_TOKEN', res.token)
-    commit('SET_NAME', 'Super Admin')
-    commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
     setToken(res.token)
   },
 
-  async getInfo({ commit }) {
-    /* const { username, password } = userInfo
-    const res = await login(username, password)
-    console.log(res)
-    commit('SET_TOKEN', res.token) */
-    commit('SET_NAME', 'Super Admin')
-    commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
+  async userInfo({ commit }) {
+    const res = await getInfo()
+    commit('SET_NAME', res.nickname)
+    commit('SET_AVATAR', res.avatar)
   },
 
   // 用户登出
