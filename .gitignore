@@ -1,5 +1,6 @@
 
 .idea
+.vscode
 admin/dist
 new-admin/node_modules
 admin/src/plugins/oss.js.backup
