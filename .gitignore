@@ -2,6 +2,8 @@
 .idea
 .vscode
 admin/dist
-new-admin/node_modules
+admin/node_modules
 admin/src/plugins/oss.js.backup
 server/node_modules
+server/web/
+.DS_Store

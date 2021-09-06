@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-03 00:01:39
+ * @LastEditTime: 2021-09-06 18:00:48
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -41,6 +41,18 @@ module.exports = app => {
     res.send({ _id: req.user._id, nickname: req.user.nickname, avatar: req.user.avatar })
   })
 
+  // 新建用户
+  router.post('/create', auth(), async(req, res)=>{
+    console.log('[USER: /create]', req.body)
+  })
+  // 删除用户
+  router.delete('/delete/:id', auth(), async (req, res) => {
+    console.log(req)
+    /* await User.findByIdAndDelete(req.params.id)
+    res.send({
+      success: true
+    }) */
+  })
   // 用户列表
   router.get('/list', auth(), async (req, res) => {
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
