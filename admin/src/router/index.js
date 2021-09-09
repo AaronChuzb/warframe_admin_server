@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-03 00:32:36
+ * @LastEditTime: 2021-09-09 18:37:51
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -55,29 +55,54 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/setting',
+  //   component: Layout,
+  //   redirect: '/setting/user/list',
+  //   name: 'Content',
+  //   meta: { title: '设置管理', icon: 'el-icon-set-up' },
+  //   children: [
+  //     {
+  //       path: 'user',
+  //       name: 'user',
+  //       component: () => import('@/views/setting/user/list'),
+  //       meta: { title: '管理员管理', icon: 'admin' }
+  //     },
+  //     {
+  //       path: 'oss',
+  //       name: 'oss',
+  //       component: () => import('@/views/setting/oss/index'),
+  //       meta: { title: 'oss配置', icon: 'oss' }
+  //     }
+  //   ]
+  // },
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
+]
+
+// 动态路由
+export const asyncRoutes = [
   {
     path: '/setting',
     component: Layout,
-    redirect: '/setting/user/list',
-    name: 'Content',
-    meta: { title: '设置管理', icon: 'el-icon-set-up' },
+    redirect: '/setting/user',
+    name: 'Setting',
+    meta: { title: '设置管理', icon: 'el-icon-set-up', role: 'setting' },
     children: [
       {
         path: 'user',
         name: 'user',
         component: () => import('@/views/setting/user/list'),
-        meta: { title: '管理员管理', icon: 'admin' }
+        meta: { title: '管理员管理', icon: 'admin', role: 'user' }
       },
       {
         path: 'oss',
         name: 'oss',
         component: () => import('@/views/setting/oss/index'),
-        meta: { title: 'oss配置', icon: 'oss' }
+        meta: { title: 'oss配置', icon: 'oss', role: 'oss' }
       }
     ]
   },
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

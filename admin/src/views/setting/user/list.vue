@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-03 00:08:08
+ * @LastEditTime: 2021-09-09 17:14:01
 -->
 <template>
   <div class="app-container">
@@ -32,6 +32,9 @@
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
+          <el-button type="primary" size="small" icon="el-icon-edit-outline">
+            停用
+          </el-button>
           <el-button type="primary" size="small" icon="el-icon-edit-outline">
             编辑
           </el-button>
