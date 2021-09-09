@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-03 00:10:27
+ * @LastEditTime: 2021-09-10 01:55:23
 -->
 <template>
   <div class="app-container">
@@ -28,7 +28,7 @@
       <el-table-column width="300px" align="center" label="部件名称">
         <template slot-scope="{ row }">
           <template v-if="row.edit">
-            <el-input v-model="row.title" class="edit-input" size="small" />
+            <el-input v-model="row.name" class="edit-input" size="small" />
             <el-button class="cancel-btn" size="small" icon="el-icon-document-remove" type="warning" @click="cancelEdit(row)">
               取消
             </el-button>
@@ -165,7 +165,6 @@ export default {
           })
         );
       }
-
       this.counts = res.counts;
       this.listLoading = false;
     },
@@ -177,9 +176,14 @@ export default {
         type: "warning",
       });
     },
-    confirmEdit(row) {
+    async confirmEdit(row) {
       row.edit = false;
       row.tempName = row.name;
+      let data = row
+      // 删除对象多余元素
+      delete data.edit
+      delete data.tempName
+      await change(row._id, data)
       this.$message({
         message: "编辑成功",
         type: "success",

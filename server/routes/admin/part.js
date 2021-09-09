@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 23:22:57
+ * @LastEditTime: 2021-09-10 01:46:02
  */
 module.exports = app => {
   const express = require('express')
@@ -57,7 +57,7 @@ module.exports = app => {
       userOptions: users
     })
   })
-  // 修改部件名
+  // 修改部件
   router.put('/edit/:id', auth(), actions(), async (req, res) => {
     await Part.findByIdAndUpdate(req.params.id, req.body)
     res.send({success: true})

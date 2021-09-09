@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 17:25:58
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 23:15:47
+ * @LastEditTime: 2021-09-10 01:40:57
  */
 import request from '@/utils/request'
 
@@ -17,14 +17,10 @@ export function list(page, pageSize, search, sort, user) {
   }})
 }
 
-export function change(id, name) {
-  return request.put(`/part/edit/${id}`, {
-    name
-  })
+export function change(id, data) {
+  return request.put(`/part/edit/${id}`, data)
 }
 
 export function deleted(id) {
-  return request.delete(`/part/delete/${id}`, {
-    name
-  })
+  return request.delete(`/part/delete/${id}`)
 }
