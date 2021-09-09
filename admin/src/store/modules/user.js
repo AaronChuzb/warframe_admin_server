@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-09 17:40:11
+ * @LastEditTime: 2021-09-10 01:10:34
  */
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
@@ -11,7 +11,9 @@ const getDefaultState = () => {
   return {
     token: '',
     name: '',
-    avatar: ''
+    _id: '',
+    avatar: '',
+    roles: []
   }
 }
 
@@ -27,8 +29,14 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_ID: (state, _id) => {
+    state._id = _id
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ROLES: (state, roles) =>{
+    state.roles = roles
   }
 }
 
@@ -37,6 +45,7 @@ const actions = {
   async login({ commit }, userInfo) {
     const { username, password } = userInfo
     const res = await login(username, password)
+    console.log(res)
     commit('SET_TOKEN', res.token)
     setToken(res.token)
   },
@@ -44,7 +53,9 @@ const actions = {
   async userInfo({ commit }) {
     const res = await getInfo()
     commit('SET_NAME', res.nickname)
+    commit('SET_ID', res._id)
     commit('SET_AVATAR', res.avatar)
+    commit('SET_ROLES', res.roles)
   },
 
   // 用户登出

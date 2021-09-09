@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-09 18:37:51
+ * @LastEditTime: 2021-09-10 00:43:40
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -34,27 +34,7 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard', affix: true }
     }]
   },
-  {
-    path: '/content',
-    component: Layout,
-    redirect: '/content/category',
-    name: 'Content',
-    meta: { title: '基础内容', icon: 'basic' },
-    children: [
-      {
-        path: 'category',
-        name: 'part',
-        component: () => import('@/views/basic/category/list'),
-        meta: { title: '基础分类', icon: 'category' }
-      },
-      {
-        path: 'part',
-        name: 'part',
-        component: () => import('@/views/basic/part/list'),
-        meta: { title: '遗物部件', icon: 'part' }
-      }
-    ]
-  },
+  
   // {
   //   path: '/setting',
   //   component: Layout,
@@ -83,6 +63,27 @@ export const constantRoutes = [
 // 动态路由
 export const asyncRoutes = [
   {
+    path: '/content',
+    component: Layout,
+    redirect: '/content/category',
+    name: 'Content',
+    meta: { title: '基础内容', icon: 'basic', role: 'basic' },
+    children: [
+      {
+        path: 'category',
+        name: 'part',
+        component: () => import('@/views/basic/category/list'),
+        meta: { title: '基础分类', icon: 'category', role: 'category' }
+      },
+      {
+        path: 'part',
+        name: 'part',
+        component: () => import('@/views/basic/part/list'),
+        meta: { title: '遗物部件', icon: 'part', role: 'part' }
+      }
+    ]
+  },
+  {
     path: '/setting',
     component: Layout,
     redirect: '/setting/user',
@@ -102,7 +103,7 @@ export const asyncRoutes = [
         meta: { title: 'oss配置', icon: 'oss', role: 'oss' }
       }
     ]
-  },
+  }
 ]
 
 const createRouter = () => new Router({

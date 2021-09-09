@@ -38,7 +38,7 @@ module.exports = app => {
 
   // 获取用户信息与权限
   router.get('/info', auth(), async (req, res) => {
-    res.send({ _id: req.user._id, nickname: req.user.nickname, avatar: req.user.avatar })
+    res.send({ _id: req.user._id, nickname: req.user.nickname, avatar: req.user.avatar, roles: req.user.roles })
   })
 
   // 新建用户

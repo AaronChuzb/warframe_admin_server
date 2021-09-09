@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-09 17:14:01
+ * @LastEditTime: 2021-09-10 00:41:20
 -->
 <template>
   <div class="app-container">
@@ -17,12 +17,12 @@
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
       <el-table-column width="150px" label="昵称" align="center">
         <template slot-scope="{ row }">
-          <span >{{ row.nickname }}</span>
+          <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
       <el-table-column width="150px" label="管理员头像" align="center">
         <template slot-scope="{ row }">
-           <el-avatar shape="square" size="large" :src="row.avatar"></el-avatar>
+          <el-avatar shape="square" size="large" :src="row.avatar"></el-avatar>
         </template>
       </el-table-column>
       <el-table-column align="center" label="权限">
@@ -33,10 +33,10 @@
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
           <el-button type="primary" size="small" icon="el-icon-edit-outline">
-            停用
-          </el-button>
-          <el-button type="primary" size="small" icon="el-icon-edit-outline">
             编辑
+          </el-button>
+          <el-button type="warning" size="small" icon="el-icon-edit-outline">
+            停用
           </el-button>
           <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
             删除
@@ -46,38 +46,69 @@
     </el-table>
     <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
     <!-- 新增 -->
-   <!--  <el-dialog title="新增部件" :visible.sync="showNewItem">
-      <el-form :model="part" :rules="rules" ref="part">
-        <el-form-item label="部件名称" prop="name">
-          <el-input v-model="part.name" autocomplete="off"></el-input>
-        </el-form-item>
+    <el-dialog title="新增管理员" :visible.sync="showNewItem">
+      <el-form :model="user" :rules="rules" ref="part">
+        <el-tabs>
+          <el-tab-pane label="基础信息">
+            <el-form-item label="昵称" prop="name">
+              <el-input v-model="user.nickname" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="账户" prop="name">
+              <el-input v-model="user.username" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="name">
+              <el-input v-model="user.password" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="权限配置">
+            <el-form-item prop="name">
+              <el-collapse accordion>
+                <el-collapse-item v-for="(item, index) in permissions" :key="index">
+                  <template slot="title">{{ item.title }}<i v-if="item.role == 'setting'" class="header-icon el-icon-info"></i> </template>
+                  <el-checkbox-group v-model="user.roles" @change="roleChange(item)">
+                    <el-checkbox v-for="child in item.children" :label="child.role" :key="child.role">{{ child.title }}</el-checkbox>
+                  </el-checkbox-group>
+                </el-collapse-item>
+              </el-collapse>
+            </el-form-item>
+          </el-tab-pane>
+        </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showNewItem = false">取 消</el-button>
         <el-button type="primary" @click="newItem('part')">确 定</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 <script>
 import { list } from "@/api/user";
 import Pagination from "@/components/Pagination";
+import { asyncRoutes } from "@/router";
 export default {
   name: "InlineEditTable",
-
   components: { Pagination },
   data() {
     return {
       part: {
         name: "",
       },
+      user: {
+        nickname: "",
+        username: "",
+        password: "",
+        avatar: "",
+        roles: [],
+        status: 1,
+      },
+      permissions: [[]],
       table: [],
       page: 1,
       pageSize: 10,
       search: "",
       counts: 0,
       listLoading: false,
-      showNewItem: false,
+      showNewItem: true,
       rules: {
         name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
       },
@@ -85,18 +116,37 @@ export default {
   },
   created() {
     this.getData();
+    // 循环异步路由获取权限列表
+    console.log(asyncRoutes)
+    asyncRoutes.forEach((item, index) => {
+      if (item.meta) {
+        this.permissions[index] = {
+          title: item.meta.title,
+          role: item.meta.role,
+          children: [],
+        };
+        let children = [];
+        item.children.forEach((child) => {
+          children.push({
+            title: child.meta.title,
+            role: child.meta.role
+          });
+        });
+        this.permissions[index].children = children;
+      }
+    });
   },
   methods: {
     newItem(formName) {
-      this.showNewItem = false
-      this.$refs[formName].validate( async (valid) => {
+      this.showNewItem = false;
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          await create(this.part.name)
+          await create(this.part.name);
           this.$message({
             type: "success",
             message: "添加成功!",
           });
-          this.getData()
+          this.getData();
         } else {
           return false;
         }
@@ -107,13 +157,13 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then( async () => {
-        await deleted(row._id)
+      }).then(async () => {
+        await deleted(row._id);
         this.$message({
           type: "success",
           message: "删除成功!",
         });
-        this.getData()
+        this.getData();
       });
     },
     searchList(e) {
@@ -123,18 +173,47 @@ export default {
     async getData() {
       this.listLoading = true;
       const res = await list(this.page, this.pageSize, this.search);
-      this.table = res.data
+      this.table = res.data;
       this.counts = res.counts;
       this.listLoading = false;
     },
     confirmEdit(row) {
       row.edit = false;
+
       row.tempName = row.name;
       this.$message({
         message: "编辑成功",
         type: "success",
       });
     },
+    roleChange(parent) {
+      console.log(parent)
+      let parentChild = []
+      // 将操作的母节点的子元素role全部取出
+      parent.children.forEach(item=>{
+        parentChild.push(item.role)
+      })
+      // 两个数组进行对比
+      let flag = false // 是否存在相同元素的标志
+      parentChild.forEach(item=>{
+        if(this.user.roles.includes(item)){
+          flag = true
+        }
+      })
+      if(flag){
+        if(!this.user.roles.includes(parent.role)){
+          this.user.roles.push(parent.role)
+        }
+      } else {
+        if(this.user.roles.includes(parent.role)){
+          this.user.roles.splice(this.user.roles.indexOf(parent.role), 1)
+        }
+      }
+      
+    },
+    createUser(){
+      
+    }
   },
 };
 </script>

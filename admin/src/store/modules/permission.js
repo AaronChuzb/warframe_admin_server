@@ -1,10 +1,10 @@
 /*
  * @Date: 2021-09-09 18:18:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-09 18:30:57
+ * @LastEditTime: 2021-09-10 01:07:21
  */
 import { asyncRoutes, constantRoutes } from '@/router'
-
+import store from '@/store'
 const state = {
   routes: [],
   addRoutes: []
@@ -44,7 +44,13 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       let accessedRoutes
-      accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      // 如果是超级管理员直接拼
+      console.log(store.getters.id)
+      if(store.getters.id == '61250a30e66c9709dc2082bb'){
+        accessedRoutes = asyncRoutes
+      } else {
+        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })
