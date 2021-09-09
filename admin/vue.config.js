@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
-/* const TerserPlugin = require('terser-webpack-plugin') */
+const TerserPlugin = require('terser-webpack-plugin')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -31,28 +31,32 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
+    },
+    optimization: {
+      minimizer: [
+        // 打包混淆, 插件为 terser-webpack-plugin  版本4.2.3
+        new TerserPlugin({
+          terserOptions: {
+            mangle: true, // 混淆，默认也是开的，mangle也是可以配置很多选项的，具体看后面的链接
+            compress: {
+              drop_console: true, //传true就是干掉所有的console.*这些函数的调用.
+              drop_debugger: true, //干掉那些debugger;
+            }
+          }
+        })
+      ]
     }
   },
   chainWebpack(config) {
-    /* config.optimization.minimizer([new TerserPlugin({
-      terserOptions: {
-        mangle: true, // 混淆，默认也是开的，mangle也是可以配置很多选项的，具体看后面的链接
-        compress: {
-          drop_console: true,//传true就是干掉所有的console.*这些函数的调用.
-          drop_debugger: true, //干掉那些debugger;
-        }
-      }
-    })]) */
+    
     // it can improve the speed of the first screen, it is recommended to turn on preload
-    config.plugin('preload').tap(() => [
-      {
-        rel: 'preload',
-        // to ignore runtime.js
-        // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
-        fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
-        include: 'initial'
-      }
-    ])
+    config.plugin('preload').tap(() => [{
+      rel: 'preload',
+      // to ignore runtime.js
+      // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
+      fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
+      include: 'initial'
+    }])
 
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
