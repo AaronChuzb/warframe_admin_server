@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 00:41:20
+ * @LastEditTime: 2021-09-10 18:06:48
 -->
 <template>
   <div class="app-container">
@@ -45,20 +45,45 @@
       </el-table-column>
     </el-table>
     <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
-    <!-- 新增 -->
+    <!-- 新增或者编辑 -->
     <el-dialog title="新增管理员" :visible.sync="showNewItem">
       <el-form :model="user" :rules="rules" ref="part">
         <el-tabs>
           <el-tab-pane label="基础信息">
-            <el-form-item label="昵称" prop="name">
-              <el-input v-model="user.nickname" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="账户" prop="name">
-              <el-input v-model="user.username" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="name">
-              <el-input v-model="user.password" autocomplete="off"></el-input>
-            </el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12" >
+                <el-upload
+                v-if="user.avatar == ''"
+                  class="upload-demo"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  multiple
+                  :limit="1">
+                  <div class="upload-button" >
+                  <div class="upload-plus">+</div>
+                  <div class="upload-name">上传头像</div>
+                </div>
+                </el-upload>
+                
+                <el-avatar v-else shape="square" :size="80" fit="fill" :src="user.avatar"></el-avatar>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="昵称" prop="name">
+                  <el-input v-model="user.nickname" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="账户" prop="name">
+                  <el-input v-model="user.username" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="密码" prop="name">
+                  <el-input type="password" v-model="user.password" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-tab-pane>
           <el-tab-pane label="权限配置">
             <el-form-item prop="name">
@@ -114,10 +139,10 @@ export default {
       },
     };
   },
-  created() {
+  async created() {
     this.getData();
     // 循环异步路由获取权限列表
-    console.log(asyncRoutes)
+    console.log(asyncRoutes);
     asyncRoutes.forEach((item, index) => {
       if (item.meta) {
         this.permissions[index] = {
@@ -129,7 +154,7 @@ export default {
         item.children.forEach((child) => {
           children.push({
             title: child.meta.title,
-            role: child.meta.role
+            role: child.meta.role,
           });
         });
         this.permissions[index].children = children;
@@ -137,6 +162,10 @@ export default {
     });
   },
   methods: {
+    /**
+     * @description: 表单校验提交创建
+     * @param {String} formName 表单名称
+     */
     newItem(formName) {
       this.showNewItem = false;
       this.$refs[formName].validate(async (valid) => {
@@ -152,6 +181,10 @@ export default {
         }
       });
     },
+    /**
+     * @description: 删除一行数据
+     * @param {*} row
+     */
     deleteItem(row) {
       this.$confirm(`确定删除“${row.name}”`, "提示", {
         confirmButtonText: "确定",
@@ -166,6 +199,10 @@ export default {
         this.getData();
       });
     },
+    /**
+     * @description: 搜索列表
+     * @param {*} e
+     */
     searchList(e) {
       this.page = 1;
       this.getData();
@@ -179,41 +216,43 @@ export default {
     },
     confirmEdit(row) {
       row.edit = false;
-
       row.tempName = row.name;
       this.$message({
         message: "编辑成功",
         type: "success",
       });
     },
+
+    /**
+     * @description: 权限列表变更,仅仅是子权限添加到权限列表肯定不行,
+     * 哪怕只有一个子元素被选入也需要将改母节点放入,相反,如果一个子节点都没有就需要删除该母节点
+     * @param {Object} parent 操作的母节点
+     */
     roleChange(parent) {
-      console.log(parent)
-      let parentChild = []
+      console.log(parent);
+      let parentChild = [];
       // 将操作的母节点的子元素role全部取出
-      parent.children.forEach(item=>{
-        parentChild.push(item.role)
-      })
+      parent.children.forEach((item) => {
+        parentChild.push(item.role);
+      });
       // 两个数组进行对比
-      let flag = false // 是否存在相同元素的标志
-      parentChild.forEach(item=>{
-        if(this.user.roles.includes(item)){
-          flag = true
+      let flag = false; // 是否存在相同元素的标志
+      parentChild.forEach((item) => {
+        if (this.user.roles.includes(item)) {
+          flag = true;
         }
-      })
-      if(flag){
-        if(!this.user.roles.includes(parent.role)){
-          this.user.roles.push(parent.role)
+      });
+      if (flag) {
+        if (!this.user.roles.includes(parent.role)) {
+          this.user.roles.push(parent.role);
         }
       } else {
-        if(this.user.roles.includes(parent.role)){
-          this.user.roles.splice(this.user.roles.indexOf(parent.role), 1)
+        if (this.user.roles.includes(parent.role)) {
+          this.user.roles.splice(this.user.roles.indexOf(parent.role), 1);
         }
       }
-      
     },
-    createUser(){
-      
-    }
+    createUser() {},
   },
 };
 </script>
@@ -232,5 +271,29 @@ export default {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
+}
+.upload-button{
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  border: 2px dashed #666;
+  position: relative;
+  cursor: pointer;
+}
+.upload-plus{
+  font-size: 40px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 45%;
+  left: 50%;
+}
+.upload-name{
+  font-size: 10px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  bottom: 2px;
+  left: 50%;
+  width: 100%;
+  text-align: center;
 }
 </style>

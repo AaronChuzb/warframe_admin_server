@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 01:55:23
+ * @LastEditTime: 2021-09-10 11:48:34
 -->
 <template>
   <div class="app-container">
@@ -117,6 +117,10 @@ export default {
     this.getData();
   },
   methods: {
+    /**
+     * @description: 新建部件
+     * @param {*} formName 表单名称
+     */
     newItem(formName) {
       this.showNewItem = false
       this.$refs[formName].validate( async (valid) => {
@@ -132,6 +136,11 @@ export default {
         }
       });
     },
+
+    /**
+     * @description: 删除一行数据
+     * @param {Object} row 表格行数据
+     */
     deleteItem(row) {
       this.$confirm(`确定删除“${row.name}”`, "提示", {
         confirmButtonText: "确定",
@@ -146,10 +155,19 @@ export default {
         this.getData()
       });
     },
+
+    /**
+     * @description: 搜索列表
+     * @param {*} e 
+     */
     searchList(e) {
       this.page = 1;
       this.getData();
     },
+
+    /**
+     * @description: 获取表格数据
+     */
     async getData() {
       this.listLoading = true;
       const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id);
@@ -168,6 +186,10 @@ export default {
       this.counts = res.counts;
       this.listLoading = false;
     },
+    /**
+     * @description: 取消编辑
+     * @param {Object} row
+     */
     cancelEdit(row) {
       row.name = row.tempName;
       row.edit = false;
@@ -176,10 +198,15 @@ export default {
         type: "warning",
       });
     },
+    /**
+     * @description: 提交编辑
+     * @param {Object} row
+     */
     async confirmEdit(row) {
       row.edit = false;
       row.tempName = row.name;
-      let data = row
+      // 深拷贝一下,如果是浅拷贝会删去原来列表中的值,导致不能二次更改
+      let data = JSON.parse(JSON.stringify(row))
       // 删除对象多余元素
       delete data.edit
       delete data.tempName

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 01:01:35
+ * @LastEditTime: 2021-09-10 17:28:56
  */
 const getters = {
   sidebar: state => state.app.sidebar,
@@ -12,6 +12,7 @@ const getters = {
   name: state => state.user.name,
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
-  permission_route: state => state.permission.routes
+  permission_route: state => state.permission.routes,
+  getOss: state => state.oss
 }
 export default getters

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-09 18:33:58
+ * @LastEditTime: 2021-09-10 17:29:14
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -11,6 +11,7 @@ import settings from './modules/settings'
 import user from './modules/user'
 import tagsView from './modules/tagsView'
 import permission from './modules/permission'
+import oss from './modules/oss'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
     settings,
     user,
     tagsView,
-    permission
+    permission,
+    oss
   },
   getters
 })

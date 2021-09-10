@@ -1,33 +1,33 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 14:22:13
+ * @LastEditTime: 2021-09-10 17:58:10
  */
 module.exports = app => {
   const express = require('express')
   // 登录校验中间件
   const auth = require('../../middleware/auth')
   // 获取模型中间件
-  const resource = require('../../middleware/resource')
-  // 获取搜索字符串的参数
-  const search = require('../../middleware/search')
-  // 分页中间件
-  const pages = require('../../middleware/pages')
-  // 特殊列表查询拦截中间件
-  const options = require('../../middleware/options')
-  // 特殊单个物品查询拦截中间件
-  const option = require('../../middleware/option')
-  // 特殊单个物品更新拦截中间件
-  const update = require('../../middleware/update')
+  // const resource = require('../../middleware/resource')
+  // // 获取搜索字符串的参数
+  // const search = require('../../middleware/search')
+  // // 分页中间件
+  // const pages = require('../../middleware/pages')
+  // // 特殊列表查询拦截中间件
+  // const options = require('../../middleware/options')
+  // // 特殊单个物品查询拦截中间件
+  // const option = require('../../middleware/option')
+  // // 特殊单个物品更新拦截中间件
+  // const update = require('../../middleware/update')
 
-  const router = express.Router({
-    mergeParams: true
-  })
+  // const router = express.Router({
+  //   mergeParams: true
+  // })
   
   // token转换秘钥
   app.set('secret', 'maliho123.')
 
-  // 创建操作(给每一次新建都加上创建者的id,更新者也是)
+/*   // 创建操作(给每一次新建都加上创建者的id,更新者也是)
   router.post('/', async (req, res, next) => {
     req.body.creator = req.user._id
     req.body.updater = req.user._id
@@ -65,12 +65,12 @@ module.exports = app => {
     })
   })
 
-  app.use('/admin/api/rest/:resource', auth(), resource(), router)
+  app.use('/admin/api/rest/:resource', auth(), resource(), router) */
 
-  // 获取oss上传秘钥接口
+  // 获取oss秘钥接口
   app.get('/admin/api/oss', auth(), async (req, res)=>{
     const Model = require('../../models/Oss')
-    const model = await Model.find({})
+    const model = await Model.findOne({}, {__v: 0})
     res.send(model)
   })
   

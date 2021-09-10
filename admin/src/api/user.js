@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-03 00:04:00
+ * @LastEditTime: 2021-09-10 17:47:08
  */
 import request from '@/utils/request'
 
@@ -27,4 +27,8 @@ export function logout() {
     url: '/vue-admin-template/user/logout',
     method: 'post'
   })
+}
+
+export function getOssInfo(){
+  return request.get('/oss')
 }
