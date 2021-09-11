@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 18:52:21
+ * @LastEditTime: 2021-09-11 21:25:41
  */
 import axios from 'axios'
 import { Message } from 'element-ui'
@@ -21,7 +21,6 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -30,7 +29,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response
-    console.log(res)
     if (res.status !== 200) {
       if(res.status === 402){
         Message({
@@ -51,9 +49,8 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error.response.data)
     Message({
-      message: error.message,
+      message: error.response.data.message,
       type: 'error',
       duration: 5 * 1000
     })

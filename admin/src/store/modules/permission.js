@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-09 18:18:44
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 01:07:21
+ * @LastEditTime: 2021-09-11 21:25:55
  */
 import { asyncRoutes, constantRoutes } from '@/router'
 import store from '@/store'
@@ -45,7 +45,6 @@ const actions = {
     return new Promise(resolve => {
       let accessedRoutes
       // 如果是超级管理员直接拼
-      console.log(store.getters.id)
       if(store.getters.id == '61250a30e66c9709dc2082bb'){
         accessedRoutes = asyncRoutes
       } else {

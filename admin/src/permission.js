@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 01:03:07
+ * @LastEditTime: 2021-09-11 20:49:10
  */
 import router from './router'
 import store from './store'
@@ -36,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           await store.dispatch('user/userInfo')
           // TODO: 将下面方法的数组换成获取用户的权限
-          const accessRoutes = await store.dispatch('permission/generateRoutes', []) // 'basic','category','part','setting', 'user', 'oss','test'
+          const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.roles) // 'basic','category','part','setting', 'user', 'oss','test'
           // console.log(accessRoutes)
           router.options.routes = store.getters.permission_route
           router.addRoutes(accessRoutes)

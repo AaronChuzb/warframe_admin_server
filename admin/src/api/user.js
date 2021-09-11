@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 18:22:54
+ * @LastEditTime: 2021-09-11 22:14:33
  */
 import request from '@/utils/request'
 
@@ -35,4 +35,20 @@ export function getOssInfo(){
 
 export function changeStatus(id, status){
   return request.put(`/user/stop/${id}`, { status })
+}
+
+export function creatUser(data){
+  return request.post('/user/create', data)
+}
+
+export function getUserInfo(id) {
+  return request.get(`/user/userinfo/${id}`)
+}
+
+export function deleteUser(id) {
+  return request.delete(`/user/delete/${id}`)
+}
+
+export function changeUser(id, data) {
+  return request.put(`/user/change/${id}`, data)
 }

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 17:58:10
+ * @LastEditTime: 2021-09-11 20:30:04
  */
 module.exports = app => {
   const express = require('express')
@@ -72,19 +72,5 @@ module.exports = app => {
     const Model = require('../../models/Oss')
     const model = await Model.findOne({}, {__v: 0})
     res.send(model)
-  })
-  
-  //错误处理函数
-  app.use(async (err, req, res, next) => {
-    console.log(err.code)
-    if(err.code == 11000){
-      res.status(403).send({
-        message: '已存在条目，请不要重复创建'
-      })
-    } else {
-      res.status(err.statusCode || 500).send({
-        message: err.message
-      })
-    }
   })
 }

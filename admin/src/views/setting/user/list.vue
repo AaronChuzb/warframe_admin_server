@@ -1,18 +1,14 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 18:25:44
+ * @LastEditTime: 2021-09-11 22:51:16
 -->
 <template>
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="search" placeholder="按昵称或账号搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">
-        搜索
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">
-        新增管理员
-      </el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">搜索</el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">新增管理员</el-button>
     </div>
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
       <el-table-column width="150px" label="昵称" align="center">
@@ -26,46 +22,34 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="权限">
-        <template slot-scope="{ row }">
-          <span>{{ $parseTime(row.updatedAt) }}</span>
+        <template slot-scope="{ row }" >
+          <el-tag type="success" style="margin-right: 10px; margin-bottom: 5px" v-for="item in row.roles" :key="item">{{ transRole(item) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
-          <el-button type="primary" size="small" icon="el-icon-edit-outline">
-            编辑
-          </el-button>
-          <el-button type="warning" size="small" icon="el-icon-edit-outline" @click="changeUserStatus(1, row)">
-            停用
-          </el-button>
-          <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
-            删除
-          </el-button>
+          <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="getInfo(row)">编辑</el-button>
+          <el-button type="warning" size="small" icon="el-icon-edit-outline" v-if="row.status" @click="changeUserStatus(1, row)">停用</el-button>
+          <el-button type="success" size="small" icon="el-icon-edit-outline" v-else @click="changeUserStatus(2, row)">启用</el-button>
+          <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
     <!-- 新增或者编辑 -->
-    <el-dialog title="新增管理员" :visible.sync="showNewItem">
-      <el-form :model="user" :rules="rules" ref="part">
+    <el-dialog :title="!isEdit ? '新增管理员' : '编辑管理员'" :visible.sync="showNewItem">
+      <el-form :model="user" :rules="rules" ref="user">
         <el-tabs>
           <el-tab-pane label="基础信息">
             <el-row :gutter="20">
-              <el-col :span="12" >
-                <el-upload
-                  v-if="user.avatar == ''"
-                  action="https"
-                  :auto-upload="true"
-                  :http-request="uploadAvatar"
-                  :show-file-list="false"
-                  :limit="1">
-                  <div class="upload-button" >
-                  <div class="upload-plus">+</div>
-                  <div class="upload-name">上传头像</div>
-                </div>
+              <el-col :span="12" class="avatar">
+                <el-upload v-if="user.avatar == ''" action="https" :auto-upload="true" :http-request="uploadAvatar" :show-file-list="false" :limit="1">
+                  <div class="upload-button">
+                    <div class="upload-plus">+</div>
+                  </div>
                 </el-upload>
-                
                 <el-avatar v-else shape="square" :size="80" fit="fill" :src="user.avatar"></el-avatar>
+                <el-button @click="user.avatar = ''">更换头像</el-button>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="昵称" prop="nickname">
@@ -101,14 +85,14 @@
         </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="showNewItem = false">取 消</el-button>
-        <el-button type="primary" @click="newItem('part')">确 定</el-button>
+        <el-button @click="(showNewItem = false), (isEdit = false), resetForm()">取 消</el-button>
+        <el-button type="primary" @click="editUser('user')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { list, changeStatus } from "@/api/user";
+import { list, changeStatus, creatUser, getUserInfo, deleteUser, changeUser } from "@/api/user";
 import Pagination from "@/components/Pagination";
 import { asyncRoutes } from "@/router";
 export default {
@@ -116,9 +100,8 @@ export default {
   components: { Pagination },
   data() {
     return {
-      part: {
-        name: "",
-      },
+      isEdit: false,
+      editId: "",
       user: {
         nickname: "",
         username: "",
@@ -128,13 +111,14 @@ export default {
         status: true,
       },
       permissions: [[]],
+      permissionTrans: [],
       table: [],
       page: 1,
       pageSize: 10,
       search: "",
       counts: 0,
       listLoading: false,
-      showNewItem: true,
+      showNewItem: false,
       rules: {
         nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
         username: [{ required: true, message: "请输入账户", trigger: "blur" }],
@@ -146,9 +130,12 @@ export default {
   async created() {
     this.getData();
     // 循环异步路由获取权限列表
-    console.log(asyncRoutes);
     asyncRoutes.forEach((item, index) => {
       if (item.meta) {
+        this.permissionTrans.push({
+          title: item.meta.title,
+          role: item.meta.role,
+        })
         this.permissions[index] = {
           title: item.meta.title,
           role: item.meta.role,
@@ -160,47 +147,91 @@ export default {
             title: child.meta.title,
             role: child.meta.role,
           });
+          this.permissionTrans.push({
+            title: child.meta.title,
+            role: child.meta.role,
+          })
         });
         this.permissions[index].children = children;
       }
     });
   },
   methods: {
-    /**
-     * @description: 表单校验提交创建
-     * @param {String} formName 表单名称
-     */
-    newItem(formName) {
-      this.showNewItem = false;
+    resetForm() {
+      this.user = {
+        nickname: "",
+        username: "",
+        password: "",
+        avatar: "",
+        roles: [],
+        status: true,
+      };
+      this.rules.password[0].required = true
+    },
+    async uploadAvatar(e) {
+      const res = await this.$uploader(e.file);
+      this.user.avatar = res;
+    },
+    editUser(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          await create(this.part.name);
-          this.$message({
-            type: "success",
-            message: "添加成功!",
-          });
+          if (!this.isEdit) {
+            await creatUser(this.user);
+            this.$message({
+              type: "success",
+              message: `创建用户”${this.user.nickname}“成功!`,
+            });
+          } else {
+            await changeUser(this.editId, this.user)
+            this.$message({
+              type: "success",
+              message: `编辑用户”${this.user.nickname}“成功!`,
+            });
+            this.editId = ""
+            this.isEdit = false;
+            this.resetForm()
+          }
+          this.showNewItem = false
           this.getData();
         } else {
           return false;
         }
       });
     },
-    /**
-     * @description: 删除一行数据
-     * @param {*} row
-     */
-    deleteItem(row) {
-      this.$confirm(`确定删除“${row.name}”`, "提示", {
+    async changeUserStatus(type, row) {
+      let status = true;
+      let notice = "启用";
+      if (type == 1) {
+        status = false;
+        notice = "停用";
+      }
+      await changeStatus(row._id, status);
+      this.$message({
+        type: "success",
+        message: `${notice}”${row.nickname}“成功!`,
+      });
+      await this.getData();
+    },
+    async getInfo(row) {
+      this.showNewItem = true;
+      this.isEdit = true;
+      const res = await getUserInfo(row._id);
+      this.editId = row._id
+      this.user = { ...res };
+      this.rules.password[0].required = false
+    },
+    async deleteItem(row) {
+      this.$confirm(`确定删除“${row.nickname}”`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(async () => {
-        await deleted(row._id);
+      }).then( async () => {
+        await deleteUser(row._id)
         this.$message({
           type: "success",
           message: "删除成功!",
         });
-        this.getData();
+        this.getData()
       });
     },
     /**
@@ -215,25 +246,19 @@ export default {
       this.listLoading = true;
       const res = await list(this.page, this.pageSize, this.search);
       this.table = res.data;
+      // 替换table中的权限为中文
+      /* this.table.roles.forEach(item=>{
+
+      }) */
       this.counts = res.counts;
       this.listLoading = false;
     },
-    confirmEdit(row) {
-      row.edit = false;
-      row.tempName = row.name;
-      this.$message({
-        message: "编辑成功",
-        type: "success",
-      });
-    },
-
     /**
      * @description: 权限列表变更,仅仅是子权限添加到权限列表肯定不行,
      * 哪怕只有一个子元素被选入也需要将改母节点放入,相反,如果一个子节点都没有就需要删除该母节点
      * @param {Object} parent 操作的母节点
      */
     roleChange(parent) {
-      console.log(parent);
       let parentChild = [];
       // 将操作的母节点的子元素role全部取出
       parent.children.forEach((item) => {
@@ -256,14 +281,16 @@ export default {
         }
       }
     },
-    async uploadAvatar(e){
-      const res = await this.$uploader(e.file)
-      console.log(res)
-      this.user.avatar = res
-    },
-    createUser() {},
-    async changeUserStatus(type, row) {
-      await changeStatus(row._id, false)
+    transRole(en){
+      console.log(en)
+      if(en == 'all'){
+        return '超级管理员'
+      }
+      for(let i = 0; i < this.permissionTrans.length; i++){
+        if(this.permissionTrans[i].role == en){
+          return this.permissionTrans[i].title
+        }
+      }
     }
   },
 };
@@ -307,5 +334,10 @@ export default {
   left: 50%;
   width: 100%;
   text-align: center;
+}
+.avatar{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 18:32:47
+ * @LastEditTime: 2021-09-11 22:26:55
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -23,11 +23,15 @@ module.exports = app => {
     const user = await User.findOne({
       username
     }).select('+password')
+    console.log(user)
     assert(user, 422, '用户不存在')
-    // 2.校验密码
+    // 2.判断是否停用
+    let status = user.status
+    assert(status, 422, '该账户已停用')
+    // 3.校验密码
     const isValid = require('bcrypt').compareSync(password, user.password)
     assert(isValid, 422, '密码不正确')
-    // 3.返回token
+    // 4.返回token
     const token = jwt.sign({
       _id: user._id
     }, app.get('secret'))
@@ -49,11 +53,16 @@ module.exports = app => {
 
   // 删除用户
   router.delete('/delete/:id', auth(), async (req, res) => {
-    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, '不允许操作超级用户')
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, { message: '不允许操作超级用户' })
     await User.findByIdAndDelete(req.params.id)
     res.send({
       success: true
     })
+  })
+  // 修改用户获取用户信息
+  router.get('/userinfo/:id', auth(),  async (req, res) => {
+    const model = await User.findById(req.params.id, {__v: 0, _id: 0, createdAt: 0, updatedAt: 0})
+    res.send(model)
   })
   // 修改用户信息
   router.put('/change/:id', auth(),  async (req, res) => {
@@ -97,7 +106,7 @@ module.exports = app => {
 
   // 停用用户的登录权限
   router.put('/stop/:id', auth(),  async (req, res) => {
-    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, '不允许操作超级用户')
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'),'不允许操作超级用户', 403 )
     await User.updateOne({_id:req.params.id},{status:req.body.status}, (err, docs)=>{
       if(err){
         res.send({success: false})
@@ -109,4 +118,9 @@ module.exports = app => {
   })
 
   app.use('/admin/api/user', router)
+  app.use(async (err, req, res, next) => {
+    res.status(err.statusCode || 500).send({
+      message: err.message
+    })
+  })
 }
