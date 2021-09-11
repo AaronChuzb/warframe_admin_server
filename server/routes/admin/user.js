@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-06 18:00:48
+ * @LastEditTime: 2021-09-11 18:32:47
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -43,16 +43,24 @@ module.exports = app => {
 
   // 新建用户
   router.post('/create', auth(), async(req, res)=>{
-    console.log('[USER: /create]', req.body)
+    const model = await User.create(req.body)
+    res.send(model)
   })
+
   // 删除用户
   router.delete('/delete/:id', auth(), async (req, res) => {
-    console.log(req)
-    /* await User.findByIdAndDelete(req.params.id)
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, '不允许操作超级用户')
+    await User.findByIdAndDelete(req.params.id)
     res.send({
       success: true
-    }) */
+    })
   })
+  // 修改用户信息
+  router.put('/change/:id', auth(),  async (req, res) => {
+    const model = await User.findByIdAndUpdate(req.params.id, req.body)
+    res.send(model)
+  })
+
   // 用户列表
   router.get('/list', auth(), async (req, res) => {
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
@@ -85,6 +93,19 @@ module.exports = app => {
       data: models,
       counts: counts,
     })
+  })
+
+  // 停用用户的登录权限
+  router.put('/stop/:id', auth(),  async (req, res) => {
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, '不允许操作超级用户')
+    await User.updateOne({_id:req.params.id},{status:req.body.status}, (err, docs)=>{
+      if(err){
+        res.send({success: false})
+      } else {
+        console.log('done')
+        res.send({success: true})
+      }
+    }).lean()
   })
 
   app.use('/admin/api/user', router)

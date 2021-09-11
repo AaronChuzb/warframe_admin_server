@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 17:03:40
+ * @LastEditTime: 2021-09-11 18:52:21
  */
 import axios from 'axios'
 import { Message } from 'element-ui'
@@ -51,6 +51,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log(error.response.data)
     Message({
       message: error.message,
       type: 'error',

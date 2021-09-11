@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 17:47:08
+ * @LastEditTime: 2021-09-11 18:22:54
  */
 import request from '@/utils/request'
 
@@ -31,4 +31,8 @@ export function logout() {
 
 export function getOssInfo(){
   return request.get('/oss')
+}
+
+export function changeStatus(id, status){
+  return request.put(`/user/stop/${id}`, { status })
 }

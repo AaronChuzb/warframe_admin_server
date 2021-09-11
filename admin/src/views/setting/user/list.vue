@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 18:06:48
+ * @LastEditTime: 2021-09-11 18:25:44
 -->
 <template>
   <div class="app-container">
@@ -35,7 +35,7 @@
           <el-button type="primary" size="small" icon="el-icon-edit-outline">
             编辑
           </el-button>
-          <el-button type="warning" size="small" icon="el-icon-edit-outline">
+          <el-button type="warning" size="small" icon="el-icon-edit-outline" @click="changeUserStatus(1, row)">
             停用
           </el-button>
           <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
@@ -53,10 +53,11 @@
             <el-row :gutter="20">
               <el-col :span="12" >
                 <el-upload
-                v-if="user.avatar == ''"
-                  class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  multiple
+                  v-if="user.avatar == ''"
+                  action="https"
+                  :auto-upload="true"
+                  :http-request="uploadAvatar"
+                  :show-file-list="false"
                   :limit="1">
                   <div class="upload-button" >
                   <div class="upload-plus">+</div>
@@ -67,26 +68,26 @@
                 <el-avatar v-else shape="square" :size="80" fit="fill" :src="user.avatar"></el-avatar>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="昵称" prop="name">
+                <el-form-item label="昵称" prop="nickname">
                   <el-input v-model="user.nickname" autocomplete="off"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="账户" prop="name">
+                <el-form-item label="账户" prop="username">
                   <el-input v-model="user.username" autocomplete="off"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="密码" prop="name">
+                <el-form-item label="密码" prop="password">
                   <el-input type="password" v-model="user.password" autocomplete="off"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="权限配置">
-            <el-form-item prop="name">
+            <el-form-item prop="roles">
               <el-collapse accordion>
                 <el-collapse-item v-for="(item, index) in permissions" :key="index">
                   <template slot="title">{{ item.title }}<i v-if="item.role == 'setting'" class="header-icon el-icon-info"></i> </template>
@@ -107,7 +108,7 @@
   </div>
 </template>
 <script>
-import { list } from "@/api/user";
+import { list, changeStatus } from "@/api/user";
 import Pagination from "@/components/Pagination";
 import { asyncRoutes } from "@/router";
 export default {
@@ -124,7 +125,7 @@ export default {
         password: "",
         avatar: "",
         roles: [],
-        status: 1,
+        status: true,
       },
       permissions: [[]],
       table: [],
@@ -135,7 +136,10 @@ export default {
       listLoading: false,
       showNewItem: true,
       rules: {
-        name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
+        nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+        username: [{ required: true, message: "请输入账户", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        roles: [{ required: true, message: "请选择用户权限", trigger: "blur" }],
       },
     };
   },
@@ -252,7 +256,15 @@ export default {
         }
       }
     },
+    async uploadAvatar(e){
+      const res = await this.$uploader(e.file)
+      console.log(res)
+      this.user.avatar = res
+    },
     createUser() {},
+    async changeUserStatus(type, row) {
+      await changeStatus(row._id, false)
+    }
   },
 };
 </script>

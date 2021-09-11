@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-10 17:21:36
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 17:40:56
+ * @LastEditTime: 2021-09-11 17:26:06
  */
 import OSS from 'ali-oss'
 import Vue from 'vue'
@@ -13,11 +13,14 @@ const uploader = async e => {
   let fileName = file.name.substr(0,file.name.lastIndexOf('.'))
   let date = new Date().getTime()
   let fileNames = `${date}_${fileName}` // 拼接文件名，保证唯一，这里使用时间戳+原文件名
+
   // 上传文件,这里是上传到OSS的 uploads文件夹下
-  if(store.getters.getOss.accessKeyId === ''){
+  if(store.getters.getOss.oss.accessKeyId == ''){
     await store.dispatch('oss/getOss')
   }
-  const { region, accessKeyId, accessKeySecret, bucket } = store.getters.getOss
+  
+  const { region, accessKeyId, accessKeySecret, bucket } = store.getters.getOss.oss
+  console.log(region, accessKeyId, accessKeySecret, bucket)
   const client = new OSS({
     region,
     accessKeyId,
