@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-06 18:09:03
+ * @LastEditTime: 2021-09-12 20:32:11
  */
 const express = require('express')
 const app = express()
@@ -15,6 +15,8 @@ require('./routes/admin')(app)
 require('./routes/admin/user')(app)
 // 遗物组件模块
 require('./routes/admin/part')(app)
+// 基础分类模块
+require('./routes/admin/category')(app)
 
 require('./plugins/db')(app)
 

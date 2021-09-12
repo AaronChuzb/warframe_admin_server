@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 00:43:40
+ * @LastEditTime: 2021-09-12 21:05:43
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -84,11 +84,32 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/advanced',
+    component: Layout,
+    redirect: '/advanced/remain',
+    name: 'Advanced',
+    meta: { title: '进阶内容', icon: 'advanced', role: 'advanced' },
+    children: [
+      {
+        path: 'remain',
+        name: 'remain',
+        component: () => import('@/views/advanced/remain/list'),
+        meta: { title: '遗物', icon: 'remain', role: 'advanced' }
+      },
+      {
+        path: 'remain-1',
+        name: 'remain-1',
+        component: () => import('@/views/advanced/remain/list'),
+        meta: { title: '遗物', icon: 'remain', role: 'advanced' }
+      }
+    ]
+  },
+  {
     path: '/setting',
     component: Layout,
     redirect: '/setting/user',
     name: 'Setting',
-    meta: { title: '设置管理', icon: 'el-icon-set-up', role: 'setting' },
+    meta: { title: '设置管理', icon: 'setting', role: 'setting' },
     children: [
       {
         path: 'user',

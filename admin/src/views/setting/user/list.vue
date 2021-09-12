@@ -1,15 +1,17 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 22:51:16
+ * @LastEditTime: 2021-09-12 18:57:25
 -->
 <template>
   <div class="app-container">
+    <!-- 功能区 -->
     <div class="filter-container">
       <el-input v-model="search" placeholder="按昵称或账号搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">新增管理员</el-button>
     </div>
+    <!-- 列表 -->
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
       <el-table-column width="150px" label="昵称" align="center">
         <template slot-scope="{ row }">
@@ -22,7 +24,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="权限">
-        <template slot-scope="{ row }" >
+        <template slot-scope="{ row }">
           <el-tag type="success" style="margin-right: 10px; margin-bottom: 5px" v-for="item in row.roles" :key="item">{{ transRole(item) }}</el-tag>
         </template>
       </el-table-column>
@@ -96,13 +98,13 @@ import { list, changeStatus, creatUser, getUserInfo, deleteUser, changeUser } fr
 import Pagination from "@/components/Pagination";
 import { asyncRoutes } from "@/router";
 export default {
-  name: "InlineEditTable",
+  name: "User",
   components: { Pagination },
   data() {
     return {
-      isEdit: false,
-      editId: "",
-      user: {
+      isEdit: false, // 是否是编辑
+      editId: "", // 编辑的用户的id
+      user: { // 用户的表单
         nickname: "",
         username: "",
         password: "",
@@ -110,16 +112,16 @@ export default {
         roles: [],
         status: true,
       },
-      permissions: [[]],
-      permissionTrans: [],
-      table: [],
-      page: 1,
-      pageSize: 10,
-      search: "",
-      counts: 0,
-      listLoading: false,
-      showNewItem: false,
-      rules: {
+      permissions: [[]], // 存放权限的二维数组
+      permissionTrans: [], // 用来转换权限中英文的数组
+      table: [], // 存放列表的数据
+      page: 1, // 获取的数据的页数
+      pageSize: 10, // 一页的数据长度,默认10条
+      search: "", // 搜索的关键字
+      counts: 0, // 获取的数据总条数
+      listLoading: false, // 列表加载状态
+      showNewItem: false, // 显示表单
+      rules: { // 表单校验规则
         nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
         username: [{ required: true, message: "请输入账户", trigger: "blur" }],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
@@ -135,7 +137,7 @@ export default {
         this.permissionTrans.push({
           title: item.meta.title,
           role: item.meta.role,
-        })
+        });
         this.permissions[index] = {
           title: item.meta.title,
           role: item.meta.role,
@@ -150,13 +152,16 @@ export default {
           this.permissionTrans.push({
             title: child.meta.title,
             role: child.meta.role,
-          })
+          });
         });
         this.permissions[index].children = children;
       }
     });
   },
   methods: {
+    /**
+     * @description: 重置表单和表单校验
+     */
     resetForm() {
       this.user = {
         nickname: "",
@@ -166,12 +171,20 @@ export default {
         roles: [],
         status: true,
       };
-      this.rules.password[0].required = true
+      this.rules.password[0].required = true;
     },
+    /**
+     * @description: 头像上传
+     * @param {Object} e 上传的图片文件
+     */
     async uploadAvatar(e) {
       const res = await this.$uploader(e.file);
       this.user.avatar = res;
     },
+    /**
+     * @description: 提交表单
+     * @param {String} formName 需要校验的表单名称
+     */
     editUser(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
@@ -182,22 +195,27 @@ export default {
               message: `创建用户”${this.user.nickname}“成功!`,
             });
           } else {
-            await changeUser(this.editId, this.user)
+            await changeUser(this.editId, this.user);
             this.$message({
               type: "success",
               message: `编辑用户”${this.user.nickname}“成功!`,
             });
-            this.editId = ""
+            this.editId = "";
             this.isEdit = false;
-            this.resetForm()
+            this.resetForm();
           }
-          this.showNewItem = false
+          this.showNewItem = false;
           this.getData();
         } else {
           return false;
         }
       });
     },
+    /**
+     * @description: 变更用户是否可以登录
+     * @param {Number} type 类型，是启用还是停用
+     * @param {Object} row 一行的数据
+     */
     async changeUserStatus(type, row) {
       let status = true;
       let notice = "启用";
@@ -212,26 +230,34 @@ export default {
       });
       await this.getData();
     },
+    /**
+     * @description: 编辑用户前获取数据
+     * @param {Object} row 一行的数据，包含id等关键信息
+     */
     async getInfo(row) {
       this.showNewItem = true;
       this.isEdit = true;
       const res = await getUserInfo(row._id);
-      this.editId = row._id
+      this.editId = row._id;
       this.user = { ...res };
-      this.rules.password[0].required = false
+      this.rules.password[0].required = false;
     },
+    /**
+     * @description: 删除一个用户
+     * @param {Object} row 一行的数据，包含id等关键信息
+     */
     async deleteItem(row) {
       this.$confirm(`确定删除“${row.nickname}”`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then( async () => {
-        await deleteUser(row._id)
+      }).then(async () => {
+        await deleteUser(row._id);
         this.$message({
           type: "success",
           message: "删除成功!",
         });
-        this.getData()
+        this.getData();
       });
     },
     /**
@@ -246,10 +272,6 @@ export default {
       this.listLoading = true;
       const res = await list(this.page, this.pageSize, this.search);
       this.table = res.data;
-      // 替换table中的权限为中文
-      /* this.table.roles.forEach(item=>{
-
-      }) */
       this.counts = res.counts;
       this.listLoading = false;
     },
@@ -281,17 +303,21 @@ export default {
         }
       }
     },
-    transRole(en){
-      console.log(en)
-      if(en == 'all'){
-        return '超级管理员'
+    /**
+     * @description: 替换权限英文为中文
+     * @param {String} en 权限的英文名
+     */
+    transRole(en) {
+      console.log(en);
+      if (en == "all") {
+        return "超级管理员";
       }
-      for(let i = 0; i < this.permissionTrans.length; i++){
-        if(this.permissionTrans[i].role == en){
-          return this.permissionTrans[i].title
+      for (let i = 0; i < this.permissionTrans.length; i++) {
+        if (this.permissionTrans[i].role == en) {
+          return this.permissionTrans[i].title;
         }
       }
-    }
+    },
   },
 };
 </script>
@@ -311,7 +337,7 @@ export default {
   display: flex;
   align-items: center;
 }
-.upload-button{
+.upload-button {
   width: 80px;
   height: 80px;
   border-radius: 4px;
@@ -319,14 +345,14 @@ export default {
   position: relative;
   cursor: pointer;
 }
-.upload-plus{
+.upload-plus {
   font-size: 40px;
   position: absolute;
   transform: translate(-50%, -50%);
   top: 45%;
   left: 50%;
 }
-.upload-name{
+.upload-name {
   font-size: 10px;
   position: absolute;
   transform: translate(-50%, -50%);
@@ -335,7 +361,7 @@ export default {
   width: 100%;
   text-align: center;
 }
-.avatar{
+.avatar {
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
