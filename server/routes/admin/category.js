@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-12 20:28:03
+ * @LastEditTime: 2021-09-13 16:40:02
  */
 module.exports = app => {
   const express = require('express')
@@ -21,6 +21,8 @@ module.exports = app => {
       success: true
     })
   })
+
+  
   // 获取分类列表
   router.get('/list', auth(), async (req, res) => {
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
@@ -56,6 +58,36 @@ module.exports = app => {
       counts: counts,
       userOptions: users
     })
+  })
+
+  // 填充上级分类搜索分类
+  router.get('/search', auth(), async (req, res) => {
+    const reg = new RegExp(req.query.search, 'i'); // 查询通配符
+    // 查出内容
+    const models = await Category.find({
+      $or: [{
+        name: {
+          $regex: reg
+        },
+      }]
+    }, { _id: 1, name: 1 }).sort({ updatedAt: -1 }).limit(10).exec() // 一页的内容
+    res.send(models)
+  })
+
+
+  // 修改分类数据获取
+  router.get('/info/:id', auth(), async (req, res) => {
+    const model = await Category.findById(req.params.id, {_id: 0, name: 1}).populate({
+      path: 'parent',
+      select: 'name'
+    }).populate({
+      path: 'creator',
+      select: '_id'
+    }).populate({
+      path: 'updater',
+      select: '_id'
+    })
+    res.send(model)
   })
 
   // 修改分类

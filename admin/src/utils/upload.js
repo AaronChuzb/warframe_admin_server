@@ -1,10 +1,9 @@
 /*
  * @Date: 2021-09-10 17:21:36
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 17:26:06
+ * @LastEditTime: 2021-09-13 09:36:20
  */
 import OSS from 'ali-oss'
-import Vue from 'vue'
 import store from '@/store'
 import { Message } from 'element-ui'
 

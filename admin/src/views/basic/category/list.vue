@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-12 20:38:24
+ * @LastEditTime: 2021-09-13 16:41:51
 -->
 <template>
   <div class="app-container">
@@ -27,13 +27,7 @@
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
       <el-table-column width="200px" align="center" label="分类名称">
         <template slot-scope="{ row }">
-          <template v-if="row.edit">
-            <el-input v-model="row.name" class="edit-input" size="small" />
-            <el-button class="cancel-btn" size="small" icon="el-icon-document-remove" type="warning" @click="cancelEdit(row)">
-              取消
-            </el-button>
-          </template>
-          <span v-else>{{ row.name }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column width="200px" align="center" label="上级分类">
@@ -58,10 +52,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
-          <el-button v-if="row.edit" type="success" size="small" icon="el-icon-document-checked" @click="confirmEdit(row)">
-            保存
-          </el-button>
-          <el-button v-else type="primary" size="small" icon="el-icon-edit-outline" @click="(row.edit = !row.edit), (row.tempName = row.name)">
+          <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="editRow(row._id)">
             编辑
           </el-button>
           <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
@@ -72,30 +63,21 @@
     </el-table>
     <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
     <!-- 新增 -->
-    <el-dialog title="新增分类" :visible.sync="showNewItem">
-      <el-form :model="part" :rules="rules" ref="part">
-        <el-form-item label="分类名称" prop="name">
-          <el-input v-model="part.name" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="showNewItem = false">取 消</el-button>
-        <el-button type="primary" @click="newItem('part')">确 定</el-button>
-      </div>
-    </el-dialog>
+    <new-item ref="edit" :show="showNewItem" :data="category" @done="showNewItem = false, getData()" @cancle="showNewItem = false" />
   </div>
 </template>
 <script>
-import { create, list, change, deleted } from "@/api/category";
+import { list, deleted } from "@/api/category";
 import Pagination from "@/components/Pagination";
+import newItem from "./components/edit.vue";
 export default {
   name: "InlineEditTable",
-
-  components: { Pagination },
+  components: { Pagination, newItem },
   data() {
     return {
-      part: {
+      category:{
         name: "",
+        parent: ""
       },
       table: [],
       sortOptions: [
@@ -113,35 +95,16 @@ export default {
       counts: 0,
       listLoading: false,
       showNewItem: false,
-      rules: {
-        name: [{ required: true, message: "请输入分类名称", trigger: "blur" }],
-      },
     };
   },
   created() {
     this.getData();
   },
   methods: {
-    /**
-     * @description: 新建分类
-     * @param {*} formName 表单名称
-     */
-    newItem(formName) {
-      this.showNewItem = false
-      this.$refs[formName].validate( async (valid) => {
-        if (valid) {
-          await create(this.part.name)
-          this.$message({
-            type: "success",
-            message: "添加成功!",
-          });
-          this.getData()
-        } else {
-          return false;
-        }
-      });
+    editRow(id){
+      this.showNewItem = true
+      this.$refs.edit.getInfoAndEdit(id)
     },
-
     /**
      * @description: 删除一行数据
      * @param {Object} row 表格行数据
@@ -151,19 +114,19 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then( async () => {
-        await deleted(row._id)
+      }).then(async () => {
+        await deleted(row._id);
         this.$message({
           type: "success",
           message: "删除成功!",
         });
-        this.getData()
+        this.getData();
       });
     },
 
     /**
      * @description: 搜索列表
-     * @param {*} e 
+     * @param {*} e
      */
     searchList(e) {
       this.page = 1;
@@ -190,36 +153,6 @@ export default {
       }
       this.counts = res.counts;
       this.listLoading = false;
-    },
-    /**
-     * @description: 取消编辑
-     * @param {Object} row
-     */
-    cancelEdit(row) {
-      row.name = row.tempName;
-      row.edit = false;
-      this.$message({
-        message: "用户取消编辑",
-        type: "warning",
-      });
-    },
-    /**
-     * @description: 提交编辑
-     * @param {Object} row
-     */
-    async confirmEdit(row) {
-      row.edit = false;
-      row.tempName = row.name;
-      // 深拷贝一下,如果是浅拷贝会删去原来列表中的值,导致不能二次更改
-      let data = JSON.parse(JSON.stringify(row))
-      // 删除对象多余元素
-      delete data.edit
-      delete data.tempName
-      await change(row._id, data)
-      this.$message({
-        message: "编辑成功",
-        type: "success",
-      });
     },
   },
 };
