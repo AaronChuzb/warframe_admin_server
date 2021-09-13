@@ -1,10 +1,10 @@
 <!--
  * @Date: 2021-09-13 14:58:33
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 16:44:28
+ * @LastEditTime: 2021-09-13 18:11:29
 -->
 <template>
-  <el-dialog title="新增分类" :visible.sync="show" @close="cancle" :before-close="cancle">
+  <el-dialog :title="isEdit?'编辑分类':'新增分类'" :visible.sync="show" @close="cancle" :before-close="cancle">
     <el-form :model="category" :rules="rules" ref="category" :inline="true">
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="category.name" autocomplete="off"></el-input>

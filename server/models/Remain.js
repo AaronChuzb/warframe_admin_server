@@ -1,21 +1,22 @@
 /*
  * @Date: 2021-08-25 20:13:22
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-08-28 23:59:50
+ * @LastEditTime: 2021-09-13 17:22:56
  */
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
   name: { type: String, unique: true },
   type: { type: String, ref: 'Category' },
-  cu1: { type: String, ref: 'Part' },
-  cu2: { type: String, ref: 'Part' },
-  cu3: { type: String, ref: 'Part' },
-  ag1: { type: String, ref: 'Part' },
-  ag2: { type: String, ref: 'Part' },
-  au: { type: String, ref: 'Part' },
-  stock: { type: String },
+  copper_1: { type: String, ref: 'Part' },
+  copper_2: { type: String, ref: 'Part' },
+  copper_3: { type: String, ref: 'Part' },
+  silver_1: { type: String, ref: 'Part' },
+  silver_2: { type: String, ref: 'Part' },
+  gold: { type: String, ref: 'Part' },
+  stock: { type: Boolean },
   getways: { type: String },
+  contribute: { type: String },
   creator: { type: String, ref: 'User' },
   updater: { type: String, ref: 'User' },
 }, {

@@ -1,28 +1,12 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 20:30:04
+ * @LastEditTime: 2021-09-13 16:51:16
  */
 module.exports = app => {
   const express = require('express')
   // 登录校验中间件
   const auth = require('../../middleware/auth')
-  // 获取模型中间件
-  // const resource = require('../../middleware/resource')
-  // // 获取搜索字符串的参数
-  // const search = require('../../middleware/search')
-  // // 分页中间件
-  // const pages = require('../../middleware/pages')
-  // // 特殊列表查询拦截中间件
-  // const options = require('../../middleware/options')
-  // // 特殊单个物品查询拦截中间件
-  // const option = require('../../middleware/option')
-  // // 特殊单个物品更新拦截中间件
-  // const update = require('../../middleware/update')
-
-  // const router = express.Router({
-  //   mergeParams: true
-  // })
   
   // token转换秘钥
   app.set('secret', 'maliho123.')
