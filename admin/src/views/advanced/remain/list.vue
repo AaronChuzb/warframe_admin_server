@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 18:06:03
+ * @LastEditTime: 2021-09-14 18:25:15
 -->
 <template>
   <div class="app-container">
@@ -13,8 +13,8 @@
         </el-select>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="遗物分类" placement="top-start">
-        <el-select v-model="sort" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
-          <el-option v-for="item in sortOptions" :key="item.id" :label="item.label" :value="item.id" />
+        <el-select v-model="type" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in typeOptions" :key="item._id" :label="item.name" :value="item.index" />
         </el-select>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="更新者" placement="top-start">
@@ -25,33 +25,38 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">
+      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="openEdit">
         新增遗物
       </el-button>
     </div>
-    <div class="remain-box">
-      <el-row :gutter="20">
-        <el-col :span="4" v-for="(item, index) in 12" :key="index" class="item">
-          <el-card :body-style="{ padding: '0px' }">
-            <img src="@/assets/ls.png" class="image" />
-            <div style="padding: 14px;">
-              <span>丽思M1遗物</span>
-              <div class="bottom clearfix">
-                <el-button type="text" class="button">编辑</el-button>
-                <el-button type="text" class="button danger">删除</el-button>
+    <transition name="el-fade-in-linear">
+      <div class="remain-box" v-show="counts > 0">
+        <el-row :gutter="20">
+          <el-col :span="4" v-for="(item, index) in table" :key="index" class="item">
+            <el-card :body-style="{ padding: '0px' }">
+              <img :src="chooseImage(item.type.name)" class="image" />
+              <div style="padding: 14px;">
+                <span>{{item.name}}</span>
+                <div class="bottom clearfix">
+                  <el-button type="text" class="button" @click="editRow(item._id)">编辑</el-button>
+                  <el-button type="text" class="button danger" @click="deleteItem(item)">删除</el-button>
+                </div>
               </div>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-    <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
+            </el-card>
+          </el-col>
+        </el-row>
+      </div>
+    </transition>
+    <pagination v-show="counts > 0" :total="counts" :page.sync="page" :pageSizes="[6, 12, 18, 24]" :limit.sync="pageSize" @pagination="getData" />
+    <transition name="el-fade-in-linear">
+      <el-empty description="暂无更多" v-show="counts == 0"></el-empty>
+    </transition>
     <!-- 新增 -->
-    <new-item ref="edit" :show="showNewItem" :data="category" @done="(showNewItem = false), getData()" @cancle="showNewItem = false" />
+    <new-item ref="edit" :show="showNewItem" @done="(showNewItem = false), getData()" @cancle="showNewItem = false" />
   </div>
 </template>
 <script>
-import { list, deleted } from "@/api/category";
+import { list, deleted, getType } from "@/api/remain";
 import Pagination from "@/components/Pagination";
 import newItem from "./components/edit.vue";
 export default {
@@ -59,10 +64,6 @@ export default {
   components: { Pagination, newItem },
   data() {
     return {
-      category: {
-        name: "",
-        parent: "",
-      },
       table: [],
       sortOptions: [
         { key: { updatedAt: -1 }, label: "更新时间倒序", id: 0 },
@@ -71,23 +72,67 @@ export default {
         { key: { createdAt: -1 }, label: "创建时间倒叙", id: 3 },
       ],
       userOptions: [{ _id: "", index: 0, nickname: "所有人" }],
+      typeOptions: [{ _id: "", index: 0, name: "所有分类" }],
+      type: 0,
       user: 0,
       sort: 0,
       page: 1,
-      pageSize: 10,
+      pageSize: 12,
       search: "",
       counts: 0,
       listLoading: false,
       showNewItem: false,
     };
   },
-  created() {
+  async created() {
     this.getData();
+    console.log(this.table)
+    const res = await getType();
+    console.log(res);
+    if (this.typeOptions.length < 2) {
+      this.typeOptions = this.typeOptions.concat(
+        res.map((e, index) => {
+          e.index = index + 1;
+          return e;
+        })
+      );
+    }
   },
   methods: {
+    /**
+     * @description: 打开新增
+     */
+    openEdit() {
+      this.showNewItem = true;
+      this.$refs.edit.getPreData();
+    },
+    /**
+     * @description: 打开编辑
+     * @param {String} id 改遗物的_id
+     */
     editRow(id) {
       this.showNewItem = true;
       this.$refs.edit.getInfoAndEdit(id);
+    },
+    /**
+     * @description: 获取对应类型的图片
+     * @param {String} name 类型名
+     * @return {*} 图片路径
+     */
+    chooseImage(name){
+      let img
+      if(name == '丽斯'){
+        img = 'ls'
+      } else if (name == '美索'){
+        img = 'ms'
+      } else if (name == '尼奥'){
+        img = 'na'
+      } else if (name == '亚希'){
+        img = 'yx'
+      } else if (name == '安魂'){
+        img = 'ah'
+      }
+      return require(`@/assets/${img}.png`)
     },
     /**
      * @description: 删除一行数据
@@ -118,15 +163,12 @@ export default {
     },
 
     /**
-     * @description: 获取表格数据
+     * @description: 获取页面数据
      */
     async getData() {
       this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id);
-      this.table = res.data.map((e) => {
-        e.edit = false;
-        return e;
-      });
+      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id, this.typeOptions[this.type]._id);
+      this.table = res.data
       if (this.userOptions.length < 2) {
         this.userOptions = this.userOptions.concat(
           res.userOptions.map((e, index) => {
