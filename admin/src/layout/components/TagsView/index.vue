@@ -145,8 +145,8 @@ export default {
       })
     },
     closeOthersTags(view) {
-      // TODO: 需要优化
-      if(view.to.path !== this.$route.path){
+      const { fullPath } = view
+      if(fullPath !== this.$route.path){
         this.$router.push(this.selectedTag)
       }
       this.moveToCurrentTag()
