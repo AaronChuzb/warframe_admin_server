@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 17:37:46
+ * @LastEditTime: 2021-09-16 20:45:00
  */
 import router from './router'
 import { resetRouter } from './router'
@@ -26,8 +26,9 @@ router.onReady(async () => {
     accessRoutes.forEach(item=>{
       router.addRoute(item)
     })
-    router.addRoute({ path: '*', redirect: '/404', hidden: true })
   }
+  router.addRoute({ path: '*', redirect: '/404', hidden: true })
+
 })
 
 router.beforeEach(async(to, from, next) => {
