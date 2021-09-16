@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-02 19:20:17
+ * @LastEditTime: 2021-09-16 21:45:29
 -->
 <template>
   <el-breadcrumb class="app-breadcrumb" separator="/">
@@ -48,7 +48,7 @@ export default {
       if (!name) {
         return false
       }
-      return name.trim() === '首页'
+      return name.trim() === 'dashboard'
     },
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561
@@ -59,7 +59,9 @@ export default {
     handleLink(item) {
       const { redirect, path } = item
       if (redirect) {
-        this.$router.push(redirect)
+        if(redirect !== this.$route.path){
+          this.$router.push(redirect)
+        }
         return
       }
       this.$router.push(this.pathCompile(path))
