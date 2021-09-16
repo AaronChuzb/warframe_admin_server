@@ -2,15 +2,21 @@
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <breadcrumb class="breadcrumb-container" />
+    <!-- <el-input placeholder="请输入内容" v-model="search" class="input-with-select">
+      <el-button slot="append" icon="el-icon-search"></el-button>
+    </el-input> -->
     <div class="right-menu">
+       <template v-if="device!=='mobile'">
+        <search id="header-search" class="right-menu-item" />
+      </template>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item @click.native="$router.push('/')">
-              首页
-            </el-dropdown-item>
+          <el-dropdown-item @click.native="$router.push('/')">
+            首页
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -24,14 +30,25 @@
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
+import Search from '@/components/HeaderSearch'
 
 export default {
+  data(){
+    return{
+      search: ""
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger,
+    Search
   },
   computed: {
-    ...mapGetters(["sidebar", "avatar"]),
+     ...mapGetters([
+      'sidebar',
+      'avatar',
+      'device'
+    ])
   },
   methods: {
     toggleSideBar() {

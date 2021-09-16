@@ -15,6 +15,7 @@
     "axios": "0.21.4",
     "core-js": "3.17.3",
     "element-ui": "2.15.6",
+    "fuse.js": "^6.4.6",
     "lodash": "^4.17.21",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
