@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 18:10:17
+ * @LastEditTime: 2021-09-16 21:51:12
 -->
 <template>
   <div class="app-container">
@@ -32,7 +32,7 @@
     <transition name="el-fade-in-linear">
       <div class="remain-box" v-show="counts > 0">
         <el-row :gutter="20">
-          <el-col :span="4" v-for="(item, index) in table" :key="index" class="item">
+          <el-col :xs="12" :sm="8" :md="6"  :lg="4" :span="4" v-for="(item, index) in table" :key="index" class="item" >
             <el-card :body-style="{ padding: '0px' }">
               <img :src="chooseImage(item.type.name)" class="image" />
               <div style="padding: 14px;">
