@@ -65,7 +65,7 @@ export default {
       this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           await this.$store.dispatch("user/login", this.loginForm)
-          this.$router.push({ path: this.redirect || "/" });
+          this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
         } else {
           return false;
         }

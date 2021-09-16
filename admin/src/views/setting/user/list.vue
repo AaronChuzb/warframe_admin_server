@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-12 18:57:25
+ * @LastEditTime: 2021-09-16 18:11:14
 -->
 <template>
   <div class="app-container">
@@ -98,7 +98,7 @@ import { list, changeStatus, creatUser, getUserInfo, deleteUser, changeUser } fr
 import Pagination from "@/components/Pagination";
 import { asyncRoutes } from "@/router";
 export default {
-  name: "User",
+  name: "user",
   components: { Pagination },
   data() {
     return {

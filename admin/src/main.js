@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 17:19:46
+ * @LastEditTime: 2021-09-16 14:50:20
  */
 import Vue from 'vue'
 
@@ -15,15 +15,16 @@ import store from './store'
 import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
-
 import { parseTime } from "@/utils/index"
 import uploader from "@/utils/upload"
+import _ from 'lodash'
 
 Vue.use(ElementUI)
 
 Vue.prototype.$parseTime = parseTime
 
 Vue.prototype.$uploader = uploader
+Vue.prototype.$lodash = _
 
 Vue.config.productionTip = false
 

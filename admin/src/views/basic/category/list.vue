@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 16:41:51
+ * @LastEditTime: 2021-09-16 18:10:35
 -->
 <template>
   <div class="app-container">
@@ -71,7 +71,7 @@ import { list, deleted } from "@/api/category";
 import Pagination from "@/components/Pagination";
 import newItem from "./components/edit.vue";
 export default {
-  name: "InlineEditTable",
+  name: "category",
   components: { Pagination, newItem },
   data() {
     return {

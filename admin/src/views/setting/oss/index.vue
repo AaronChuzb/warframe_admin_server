@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-01 22:34:40
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-12 19:25:22
+ * @LastEditTime: 2021-09-16 18:11:05
 -->
 <template>
   <div class="app-container">
@@ -34,6 +34,7 @@
 <script>
 import store from "@/store";
 export default {
+  name: 'oss',
   data() {
     return {
       isEdit: false,

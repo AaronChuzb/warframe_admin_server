@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 11:48:34
+ * @LastEditTime: 2021-09-16 18:10:44
 -->
 <template>
   <div class="app-container">
@@ -84,7 +84,7 @@
 import { create, list, change, deleted } from "@/api/part";
 import Pagination from "@/components/Pagination";
 export default {
-  name: "InlineEditTable",
+  name: "part",
 
   components: { Pagination },
   data() {

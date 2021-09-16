@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-12 21:05:43
+ * @LastEditTime: 2021-09-16 18:18:14
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -11,6 +11,17 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: ()=> import('@/views/redirect/index')
+      }
+    ]
+  },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -29,7 +40,7 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: '首页',
+      name: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard', affix: true }
     }]
@@ -57,7 +68,7 @@ export const constantRoutes = [
   //   ]
   // },
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  
 ]
 
 // 动态路由
@@ -71,7 +82,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'category',
-        name: 'part',
+        name: 'category',
         component: () => import('@/views/basic/category/list'),
         meta: { title: '基础分类', icon: 'category', role: 'category' }
       },
@@ -134,7 +145,6 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
-
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()

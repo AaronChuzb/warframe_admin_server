@@ -7,7 +7,6 @@
         :key="tag.path"
         :class="isActive(tag)?'active':''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
         class="tags-view-item"
         @click.middle.native="!isAffix(tag)?closeSelectedTag(tag):''"
         @contextmenu.prevent.native="openMenu(tag,$event)"
@@ -17,10 +16,10 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(selectedTag)">Close All</li>
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭</li>
+      <li @click="closeOthersTags(selectedTag)">保留当前项关闭其他项</li>
+      <li @click="closeAllTags(selectedTag)">全部关闭</li>
     </ul>
   </div>
 </template>
@@ -44,9 +43,9 @@ export default {
     visitedViews() {
       return this.$store.state.tagsView.visitedViews
     },
-    /* routes() {
-      return this.$store.state.permission.routes
-    } */
+    routes() {
+      return this.$router.options.routes
+    }
   },
   watch: {
     $route() {
@@ -145,10 +144,14 @@ export default {
         }
       })
     },
-    closeOthersTags() {
-      this.$router.push(this.selectedTag)
+    closeOthersTags(view) {
+      // TODO: 需要优化
+      if(view.to.path !== this.$route.path){
+        this.$router.push(this.selectedTag)
+      }
+      this.moveToCurrentTag()
       this.$store.dispatch('tagsView/delOthersViews', this.selectedTag).then(() => {
-        this.moveToCurrentTag()
+        
       })
     },
     closeAllTags(view) {

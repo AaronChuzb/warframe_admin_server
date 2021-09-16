@@ -1,9 +1,10 @@
 /*
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 20:49:10
+ * @LastEditTime: 2021-09-16 17:37:46
  */
 import router from './router'
+import { resetRouter } from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
@@ -14,6 +15,20 @@ import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
+
+
+router.onReady(async () => {
+  const hasToken = getToken()
+  if (hasToken) {
+    resetRouter()
+    const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.roles)
+    router.options.routes = store.getters.permission_route
+    accessRoutes.forEach(item=>{
+      router.addRoute(item)
+    })
+    router.addRoute({ path: '*', redirect: '/404', hidden: true })
+  }
+})
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -35,11 +50,12 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           await store.dispatch('user/userInfo')
-          // TODO: 将下面方法的数组换成获取用户的权限
-          const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.roles) // 'basic','category','part','setting', 'user', 'oss','test'
           // console.log(accessRoutes)
+          const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.roles)
           router.options.routes = store.getters.permission_route
-          router.addRoutes(accessRoutes)
+          accessRoutes.forEach(item=>{
+            router.addRoute(item)
+          })
           next({ ...to, replace: true })
         } catch (error) {
           console.log(error)
