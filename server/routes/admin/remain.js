@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-14 14:40:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-14 17:56:31
+ * @LastEditTime: 2021-09-17 00:30:56
  */
 module.exports = app => {
   const express = require('express')
@@ -71,26 +71,57 @@ module.exports = app => {
     const start = page * pageSize // 从什么地方开始查
     const reg = new RegExp(req.query.search, 'i'); // 查询通配符
     const users = await User.find({},{nickname: 1}) // 根据用户遗物
-    console.log(req.query)
     let params = {
-      name: {
-        $regex: reg
+      $and: []
+    }
+    // 最后根据部件来
+    if(req.query.search != ''){
+      const parts = await Part.find({
+        name: {
+          $regex: reg
+        }
+      },{_id: 1})
+      let arr = parts.map(e=>{
+        return e._id
+      })
+      let parent = {
+        $or: []
       }
+      let keys = ['copper_1', 'copper_2','copper_3','silver_1','silver_2','gold',]
+      keys.forEach(item=>{
+        let child = {}
+        child[item] = { $in: arr }
+        parent.$or.push(child)
+      })
+      parent.$or.push({
+        name: {
+          $regex: reg
+        }
+      })
+      params.$and.push(parent)
+      temp = parent
+    } else {
+      params.$and.push({
+        name: {
+          $regex: reg
+        }
+      })
     }
     if(req.query.user != ''){
-      params['updater'] = req.query.user
+      let obj = {}
+      obj['updater'] = req.query.user
+      params.$and.push(obj)
     }
     if(req.query.type != ''){
-      params['type'] = req.query.type
+      let obj = {}
+      obj['type'] = req.query.type
+      params.$and.push(obj)
     }
     // 查出某个参数总条数
-    const counts = await Remain.countDocuments({
-      $or: [params]
-    }).exec()
+    console.log(params)
+    const counts = await Remain.countDocuments(params).exec()
     // 查出内容
-    const models = await Remain.find({
-      $or: [params]
-    }, { _id: 1, name: 1, createdAt: 1, updatedAt: 1 }).populate({ path: 'type',  select: 'name'}).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).sort(JSON.parse(req.query.sort)).skip(start).limit(pageSize).exec() // 一页的内容
+    const models = await Remain.find(params, { _id: 1, name: 1, createdAt: 1, updatedAt: 1 }).populate({ path: 'type',  select: 'name'}).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).sort(JSON.parse(req.query.sort)).skip(start).limit(pageSize).exec() // 一页的内容
     res.send({
       data: models,
       counts: counts,
