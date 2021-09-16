@@ -30,7 +30,7 @@ export default {
       search: '',
       options: [],
       searchPool: [],
-      show: false,
+      show: true,
       fuse: undefined
     }
   },
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     click() {
-      this.show = !this.show
+      // this.show = !this.show
       if (this.show) {
         this.$refs.headerSearchSelect && this.$refs.headerSearchSelect.focus()
       }
