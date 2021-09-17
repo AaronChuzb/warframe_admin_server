@@ -1,10 +1,10 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-14 18:34:48
+ * @LastEditTime: 2021-09-17 14:38:37
 -->
 <template>
-  <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle" fullscreen>
+  <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle">
     <el-form :model="remain" :rules="rules" ref="remain" label-position="top">
       <el-row :gutter="20">
         <el-col :span="12">
@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import store from "@/store";
 import { getType, search, create, getInfo, change } from "@/api/remain";
 export default {
   props: {

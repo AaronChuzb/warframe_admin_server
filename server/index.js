@@ -1,11 +1,10 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-14 14:54:48
+ * @LastEditTime: 2021-09-17 17:39:38
  */
 const express = require('express')
 const app = express()
-
 app.use(express.json())
 app.use(require('cors')())
 
@@ -24,7 +23,6 @@ require('./plugins/db')(app)
 
 app.use(express.static(__dirname+"/static",{index:"index.html"}));
 app.use('/index/admin', express.static(__dirname+"/web",{index:"index.html"}))
-
 app.listen(3000, ()=>{
   console.log(`服务运行于：http://localhost:${3000}`)
 })

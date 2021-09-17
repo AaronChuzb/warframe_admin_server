@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 18:18:14
+ * @LastEditTime: 2021-09-17 15:05:24
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -104,12 +104,6 @@ export const asyncRoutes = [
       {
         path: 'remain',
         name: 'remain',
-        component: () => import('@/views/advanced/remain/list'),
-        meta: { title: '遗物', icon: 'remain', role: 'advanced' }
-      },
-      {
-        path: 'remain-1',
-        name: 'remain-1',
         component: () => import('@/views/advanced/remain/list'),
         meta: { title: '遗物', icon: 'remain', role: 'advanced' }
       }

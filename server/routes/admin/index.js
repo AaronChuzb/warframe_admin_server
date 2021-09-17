@@ -1,60 +1,31 @@
 /*
  * @Date: 2021-08-21 20:03:47
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 16:51:16
+ * @LastEditTime: 2021-09-17 17:47:06
  */
 module.exports = app => {
   const express = require('express')
   // 登录校验中间件
   const auth = require('../../middleware/auth')
-  
+  const mongoose = require('mongoose')
   // token转换秘钥
   app.set('secret', 'maliho123.')
-
-/*   // 创建操作(给每一次新建都加上创建者的id,更新者也是)
-  router.post('/', async (req, res, next) => {
-    req.body.creator = req.user._id
-    req.body.updater = req.user._id
-    next()
-  }, async (req, res) => {
-    const model = await req.Model.create(req.body)
-    res.send(model)
-  })
-  // 查询列表
-  router.get('/', search(), pages(), options(), async (req, res) => {
-    const models = await req.Model.find(req.find).populate('creator').populate('updater').skip(req.start).limit(req.pageSize).exec() // 一页的内容
-    res.send({
-      data: models,
-      counts: req.counts
-    })
-  })
-  // 查询操作
-  router.get('/:id', option(), async (req, res) => {
-    const model = await req.Model.findById(req.params.id)
-    res.send(model)
-  })
-  // 修改操作
-  router.put('/:id', update(), async (req, res, next) => {
-    req.body.updater = req.user._id
-    next()
-  }, async (req, res) => {
-    const model = await req.Model.findByIdAndUpdate(req.params.id, req.body)
-    res.send(model)
-  })
-  // 删除操作
-  router.delete('/:id', async (req, res) => {
-    await req.Model.findByIdAndDelete(req.params.id)
-    res.send({
-      success: true
-    })
-  })
-
-  app.use('/admin/api/rest/:resource', auth(), resource(), router) */
 
   // 获取oss秘钥接口
   app.get('/admin/api/oss', auth(), async (req, res)=>{
     const Model = require('../../models/Oss')
     const model = await Model.findOne({}, {__v: 0})
     res.send(model)
+  })
+  // 获取统计信息
+  app.get('/admin/api/total', auth(), async (req, res)=>{
+    const remain = await (await mongoose.connections[0].collections.remains.stats()).count
+    const category = await (await mongoose.connections[0].collections.categories.stats()).count
+    const part = await (await mongoose.connections[0].collections.parts.stats()).count
+    res.send({
+      remain,
+      category,
+      part
+    })
   })
 }

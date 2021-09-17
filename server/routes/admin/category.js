@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 16:40:02
+ * @LastEditTime: 2021-09-17 14:43:10
  */
 module.exports = app => {
   const express = require('express')
@@ -45,6 +45,7 @@ module.exports = app => {
         },
       }
     }
+    console.log(params)
     // 查出某个参数总条数
     const counts = await Category.countDocuments({
       $or: [params]

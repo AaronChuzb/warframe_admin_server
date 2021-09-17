@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 14:58:33
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 18:11:29
+ * @LastEditTime: 2021-09-17 14:51:25
 -->
 <template>
   <el-dialog :title="isEdit?'编辑分类':'新增分类'" :visible.sync="show" @close="cancle" :before-close="cancle">
@@ -39,7 +39,7 @@ export default {
       id: '',
       category: {
         name: "",
-        parent: "",
+        parent: null,
       },
       isEdit: false,
       rules: {
@@ -68,7 +68,7 @@ export default {
       this.id = ""
       this.category = {
         name: "",
-        parent: "",
+        parent: null,
       },
       this.options = []
     },
