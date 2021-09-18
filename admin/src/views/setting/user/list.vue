@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 18:11:14
+ * @LastEditTime: 2021-09-18 14:47:09
 -->
 <template>
   <div class="app-container">
@@ -20,7 +20,7 @@
       </el-table-column>
       <el-table-column width="150px" label="管理员头像" align="center">
         <template slot-scope="{ row }">
-          <el-avatar shape="square" size="large" :src="row.avatar"></el-avatar>
+          <el-avatar shape="square" size="large" fit="contain" :src="row.avatar"></el-avatar>
         </template>
       </el-table-column>
       <el-table-column align="center" label="权限">
@@ -84,6 +84,27 @@
               </el-collapse>
             </el-form-item>
           </el-tab-pane>
+          <el-tab-pane label="补充信息">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="游戏ID">
+                  <el-input v-model="user.game_id" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系方式">
+                  <el-input v-model="user.contact" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="备注">
+                  <el-input type="textarea" v-model="user.remark" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,6 +132,9 @@ export default {
         avatar: "",
         roles: [],
         status: true,
+        remark: "",
+        game_id: "",
+        contact: ""
       },
       permissions: [[]], // 存放权限的二维数组
       permissionTrans: [], // 用来转换权限中英文的数组
@@ -170,6 +194,9 @@ export default {
         avatar: "",
         roles: [],
         status: true,
+        remark: "",
+        game_id: "",
+        contact: ""
       };
       this.rules.password[0].required = true;
     },

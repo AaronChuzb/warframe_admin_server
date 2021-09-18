@@ -1,26 +1,29 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 18:33:41
+ * @LastEditTime: 2021-09-18 14:07:45
 -->
 <template>
   <div class="dashboard-container">
     <!-- <div class="dashboard-text">name: {{ name }}</div> -->
     <el-row :gutter="20" v-for="(item, index) in layout" :key="index">
-      <el-col  style="margin-bottom: 20px;" :xs="child.xs" :sm="child.sm" :md="child.md" :lg="child.lg" :xl="child.xl" :span="child.span" v-for="(child, idx) in item" :key="child.title + idx">
-        <el-card >
-          <div v-if="idx == 0" class="user-info">
-            <div class="avatar">
-              <el-avatar :src="$store.getters.avatar" :size="100" fit="fill"></el-avatar>
-              <div class="change-img">更换头像</div>
-            </div>
-          </div>
-          <div v-if="idx == 1" style="height: 300px">
-            
-          </div>
+      <el-col style="margin-bottom: 20px;" :xs="child.xs" :sm="child.sm" :md="child.md" :lg="child.lg" :xl="child.xl" :span="child.span" v-for="(child, idx) in item" :key="child.title + idx">
+        <el-card>
           <!-- 图表 -->
-          <div v-if="idx == 2" style="height: 300px">
+          <div v-if="child.title === '词条统计'" style="height: 300px">
             <div id="total" style="width: 100%;height: 100%;"></div>
+          </div>
+          <div v-if="child.title === '访问统计'" style="height: 300px">
+            <h3>{{ child.title }}</h3>
+            <el-empty></el-empty>
+          </div>
+          <div v-if="child.title === '用户反馈'" style="height: 300px">
+            <h3>{{ child.title }}</h3>
+            <el-empty></el-empty>
+          </div>
+          <div v-if="child.title === '留言区'" style="height: 300px">
+            <h3>{{ child.title }}</h3>
+            <el-empty></el-empty>
           </div>
         </el-card>
       </el-col>
@@ -41,9 +44,12 @@ export default {
     return {
       layout: [
         [
-          { span: 7, title: '用户', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
-          { span: 7, title: '测试2', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
           { span: 10, title: '词条统计', xs: 24, sm: 24, md: 24, lg: 12, xl: 10 },
+          { span: 7, title: '访问统计', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
+          { span: 7, title: '用户反馈', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
+        ],
+        [
+          { span: 10, title: '留言区', xs: 24, sm: 24, md: 24, lg: 24, xl: 24 },
         ],
       ],
       option: {
@@ -87,16 +93,16 @@ export default {
           end: 100,
         },
       },
+      date: new Date(),
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
     async initChart() {
       const res = await total()
       console.log(res)
       let keys = ['category', 'part', 'remain']
-      keys.forEach((item, index)=>{
+      keys.forEach((item, index) => {
         this.option.series[0].data[index] = res[item]
       })
       echarts.init(document.getElementById('total')).setOption(this.option)
@@ -139,8 +145,12 @@ export default {
     background: rgba($color: #000000, $alpha: 0.5);
     opacity: 0;
   }
-  .change-img:hover{
+  .change-img:hover {
     opacity: 1;
   }
+}
+h3 {
+  margin: 0;
+  line-height: 1;
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-22 00:02:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 00:50:27
+ * @LastEditTime: 2021-09-18 14:27:53
  */
 const mongoose = require('mongoose')
 
@@ -16,6 +16,9 @@ const schema = new mongoose.Schema({
       return require('bcrypt').hashSync(val, 10)
     } 
   },
+  remark: { type: String }, // 用户备注
+  game_id: { type: String }, // 游戏中的ID
+  contact: { type: String }, // 联系方式
   roles: { type: Array }, // 用户权限列表
   status: { type: Boolean }, // 是否可以进行登录的状态
   creator: { type: String, ref: 'User' }, // 创建者id

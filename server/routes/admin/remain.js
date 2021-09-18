@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-14 14:40:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 00:30:56
+ * @LastEditTime: 2021-09-18 13:22:03
  */
 module.exports = app => {
   const express = require('express')
@@ -187,8 +187,14 @@ module.exports = app => {
 
   app.use('/admin/api/remain', router)
   app.use(async (err, req, res, next) => {
-    res.status(err.statusCode || 500).send({
-      message: err.message
-    })
+    if(err.code == 11000){
+      res.status(403).send({
+        message: '已存在条目，请不要重复创建'
+      })
+    } else {
+      res.status(err.statusCode || 500).send({
+        message: err.message
+      })
+    }
   })
 }

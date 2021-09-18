@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 14:38:37
+ * @LastEditTime: 2021-09-18 11:46:12
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle">
@@ -134,6 +134,9 @@ export default {
       types: [],
     };
   },
+  created(){
+    this.restForm()
+  },
   methods: {
     async getPreData() {
       this.types = await getType();
@@ -173,7 +176,7 @@ export default {
         gold: "",
         stock: false,
         getways: "已进入奥罗金宝库",
-        contribute: "",
+        contribute: this.$store.getters.name,
       };
     },
     /**

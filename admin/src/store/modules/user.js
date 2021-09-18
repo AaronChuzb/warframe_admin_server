@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 20:41:45
+ * @LastEditTime: 2021-09-18 15:01:59
  */
 import { login, logout, getInfo } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
@@ -11,8 +11,12 @@ const getDefaultState = () => {
   return {
     token: '',
     name: '',
+    username: '',
     _id: '',
     avatar: '',
+    contact: '',
+    game_id: '',
+    remark: '',
     roles: []
   }
 }
@@ -29,11 +33,23 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_NUM: (state, username) => {
+    state.username = username
+  },
   SET_ID: (state, _id) => {
     state._id = _id
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_CONTACT: (state, contact)=>{
+    state.contact = contact
+  },
+  SET_GAME: (state, game_id)=>{
+    state.game_id = game_id
+  },
+  SET_REMARK: (state, remark)=>{
+    state.remark = remark
   },
   SET_ROLES: (state, roles) =>{
     state.roles = roles
@@ -53,8 +69,12 @@ const actions = {
   async userInfo({ commit }) {
     const res = await getInfo()
     commit('SET_NAME', res.nickname)
+    commit('SET_NUM', res.username)
     commit('SET_ID', res._id)
     commit('SET_AVATAR', res.avatar)
+    commit('SET_CONTACT', res.contact)
+    commit('SET_REMARK', res.remark)
+    commit('SET_GAME', res.game_id)
     commit('SET_ROLES', res.roles)
   },
 

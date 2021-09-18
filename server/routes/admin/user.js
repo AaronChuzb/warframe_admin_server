@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-11 22:26:55
+ * @LastEditTime: 2021-09-18 14:56:01
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -42,7 +42,15 @@ module.exports = app => {
 
   // 获取用户信息与权限
   router.get('/info', auth(), async (req, res) => {
-    res.send({ _id: req.user._id, nickname: req.user.nickname, avatar: req.user.avatar, roles: req.user.roles })
+    res.send({ 
+      _id: req.user._id, 
+      username: req.user.username, 
+      nickname: req.user.nickname, 
+      avatar: req.user.avatar, 
+      roles: req.user.roles,
+      contact: req.user.contact,
+      game_id: req.user.game_id
+    })
   })
 
   // 新建用户
@@ -85,6 +93,9 @@ module.exports = app => {
         username: {
           $regex: reg
         },
+        game_id: {
+          $regex: reg
+        },
       }]
     }).exec()
     // 查出内容
@@ -94,6 +105,9 @@ module.exports = app => {
           $regex: reg
         },
         username: {
+          $regex: reg
+        },
+        game_id: {
           $regex: reg
         },
       }]

@@ -2,26 +2,26 @@
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <breadcrumb class="breadcrumb-container" />
-    <!-- <el-input placeholder="请输入内容" v-model="search" class="input-with-select">
-      <el-button slot="append" icon="el-icon-search"></el-button>
-    </el-input> -->
     <div class="right-menu">
        <template v-if="device!=='mobile'">
         <search id="header-search" class="right-menu-item" />
       </template>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
+          <div style="margin-right: 10px;cursor: pointer;">{{ $store.getters.name }}</div>
+          <el-avatar shape="square" :size="40" fit="fill" :src="$store.getters.avatar"></el-avatar>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <el-dropdown-item @click.native="$router.push('/')">
-            首页
-          </el-dropdown-item>
+          <!-- TODO: 查看个人资料 -->
+          <!-- <el-dropdown-item @click.native="showInfo">
+            个人资料
+          </el-dropdown-item> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <user-infomation ref="user"></user-infomation>
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@ import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
 import Search from '@/components/HeaderSearch'
+import UserInfomation from '@/components/UserInfomation'
 
 export default {
   data(){
@@ -41,7 +42,8 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    Search
+    Search,
+    UserInfomation
   },
   computed: {
      ...mapGetters([
@@ -58,6 +60,9 @@ export default {
       await this.$store.dispatch("user/logout");
       this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
+    showInfo(){
+      this.$refs.user.open()
+    }
   },
 };
 </script>
@@ -90,7 +95,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
-
+    display: flex;
     &:focus {
       outline: none;
     }
@@ -115,16 +120,16 @@ export default {
 
     .avatar-container {
       margin-right: 10px;
-
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
-
+        display: flex;
+        align-items: center;
         .user-avatar {
           cursor: pointer;
           width: 40px;
           height: 40px;
           border-radius: 10px;
+          margin-left: 10px;
         }
       }
     }
