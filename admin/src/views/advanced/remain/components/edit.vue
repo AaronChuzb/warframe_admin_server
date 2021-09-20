@@ -1,10 +1,10 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 11:46:12
+ * @LastEditTime: 2021-09-20 19:53:21
 -->
 <template>
-  <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle">
+  <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle" fullscreen>
     <el-form :model="remain" :rules="rules" ref="remain" label-position="top">
       <el-row :gutter="20">
         <el-col :span="12">

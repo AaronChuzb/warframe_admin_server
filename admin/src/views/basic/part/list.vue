@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 21:48:50
+ * @LastEditTime: 2021-09-20 19:58:04
 -->
 <template>
   <div class="app-container">
@@ -29,21 +29,28 @@
         <template slot-scope="{ row }">
           <template v-if="row.edit">
             <el-input v-model="row.name" class="edit-input" size="small" />
-            <el-button class="cancel-btn" size="small" icon="el-icon-document-remove" type="warning" @click="cancelEdit(row)">
-              取消
-            </el-button>
           </template>
           <span v-else>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column width="100" align="center" label="部件价格">
+        <template slot-scope="{ row }">
+          <template v-if="row.edit">
+            <el-select v-model="row.price" size="small">
+              <el-option v-for="item in priceOptions" :key="item.index" :label="item.price" :value="item.price" />
+            </el-select>
+          </template>
+          <span v-else>{{ row.price }}</span>
+        </template>
+      </el-table-column>
       <el-table-column width="120px" align="center" label="创建人">
         <template slot-scope="{ row }">
-          <span>{{ row.creator ? row.creator.nickname : "" }}</span>
+          <span>{{ row.creator ? row.creator.nickname : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="修改人">
         <template slot-scope="{ row }">
-          <span>{{ row.updater ? row.updater.nickname : "" }}</span>
+          <span>{{ row.updater ? row.updater.nickname : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="修改时间">
@@ -53,15 +60,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="200">
         <template slot-scope="{ row }">
-          <el-button v-if="row.edit" type="success" size="small" icon="el-icon-document-checked" @click="confirmEdit(row)">
-            保存
-          </el-button>
-          <el-button v-else type="primary" size="small" icon="el-icon-edit-outline" @click="(row.edit = !row.edit), (row.tempName = row.name)">
-            编辑
-          </el-button>
-          <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">
-            删除
-          </el-button>
+          <el-button v-if="row.edit" type="success" size="small" icon="el-icon-document-checked" @click="confirmEdit(row)">保存</el-button>
+          <el-button v-if="row.edit" size="small" icon="el-icon-document-remove" type="warning" @click="cancelEdit(row)">取消</el-button>
+          <el-button v-if="!row.edit" type="primary" size="small" icon="el-icon-edit-outline" @click=";(row.edit = !row.edit), ((row.tempName = row.name), (row.tempPrice = row.price))">编辑</el-button>
+          <el-button v-if="!row.edit" type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,6 +74,11 @@
         <el-form-item label="部件名称" prop="name">
           <el-input v-model="part.name" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="部件价格（奸商币）" prop="price">
+          <el-select v-model="part.price">
+            <el-option v-for="item in priceOptions" :key="item.index" :label="item.price" :value="item.price" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showNewItem = false">取 消</el-button>
@@ -81,40 +88,48 @@
   </div>
 </template>
 <script>
-import { create, list, change, deleted } from "@/api/part";
-import Pagination from "@/components/Pagination";
+import { create, list, change, deleted } from '@/api/part'
+import Pagination from '@/components/Pagination'
 export default {
-  name: "part",
+  name: 'part',
 
   components: { Pagination },
   data() {
     return {
       part: {
-        name: "",
+        name: '',
+        price: 15,
       },
       table: [],
       sortOptions: [
-        { key: { updatedAt: -1 }, label: "更新时间倒序", id: 0 },
-        { key: { updatedAt: 1 }, label: "更新时间正序", id: 1 },
-        { key: { createdAt: 1 }, label: "创建时间正序", id: 2 },
-        { key: { createdAt: -1 }, label: "创建时间倒叙", id: 3 },
+        { key: { updatedAt: -1 }, label: '更新时间倒序', id: 0 },
+        { key: { updatedAt: 1 }, label: '更新时间正序', id: 1 },
+        { key: { createdAt: 1 }, label: '创建时间正序', id: 2 },
+        { key: { createdAt: -1 }, label: '创建时间倒叙', id: 3 },
       ],
-      userOptions: [{ _id: "", index: 0, nickname: "所有人" }],
+      userOptions: [{ _id: '', index: 0, nickname: '所有人' }],
+      priceOptions: [
+        { price: 15, index: 0 },
+        { price: 25, index: 1 },
+        { price: 45, index: 2 },
+        { price: 100, index: 3 },
+      ],
       user: 0,
       sort: 0,
       page: 1,
       pageSize: 10,
-      search: "",
+      search: '',
       counts: 0,
       listLoading: false,
       showNewItem: false,
       rules: {
-        name: [{ required: true, message: "请输入部件名称", trigger: "blur" }],
+        name: [{ required: true, message: '请输入部件名称', trigger: 'blur' }],
+        price: [{ required: true, message: '请输入部件价格', trigger: 'blur' }],
       },
-    };
+    }
   },
   created() {
-    this.getData();
+    this.getData()
   },
   methods: {
     /**
@@ -123,18 +138,19 @@ export default {
      */
     newItem(formName) {
       this.showNewItem = false
-      this.$refs[formName].validate( async (valid) => {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
           await create(this.part.name)
           this.$message({
-            type: "success",
-            message: "添加成功!",
-          });
+            type: 'success',
+            message: '添加成功!',
+          })
+          this.part = { name: '', price: 0 }
           this.getData()
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
 
     /**
@@ -142,93 +158,90 @@ export default {
      * @param {Object} row 表格行数据
      */
     deleteItem(row) {
-      this.$confirm(`确定删除“${row.name}”`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then( async () => {
+      this.$confirm(`确定删除“${row.name}”`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
         await deleted(row._id)
         this.$message({
-          type: "success",
-          message: "删除成功!",
-        });
+          type: 'success',
+          message: '删除成功!',
+        })
         this.getData()
-      });
+      })
     },
 
     /**
      * @description: 搜索列表
-     * @param {*} e 
+     * @param {*} e
      */
     searchList(e) {
-      this.page = 1;
-      this.getData();
+      this.page = 1
+      this.getData()
     },
 
     /**
      * @description: 获取表格数据
      */
     async getData() {
-      this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id);
-      this.table = res.data.map((e) => {
-        e.edit = false;
-        return e;
-      });
+      this.listLoading = true
+      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id)
+      this.table = res.data.map(e => {
+        e.edit = false
+        return e
+      })
       if (this.userOptions.length < 2) {
         this.userOptions = this.userOptions.concat(
           res.userOptions.map((e, index) => {
-            e.index = index + 1;
-            return e;
+            e.index = index + 1
+            return e
           })
-        );
+        )
       }
-      this.counts = res.counts;
-      this.listLoading = false;
+      this.counts = res.counts
+      this.listLoading = false
     },
     /**
      * @description: 取消编辑
      * @param {Object} row
      */
     cancelEdit(row) {
-      row.name = row.tempName;
-      row.edit = false;
+      row.name = row.tempName
+      row.price = row.tempPrice
+      row.edit = false
       this.$message({
-        message: "用户取消编辑",
-        type: "warning",
-      });
+        message: '用户取消编辑',
+        type: 'warning',
+      })
     },
     /**
      * @description: 提交编辑
      * @param {Object} row
      */
     async confirmEdit(row) {
-      row.edit = false;
-      row.tempName = row.name;
+      row.edit = false
+      row.tempName = row.name
+      row.tempPrice = row.price
       // 深拷贝一下,如果是浅拷贝会删去原来列表中的值,导致不能二次更改
       let data = JSON.parse(JSON.stringify(row))
       // 删除对象多余元素
       delete data.edit
       delete data.tempName
+      delete data.tempPrice
       await change(row._id, data)
       this.$message({
-        message: "编辑成功",
-        type: "success",
-      });
+        message: '编辑成功',
+        type: 'success',
+      })
     },
   },
-};
+}
 </script>
 
 <style scoped>
 .edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  transform: translate(0, -50%);
-  right: 15px;
-  top: 50%;
+  text-align: center;
 }
 .filter-container {
   margin-bottom: 15px;
