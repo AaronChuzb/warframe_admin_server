@@ -1,12 +1,13 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 17:39:38
+ * @LastEditTime: 2021-09-20 20:25:42
  */
 const express = require('express')
 const app = express()
 app.use(express.json())
 app.use(require('cors')())
+require('./plugins/db')(app)
 
 // 后台管理路由
 require('./routes/admin')(app)
@@ -19,7 +20,10 @@ require('./routes/admin/category')(app)
 // 遗物模块
 require('./routes/admin/remain')(app)
 
-require('./plugins/db')(app)
+// app端路由
+require('./routes/app/index')(app)
+
+
 
 app.use(express.static(__dirname+"/static",{index:"index.html"}));
 app.use('/index/admin', express.static(__dirname+"/web",{index:"index.html"}))

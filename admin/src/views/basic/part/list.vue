@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 19:58:04
+ * @LastEditTime: 2021-09-20 21:57:18
 -->
 <template>
   <div class="app-container">
@@ -140,7 +140,7 @@ export default {
       this.showNewItem = false
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          await create(this.part.name)
+          await create(this.part)
           this.$message({
             type: 'success',
             message: '添加成功!',
