@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-24 16:49:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 17:55:10
+ * @LastEditTime: 2021-09-24 20:10:35
  */
 module.exports = app => {
   const express = require('express')
@@ -96,11 +96,18 @@ module.exports = app => {
       date: 1,
       version: 1
     })
+    .populate('creator', {
+      _id: 1
+    })
+    .populate('updater', {
+      _id: 1
+    })
     res.send(model)
   })
 
   // 修改日志
-  router.put('/edit/:id', auth(), actions(), async (req, res) => {
+  router.put('/change/:id', auth(), actions(), async (req, res) => {
+    console.log(req.body)
     await Log.findByIdAndUpdate(req.params.id, req.body)
     res.send({
       success: true

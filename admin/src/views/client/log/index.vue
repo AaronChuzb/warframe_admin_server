@@ -1,16 +1,21 @@
 <!--
  * @Date: 2021-09-24 17:37:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 18:28:21
+ * @LastEditTime: 2021-09-24 20:24:11
 -->
 <template>
   <div class="app-container">
     <!-- 功能区 -->
     <div class="filter-container">
       <el-input v-model="search" placeholder="按名称搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
-      <el-tooltip class="item" effect="dark" content="排序方式" placement="top-start">
-        <el-select v-model="sort" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
-          <el-option v-for="item in sortOptions" :key="item.id" :label="item.label" :value="item.id" />
+      <el-tooltip class="item" effect="dark" content="日志类型" placement="top-start">
+        <el-select v-model="type" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in typeOptions" :key="item._id" :label="item.name" :value="item._id" />
+        </el-select>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="状态" placement="top-start">
+        <el-select v-model="status" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in statusOptions" :key="item.id" :label="item.label" :value="item.id" />
         </el-select>
       </el-tooltip>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">搜索</el-button>
@@ -23,7 +28,7 @@
           <span>{{ row.type.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="150px" label="版本号" align="center">
+      <el-table-column width="150px" label="客户端版本号" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.version }}</span>
         </template>
@@ -33,14 +38,14 @@
           <span>{{ row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="150px" label="日期" align="center">
+      <el-table-column width="150px" label="日志日期" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.date }}</span>
         </template>
       </el-table-column>
       <el-table-column width="150px" label="状态" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.status }}</span>
+          <span>{{ statusOptions[row.status].label }}</span>
         </template>
       </el-table-column>
       <el-table-column min-height="250rpx" align="center" label="操作">
@@ -51,48 +56,51 @@
       </el-table-column>
     </el-table>
     <pagination v-show="counts > 0" :total="counts" :page.sync="page" :limit.sync="pageSize" @pagination="getData" />
-    <edit ref="edit" :show="showNewItem" @cancle="cancleEdit" @done="showNewItem = false, getData()"></edit>
+    <edit ref="edit" :show="showNewItem" @cancle="cancleEdit" @done=";(showNewItem = false), getData()"></edit>
   </div>
 </template>
 <script>
-import { list, deleteLog} from "@/api/log";
-import Pagination from "@/components/Pagination";
-import Edit from "./components/edit.vue"
+import { list, deleteLog, getType } from '@/api/log'
+import Pagination from '@/components/Pagination'
+import Edit from './components/edit.vue'
 export default {
-  name: "log",
+  name: 'log',
   components: { Pagination, Edit },
   data() {
     return {
       table: [], // 存放列表的数据
       page: 1, // 获取的数据的页数
       pageSize: 10, // 一页的数据长度,默认10条
-      search: "", // 搜索的关键字
+      search: '', // 搜索的关键字
       counts: 0, // 获取的数据总条数
-      sort: 0, // 排序方式
       listLoading: false, // 列表加载状态
       showNewItem: false, // 显示表单
-      sortOptions: [ // 排序方式选项
-        { key: { rank: -1 }, label: "按权重排序", id: 0 },
-        { key: { updatedAt: -1 }, label: "更新时间倒序", id: 1 },
-        { key: { updatedAt: 1 }, label: "更新时间正序", id: 2 },
-        { key: { createdAt: 1 }, label: "创建时间正序", id: 3 },
-        { key: { createdAt: -1 }, label: "创建时间倒叙", id: 4 },
+      type: '',
+      status: '',
+      statusOptions: [
+        { label: '未完成', id: 0 },
+        { label: '进行中', id: 1 },
+        { label: '已完成', id: 2 },
+        { label: '全部', id: '' },
       ],
-    };
+      typeOptions: [{ _id: '', name: '全部' }],
+    }
   },
   async created() {
-    await this.getData(); 
+    await this.getData()
+    const res = await getType()
+    this.typeOptions = this.typeOptions.concat(res)
   },
   methods: {
-    newLog(){
+    newLog() {
       this.showNewItem = true
       this.$refs.edit.getTypes()
     },
-    openEdit(row){
+    openEdit(row) {
       this.showNewItem = true
       this.$refs.edit.getInfoAndEdit(row._id)
     },
-    cancleEdit(){
+    cancleEdit() {
       this.showNewItem = false
     },
     /**
@@ -100,36 +108,36 @@ export default {
      * @param {Object} row 一行的数据，包含id等关键信息
      */
     async deleteItem(row) {
-      this.$confirm(`确定删除“${row.type.name}”`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定删除“${row.type.name}”`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(async () => {
-        await deleteLog(row._id);
+        await deleteLog(row._id)
         this.$message({
-          type: "success",
-          message: "删除成功!",
-        });
-        this.getData();
-      });
+          type: 'success',
+          message: '删除成功!',
+        })
+        this.getData()
+      })
     },
     /**
      * @description: 搜索列表
      * @param {*} e
      */
     searchList(e) {
-      this.page = 1;
-      this.getData();
+      this.page = 1
+      this.getData()
     },
     async getData() {
-      this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search, '', '');
-      this.table = res.data;
-      this.counts = res.counts;
-      this.listLoading = false;
+      this.listLoading = true
+      const res = await list(this.page, this.pageSize, this.search, this.type, this.status)
+      this.table = res.data
+      this.counts = res.counts
+      this.listLoading = false
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -147,5 +155,4 @@ export default {
   display: flex;
   align-items: center;
 }
-
 </style>
