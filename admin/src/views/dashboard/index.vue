@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 14:07:45
+ * @LastEditTime: 2021-09-24 16:46:17
 -->
 <template>
   <div class="dashboard-container">
@@ -45,8 +45,8 @@ export default {
       layout: [
         [
           { span: 10, title: '词条统计', xs: 24, sm: 24, md: 24, lg: 12, xl: 10 },
-          { span: 7, title: '访问统计', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
-          { span: 7, title: '用户反馈', xs: 12, sm: 12, md: 12, lg: 6, xl: 7 },
+          { span: 7, title: '用户反馈', xs: 24, sm: 12, md: 12, lg: 6, xl: 7 },
+          { span: 7, title: '访问统计', xs: 24, sm: 12, md: 12, lg: 6, xl: 7 },
         ],
         [
           { span: 10, title: '留言区', xs: 24, sm: 24, md: 24, lg: 24, xl: 24 },

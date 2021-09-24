@@ -1,12 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 21:32:33
- */
-/*
- * @Date: 2021-09-14 14:40:38
- * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 13:22:03
+ * @LastEditTime: 2021-09-24 10:36:09
  */
 module.exports = app => {
   const express = require('express')
@@ -47,22 +42,26 @@ module.exports = app => {
       $and: []
     }
     // 最后根据部件来
-    if(req.query.search != ''){
+    if (req.query.search != '') {
       const parts = await Part.find({
         name: {
           $regex: reg
         }
-      },{_id: 1})
-      let arr = parts.map(e=>{
+      }, {
+        _id: 1
+      })
+      let arr = parts.map(e => {
         return e._id
       })
       let parent = {
         $or: []
       }
-      let keys = ['copper_1', 'copper_2','copper_3','silver_1','silver_2','gold',]
-      keys.forEach(item=>{
+      let keys = ['copper_1', 'copper_2', 'copper_3', 'silver_1', 'silver_2', 'gold', ]
+      keys.forEach(item => {
         let child = {}
-        child[item] = { $in: arr }
+        child[item] = {
+          $in: arr
+        }
         parent.$or.push(child)
       })
       parent.$or.push({
@@ -79,19 +78,29 @@ module.exports = app => {
         }
       })
     }
-    if(req.query.type != ''){
+    if (req.query.type != '') {
       let obj = {}
       obj['type'] = req.query.type
       params.$and.push(obj)
     }
     // 查出某个参数总条数
-    console.log(params)
     const counts = await Remain.countDocuments(params).exec()
     // 查出内容
-    const models = await Remain.find(params)
-      .populate({ path: 'type',  select: { name: 1, _id: 0 }})
-      .populate({ path: 'creator', select: 'nickname' })
-      .populate({ path: 'updater', select: 'nickname' })
+    const models = await Remain.find(params, {
+        updater: 0,
+        creator: 0,
+        __v: 0,
+        createdAt: 0,
+        updatedAt: 0,
+        getways: 0
+      })
+      .populate({
+        path: 'type',
+        select: {
+          name: 1,
+          _id: 0
+        }
+      })
       .populate({
         path: 'copper_1',
         select: {
@@ -134,14 +143,10 @@ module.exports = app => {
           price: 1,
           _id: 0
         }
-      }).populate({
-        path: 'creator',
-        select: '_id'
-      }).populate({
-        path: 'updater',
-        select: '_id'
       })
-      .sort({ createdAt: 1 })
+      .sort({
+        createdAt: 1
+      })
       .skip(start)
       .limit(pageSize)
       .exec() // 一页的内容
@@ -152,37 +157,62 @@ module.exports = app => {
     })
   })
   router.get('/info/:id', async (req, res) => {
+    console.log(req.params)
     const model = await Remain.findById(req.params.id, {
       _id: 0,
-      name: 1,
-      type: 1,
-      stock: 1,
-      getways: 1,
-      contribute: 1
-    }).populate({
+      __v: 0,
+      creator: 0,
+      updater: 0
+    })
+    .populate({
+      path: 'type',
+      select: {
+        name: 1,
+        _id: 0
+      }
+    })
+    .populate({
       path: 'copper_1',
-      select: 'name'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     }).populate({
       path: 'copper_2',
-      select: 'name'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     }).populate({
       path: 'copper_3',
-      select: 'name'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     }).populate({
       path: 'silver_1',
-      select: 'name'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     }).populate({
       path: 'silver_2',
-      select: 'name'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     }).populate({
       path: 'gold',
-      select: 'name'
-    }).populate({
-      path: 'creator',
-      select: '_id'
-    }).populate({
-      path: 'updater',
-      select: '_id'
+      select: {
+        name: 1,
+        price: 1,
+        _id: 0
+      }
     })
     res.send(model)
   })

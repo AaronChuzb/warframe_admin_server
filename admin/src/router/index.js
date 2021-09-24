@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 15:05:24
+ * @LastEditTime: 2021-09-24 17:38:37
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -106,6 +106,33 @@ export const asyncRoutes = [
         name: 'remain',
         component: () => import('@/views/advanced/remain/list'),
         meta: { title: '遗物', icon: 'remain', role: 'advanced' }
+      }
+    ]
+  },
+  {
+    path: '/client',
+    component: Layout,
+    redirect: '/client/people',
+    name: 'Client',
+    meta: { title: '客户端管理', icon: 'client', role: 'client' },
+    children: [
+      {
+        path: 'people',
+        name: 'people',
+        component: () => import('@/views/client/people/index'),
+        meta: { title: '鸣谢人员', icon: 'people', role: 'people' }
+      },
+      {
+        path: 'suggest',
+        name: 'suggest',
+        component: () => import('@/views/client/suggest/index'),
+        meta: { title: '意见反馈', icon: 'suggest', role: 'suggest' }
+      },
+      {
+        path: 'log',
+        name: 'log',
+        component: () => import('@/views/client/log/index'),
+        meta: { title: '日志管理', icon: 'suggest', role: 'log' }
       }
     ]
   },

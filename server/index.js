@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 20:25:42
+ * @LastEditTime: 2021-09-24 17:58:23
  */
 const express = require('express')
 const app = express()
@@ -19,9 +19,16 @@ require('./routes/admin/part')(app)
 require('./routes/admin/category')(app)
 // 遗物模块
 require('./routes/admin/remain')(app)
+// 鸣谢人员
+require('./routes/admin/people')(app)
+// 意见反馈
+require('./routes/admin/suggest')(app)
+// 日志管理
+require('./routes/admin/log')(app)
 
 // app端路由
 require('./routes/app/index')(app)
+require('./routes/app/mine')(app)
 
 
 
