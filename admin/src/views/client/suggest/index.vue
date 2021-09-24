@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-24 11:40:14
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 16:41:09
+ * @LastEditTime: 2021-09-24 21:13:27
 -->
 <template>
   <div class="app-container">
@@ -32,6 +32,11 @@
           <span>{{ row.text }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="150" label="联系方式">
+        <template slot-scope="{ row }">
+          <span>{{ row.contact != null?row.contact:'' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="状态">
         <template slot-scope="{ row }">
           <span>{{ row.handle == 1 ? '已处理' :row.handle == 2 ? '已搁置': '未处理' }}</span>
@@ -42,12 +47,12 @@
           <span>{{ row.updater && row.handle != 0 ? row.updater.nickname : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="处理时间">
+      <el-table-column min-width="150" align="center" label="处理时间">
         <template slot-scope="{ row }">
           <span>{{ row.handle != 0 ? $parseTime(row.updatedAt) : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" min-width="300">
+      <el-table-column align="center" label="操作" min-width="250">
         <template slot-scope="{ row }">
           <el-button type="success" size="small" icon="el-icon-document-checked" @click="doneItem(row, 1)">完成</el-button>
           <el-button type="warning" size="small" icon="el-icon-document-remove" @click="doneItem(row, 2)">搁置</el-button>
