@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 19:53:21
+ * @LastEditTime: 2021-09-25 17:54:49
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle" fullscreen>
@@ -115,7 +115,7 @@ export default {
         silver_2: "",
         gold: "",
         stock: false,
-        getways: "已进入奥罗金宝库",
+        getways: "这个遗物目前正处于圣装宝库",
         contribute: "",
       },
       isEdit: false,
@@ -175,7 +175,7 @@ export default {
         silver_2: "",
         gold: "",
         stock: false,
-        getways: "已进入奥罗金宝库",
+        getways: "这个遗物目前正处于圣装宝库",
         contribute: this.$store.getters.name,
       };
     },

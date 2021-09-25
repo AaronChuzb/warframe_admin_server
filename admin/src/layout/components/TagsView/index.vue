@@ -251,7 +251,7 @@ export default {
   .contextmenu {
     margin: 0;
     background: #fff;
-    z-index: 3000;
+    z-index: 99999999000;
     position: absolute;
     list-style-type: none;
     padding: 5px 0;

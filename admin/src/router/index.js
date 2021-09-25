@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 20:27:32
+ * @LastEditTime: 2021-09-24 22:21:20
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -133,6 +133,12 @@ export const asyncRoutes = [
         name: 'log',
         component: () => import('@/views/client/log/index'),
         meta: { title: '日志管理', icon: 'log', role: 'log' }
+      },
+      {
+        path: 'about',
+        name: 'about',
+        component: () => import('@/views/client/about/index'),
+        meta: { title: '关于内容', icon: 'about', role: 'about' }
       }
     ]
   },

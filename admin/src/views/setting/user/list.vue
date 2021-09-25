@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 14:47:09
+ * @LastEditTime: 2021-09-24 23:59:50
 -->
 <template>
   <div class="app-container">
@@ -205,7 +205,7 @@ export default {
      * @param {Object} e 上传的图片文件
      */
     async uploadAvatar(e) {
-      const res = await this.$uploader(e.file);
+      const res = await this.$uploader(e.file, '/avatar');
       this.user.avatar = res;
     },
     /**

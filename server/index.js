@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 17:58:23
+ * @LastEditTime: 2021-09-25 00:10:55
  */
 const express = require('express')
 const app = express()
@@ -25,6 +25,8 @@ require('./routes/admin/people')(app)
 require('./routes/admin/suggest')(app)
 // 日志管理
 require('./routes/admin/log')(app)
+// 关于管理
+require('./routes/admin/about')(app)
 
 // app端路由
 require('./routes/app/index')(app)

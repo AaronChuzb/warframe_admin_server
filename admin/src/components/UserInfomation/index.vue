@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-18 14:15:34
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 15:13:01
+ * @LastEditTime: 2021-09-24 23:59:04
 -->
 <template>
   <el-dialog title="个人资料" :visible.sync="show" :append-to-body="true">
@@ -84,7 +84,7 @@ export default {
      * @param {Object} e 上传的图片文件
      */
     async uploadAvatar(e) {
-      const res = await this.$uploader(e.file);
+      const res = await this.$uploader(e.file, '/avatar');
       this.user.avatar = res;
     },
   },

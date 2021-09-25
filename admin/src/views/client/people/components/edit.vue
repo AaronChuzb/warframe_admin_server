@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-24 14:07:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 15:09:51
+ * @LastEditTime: 2021-09-24 23:59:41
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑人员' : '新增人员'" :visible.sync="show" @close="cancle" :before-close="cancle">
@@ -76,7 +76,7 @@ export default {
      * @param {Object} e 上传的图片文件
      */
     async uploadAvatar(e) {
-      const res = await this.$uploader(e.file)
+      const res = await this.$uploader(e.file, '/avatar')
       this.people.avatar = res
     },
     async getInfoAndEdit(id) {
