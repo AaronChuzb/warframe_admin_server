@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 10:36:09
+ * @LastEditTime: 2021-09-26 17:21:21
  */
 module.exports = app => {
   const express = require('express')
@@ -81,6 +81,17 @@ module.exports = app => {
     if (req.query.type != '') {
       let obj = {}
       obj['type'] = req.query.type
+      params.$and.push(obj)
+    }
+    if (req.query.stock != ''){
+      let stock
+      if(req.query.stock == '1'){
+        stock = true
+      } else {
+        stock = false
+      }
+      let obj = {}
+      obj['stock'] = stock
       params.$and.push(obj)
     }
     // 查出某个参数总条数
