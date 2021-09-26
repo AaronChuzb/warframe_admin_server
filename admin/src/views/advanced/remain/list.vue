@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 21:51:12
+ * @LastEditTime: 2021-09-26 17:38:38
 -->
 <template>
   <div class="app-container">
@@ -15,6 +15,11 @@
       <el-tooltip class="item" effect="dark" content="遗物分类" placement="top-start">
         <el-select v-model="type" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
           <el-option v-for="item in typeOptions" :key="item._id" :label="item.name" :value="item.index" />
+        </el-select>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="是否入库" placement="top-start">
+        <el-select v-model="stock" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in stockOption" :key="item.label" :label="item.label" :value="item.id" />
         </el-select>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="更新者" placement="top-start">
@@ -73,6 +78,12 @@ export default {
       ],
       userOptions: [{ _id: "", index: 0, nickname: "所有人" }],
       typeOptions: [{ _id: "", index: 0, name: "所有分类" }],
+      stockOption: [
+        { label: "全部", id: 0, stock: '' },
+        { label: "已入库", id: 1, stock: '1' },
+        { label: "未入库", id: 2, stock: '2' },
+      ],
+      stock: 0,
       type: 0,
       user: 0,
       sort: 0,
@@ -167,7 +178,7 @@ export default {
      */
     async getData() {
       this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id, this.typeOptions[this.type]._id);
+      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id, this.typeOptions[this.type]._id, this.stockOption[this.stock].stock);
       this.table = res.data
       if (this.userOptions.length < 2) {
         this.userOptions = this.userOptions.concat(

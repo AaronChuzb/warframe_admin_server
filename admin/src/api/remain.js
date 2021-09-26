@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-14 15:04:14
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-14 18:27:36
+ * @LastEditTime: 2021-09-26 17:37:35
  */
 import request from '@/utils/request'
 
@@ -24,9 +24,9 @@ export function create(data) {
 }
 
 // 遗物列表
-export function list(page, pageSize, search, sort, user, type) {
+export function list(page, pageSize, search, sort, user, type, stock) {
   return request.get('/remain/list', {params:{
-    page, pageSize, search, sort, user, type
+    page, pageSize, search, sort, user, type, stock
   }})
 }
 
