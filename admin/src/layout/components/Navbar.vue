@@ -13,9 +13,9 @@
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <!-- TODO: 查看个人资料 -->
-          <!-- <el-dropdown-item @click.native="showInfo">
+          <el-dropdown-item @click.native="showInfo">
             个人资料
-          </el-dropdown-item> -->
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -61,7 +61,7 @@ export default {
       this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
     showInfo(){
-      this.$refs.user.open()
+      this.$router.push(`/mine/index`);
     }
   },
 };
