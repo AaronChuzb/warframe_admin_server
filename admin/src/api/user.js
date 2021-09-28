@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:00:39
+ * @LastEditTime: 2021-09-28 16:04:34
  */
 import request from '@/utils/request'
 
@@ -67,3 +67,18 @@ export function changeMyPass(oldPass, newPass) {
     newPass
   })
 }
+
+export function changeMyContact(contact) {
+  return request.put(`/user/change_my_contact`, {
+    contact
+  })
+}
+
+export function changeMyGameId(game_id) {
+  return request.put(`/user/change_my_game_id`, {
+    game_id
+  })
+}
+
+
+

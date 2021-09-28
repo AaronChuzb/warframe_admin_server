@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-27 17:17:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:39:51
+ * @LastEditTime: 2021-09-28 17:09:15
 -->
 <template>
   <div class="app-container">
@@ -29,7 +29,7 @@
           </div>
           <div class="right">
             <div class="content">{{ $store.getters.game_id }}</div>
-            <el-button type="primary">设置</el-button>
+            <el-button type="primary" @click="showGameIdChange = true">设置</el-button>
           </div>
         </div>
       </el-col>
@@ -44,7 +44,7 @@
           </div>
           <div class="right">
             <div class="content">{{ $store.getters.contact }}</div>
-            <el-button type="primary">设置</el-button>
+            <el-button type="primary" @click="showContactChange = true">设置</el-button>
           </div>
         </div>
       </el-col>
@@ -71,6 +71,7 @@
     </div>
     <Pass :show="showPassChange" @cancle="showPassChange = false"></Pass>
     <Contact :show="showContactChange" @cancle="showContactChange = false"></Contact>
+    <Game :show="showGameIdChange" @cancle="showGameIdChange = false"></Game>
   </div>
 </template>
 
@@ -78,18 +79,21 @@
 import Title from './components/title.vue'
 import Pass from './components/pass.vue'
 import Contact from './components/contact.vue'
+import Game from './components/game.vue'
 import { asyncRoutes } from "@/router";
 export default {
   components: {
     Title,
     Pass,
-    Contact
+    Contact,
+    Game
   },
   data(){
     return{
       permissionTrans: [], // 用来转换权限中英文的数组
       showPassChange: false,
-      showContactChange: false
+      showContactChange: false,
+      showGameIdChange: false,
     }
   },
   async created() {

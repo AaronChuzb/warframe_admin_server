@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:41:28
+ * @LastEditTime: 2021-09-28 17:07:22
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -168,6 +168,36 @@ module.exports = app => {
     res.send({
       type: 'success',
       message: '修改密码成功！'
+    })
+  })
+  // 修改联系方式
+  router.put('/change_my_contact', auth(), async (req, res) => {
+    const {
+      contact
+    } = req.body
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: {
+        contact: contact
+      }
+    })
+    res.send({
+      type: 'success',
+      message: '修改联系方式成功！'
+    })
+  })
+  // 修改角色ID
+  router.put('/change_my_game_id', auth(), async (req, res) => {
+    const {
+      game_id
+    } = req.body
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: {
+        game_id: game_id
+      }
+    })
+    res.send({
+      type: 'success',
+      message: '修改角色ID成功！'
     })
   })
 

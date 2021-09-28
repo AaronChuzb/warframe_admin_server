@@ -1,13 +1,13 @@
 <!--
- * @Date: 2021-09-28 15:33:56
+ * @Date: 2021-09-28 16:00:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 17:05:03
+ * @LastEditTime: 2021-09-28 17:09:53
 -->
 <template>
-  <el-dialog title="设置新的联系方式" :visible.sync="show" :before-close="cancle">
+  <el-dialog title="设置新的游戏内ID" :visible.sync="show" :before-close="cancle">
     <el-form :model="form" :rules="rules" status-icon ref="form">
-      <el-form-item label="QQ、微信、电话或者邮箱" prop="contact">
-        <el-input v-model="form.contact" autocomplete="off"></el-input>
+      <el-form-item label="" prop="game_id">
+        <el-input v-model="form.game_id" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { changeMyContact } from '@/api/user'
+import { changeMyGameId } from '@/api/user'
 export default {
   props: {
     show: false,
@@ -26,24 +26,24 @@ export default {
   data() {
     return {
       form: {
-        contact: '',
+        game_id: '',
       },
       rules: {
-        contact: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
+        game_id: [{ required: true, message: '请输入游戏内ID', trigger: 'blur' }],
       },
     }
   },
   methods: {
     cancle() {
       this.form = {
-        contact: '',
+        game_id: '',
       }
       this.$emit('cancle')
     },
     async save(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          const res = await changeMyContact(this.form.contact)
+          const res = await changeMyGameId(this.form.game_id)
           this.$message({
             type: res.type,
             message: res.message,

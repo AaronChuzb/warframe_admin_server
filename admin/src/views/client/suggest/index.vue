@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-24 11:40:14
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 21:13:27
+ * @LastEditTime: 2021-09-28 17:47:35
 -->
 <template>
   <div class="app-container">
@@ -21,42 +21,46 @@
         搜索
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
+    <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%" :row-class-name="tableRowClassName">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" class="table-expand">
+
+            <el-form-item label="反馈内容：">
+              <span>{{ props.row.text }}</span>
+            </el-form-item>
+            <el-form-item label="联系方式：">
+              <span>{{ props.row.contact != null ? props.row.contact : '' }}</span>
+            </el-form-item>
+            <el-form-item label="创建时间：">
+              <span>{{ $parseTime(props.row.createdAt) }}</span>
+            </el-form-item>
+            <el-form-item label="处理时间：">
+              <span>{{ props.row.handle != 0 ? $parseTime(props.row.updatedAt) : '' }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column width="150" align="center" label="类型">
         <template slot-scope="{ row }">
           <span>{{ row.type }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="300" label="反馈内容">
-        <template slot-scope="{ row }">
-          <span>{{ row.text }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="150" label="联系方式">
-        <template slot-scope="{ row }">
-          <span>{{ row.contact != null?row.contact:'' }}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="状态">
         <template slot-scope="{ row }">
-          <span>{{ row.handle == 1 ? '已处理' :row.handle == 2 ? '已搁置': '未处理' }}</span>
+          <span>{{ row.handle == 1 ? '已处理' : row.handle == 2 ? '已搁置' : '未处理' }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="处理人">
+      <el-table-column width="150" align="center" label="处理人">
         <template slot-scope="{ row }">
           <span>{{ row.updater && row.handle != 0 ? row.updater.nickname : '' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="150" align="center" label="处理时间">
-        <template slot-scope="{ row }">
-          <span>{{ row.handle != 0 ? $parseTime(row.updatedAt) : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="250">
         <template slot-scope="{ row }">
           <el-button type="success" size="small" icon="el-icon-document-checked" @click="doneItem(row, 1)">完成</el-button>
           <el-button type="warning" size="small" icon="el-icon-document-remove" @click="doneItem(row, 2)">搁置</el-button>
-          <el-button type="danger" size="small" icon="el-icon-document-delete">删除</el-button>
+          <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,7 +68,7 @@
   </div>
 </template>
 <script>
-import { list, changeStatus } from '@/api/suggest'
+import { list, changeStatus, deleteItem } from '@/api/suggest'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'suggest',
@@ -96,6 +100,14 @@ export default {
     this.getData()
   },
   methods: {
+    tableRowClassName({ row }) {
+      if (row.handle === 2) {
+        return 'warning-row'
+      } else if (row.handle === 1) {
+        return 'success-row'
+      }
+      return ''
+    },
     async doneItem(row, status) {
       row.handle = status
       await changeStatus(row._id, row)
@@ -109,13 +121,13 @@ export default {
      * @description: 删除一行数据
      * @param {Object} row 表格行数据
      */
-    deleteItem(row) {
-      this.$confirm(`确定删除“${row.name}”`, '提示', {
+    deleteRow(row) {
+      this.$confirm(`确定删除“${row.type}”`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(async () => {
-        await deleted(row._id)
+        await deleteItem(row._id)
         this.$message({
           type: 'success',
           message: '删除成功!',
@@ -147,7 +159,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .edit-input {
   text-align: center;
 }
@@ -155,5 +167,26 @@ export default {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
+}
+
+::v-deep .el-table .warning-row {
+  background: oldlace;
+}
+
+::v-deep .el-table .success-row {
+  background: #f0f9eb;
+}
+.table-expand {
+  font-size: 0;
+  padding-left: 50px;
+}
+.table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+::v-deep.table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
 }
 </style>
