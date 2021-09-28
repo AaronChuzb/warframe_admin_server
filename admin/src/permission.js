@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 20:45:00
+ * @LastEditTime: 2021-09-28 17:58:31
  */
 import router from './router'
 import { resetRouter } from './router'
@@ -51,7 +51,6 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           await store.dispatch('user/userInfo')
-          // console.log(accessRoutes)
           const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.roles)
           router.options.routes = store.getters.permission_route
           accessRoutes.forEach(item=>{
@@ -59,7 +58,6 @@ router.beforeEach(async(to, from, next) => {
           })
           next({ ...to, replace: true })
         } catch (error) {
-          console.log(error)
           // 失败后代表有人篡改token，删除token后返回登录页
           await store.dispatch('user/resetToken')
           Message.error('用户信息错误，需要重新登录！')
