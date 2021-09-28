@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 14:56:01
+ * @LastEditTime: 2021-09-28 15:41:28
  */
 module.exports = app => {
   const assert = require('http-assert')
@@ -23,7 +23,6 @@ module.exports = app => {
     const user = await User.findOne({
       username
     }).select('+password')
-    console.log(user)
     assert(user, 422, '用户不存在')
     // 2.判断是否停用
     let status = user.status
@@ -42,11 +41,11 @@ module.exports = app => {
 
   // 获取用户信息与权限
   router.get('/info', auth(), async (req, res) => {
-    res.send({ 
-      _id: req.user._id, 
-      username: req.user.username, 
-      nickname: req.user.nickname, 
-      avatar: req.user.avatar, 
+    res.send({
+      _id: req.user._id,
+      username: req.user.username,
+      nickname: req.user.nickname,
+      avatar: req.user.avatar,
       roles: req.user.roles,
       contact: req.user.contact,
       game_id: req.user.game_id
@@ -54,26 +53,33 @@ module.exports = app => {
   })
 
   // 新建用户
-  router.post('/create', auth(), async(req, res)=>{
+  router.post('/create', auth(), async (req, res) => {
     const model = await User.create(req.body)
     res.send(model)
   })
 
   // 删除用户
   router.delete('/delete/:id', auth(), async (req, res) => {
-    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, { message: '不允许操作超级用户' })
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), 403, {
+      message: '不允许操作超级用户'
+    })
     await User.findByIdAndDelete(req.params.id)
     res.send({
       success: true
     })
   })
   // 修改用户获取用户信息
-  router.get('/userinfo/:id', auth(),  async (req, res) => {
-    const model = await User.findById(req.params.id, {__v: 0, _id: 0, createdAt: 0, updatedAt: 0})
+  router.get('/userinfo/:id', auth(), async (req, res) => {
+    const model = await User.findById(req.params.id, {
+      __v: 0,
+      _id: 0,
+      createdAt: 0,
+      updatedAt: 0
+    })
     res.send(model)
   })
   // 修改用户信息
-  router.put('/change/:id', auth(),  async (req, res) => {
+  router.put('/change/:id', auth(), async (req, res) => {
     const model = await User.findByIdAndUpdate(req.params.id, req.body)
     res.send(model)
   })
@@ -111,7 +117,9 @@ module.exports = app => {
           $regex: reg
         },
       }]
-    }, { __v: 0 }).skip(start).limit(pageSize).exec() // 一页的内容
+    }, {
+      __v: 0
+    }).skip(start).limit(pageSize).exec() // 一页的内容
     res.send({
       data: models,
       counts: counts,
@@ -119,16 +127,48 @@ module.exports = app => {
   })
 
   // 停用用户的登录权限
-  router.put('/stop/:id', auth(),  async (req, res) => {
-    assert(!(req.params.id == '61250a30e66c9709dc2082bb'),'不允许操作超级用户', 403 )
-    await User.updateOne({_id:req.params.id},{status:req.body.status}, (err, docs)=>{
-      if(err){
-        res.send({success: false})
+  router.put('/stop/:id', auth(), async (req, res) => {
+    assert(!(req.params.id == '61250a30e66c9709dc2082bb'), '不允许操作超级用户', 403)
+    await User.updateOne({
+      _id: req.params.id
+    }, {
+      status: req.body.status
+    }, (err, docs) => {
+      if (err) {
+        res.send({
+          success: false
+        })
       } else {
-        console.log('done')
-        res.send({success: true})
+        res.send({
+          success: true
+        })
       }
     }).lean()
+  })
+
+
+  // 用户自行操作的部分
+  // 修改密码
+  router.put('/change_my_pass', auth(), async (req, res) => {
+    const {
+      oldPass,
+      newPass
+    } = req.body
+    // 1.先获取用户校验密码
+    const user = await User.findById(req.user._id).select('+password')
+    // 2.对比原密码
+    const isValid = require('bcrypt').compareSync(oldPass, user.password)
+    assert(isValid, 422, '原密码不正确')
+    // 3.验证通过修改密码
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: {
+        password: newPass
+      }
+    })
+    res.send({
+      type: 'success',
+      message: '修改密码成功！'
+    })
   })
 
   app.use('/admin/api/user', router)

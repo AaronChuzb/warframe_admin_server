@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-18 15:01:59
+ * @LastEditTime: 2021-09-28 15:40:31
  */
 import { login, logout, getInfo } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
@@ -61,7 +61,6 @@ const actions = {
   async login({ commit }, userInfo) {
     const { username, password } = userInfo
     const res = await login(username, password)
-    console.log(res)
     commit('SET_TOKEN', res.token)
     setToken(res.token)
   },
@@ -79,8 +78,8 @@ const actions = {
   },
 
   // 用户登出
-  logout({ commit, state }) {
-    removeToken() // must remove  token  first
+  async logout({ commit, state }) {
+    await removeToken() // must remove  token  first
     resetRouter()
     commit('RESET_STATE')
   },

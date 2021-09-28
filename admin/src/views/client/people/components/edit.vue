@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-24 14:07:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 23:59:41
+ * @LastEditTime: 2021-09-28 15:42:45
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑人员' : '新增人员'" :visible.sync="show" @close="cancle" :before-close="cancle">
@@ -83,7 +83,6 @@ export default {
       this.id = id
       this.isEdit = true
       const res = await getPeopleInfo(id)
-      console.log(res)
       this.people = res
     },
     restForm() {

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 23:59:50
+ * @LastEditTime: 2021-09-28 15:42:56
 -->
 <template>
   <div class="app-container">
@@ -335,7 +335,6 @@ export default {
      * @param {String} en 权限的英文名
      */
     transRole(en) {
-      console.log(en);
       if (en == "all") {
         return "超级管理员";
       }

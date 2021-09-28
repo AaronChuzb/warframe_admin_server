@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-24 11:20:05
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 15:11:26
+ * @LastEditTime: 2021-09-28 15:41:11
  */
 module.exports = app => {
   const express = require('express')
@@ -65,7 +65,6 @@ module.exports = app => {
 
   app.use('/admin/api/people', router)
   app.use(async (err, req, res, next) => {
-    console.log(err.code)
     if(err.code == 11000){
       res.status(403).send({
         message: '已存在该人员，请不要重复添加'

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-24 10:15:20
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-25 00:59:16
+ * @LastEditTime: 2021-09-28 15:41:41
  */
 module.exports = app => {
   const express = require('express')
@@ -18,7 +18,6 @@ module.exports = app => {
 
   // 提交反馈
   router.post('/suggest', async (req, res) => {
-    console.log(req.body)
     await Suggest.create(req.body)
     res.send({
       message: '提交反馈成功，祝您武运昌隆。'

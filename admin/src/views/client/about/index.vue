@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-24 22:18:20
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-25 00:56:54
+ * @LastEditTime: 2021-09-28 15:42:41
 -->
 <template>
   <div class="app-container">
@@ -41,7 +41,6 @@ export default {
   methods: {
     async getData() {
       const res = await getInfo()
-      console.log(res)
       if (res != '') {
         this.isEdit = true
         this.id = res._id

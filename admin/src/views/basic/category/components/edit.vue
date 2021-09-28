@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 14:58:33
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 14:51:25
+ * @LastEditTime: 2021-09-28 15:42:37
 -->
 <template>
   <el-dialog :title="isEdit?'编辑分类':'新增分类'" :visible.sync="show" @close="cancle" :before-close="cancle">
@@ -54,7 +54,6 @@ export default {
       this.id = id
       this.isEdit = true
       const res = await getInfo(id)
-      console.log(res)
       let data = JSON.parse(JSON.stringify(res))
       if(res.parent != null){
         this.options = [data.parent]

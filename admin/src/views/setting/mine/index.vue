@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-27 17:17:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-27 18:26:47
+ * @LastEditTime: 2021-09-28 15:39:51
 -->
 <template>
   <div class="app-container">
@@ -60,22 +60,71 @@
             </div>
           </div>
           <div class="right">
-            <el-button>修改</el-button>
+            <el-button @click="showPassChange = true">修改</el-button>
           </div>
         </div>
       </el-col>
     </el-row>
     <Title title="个人权限"></Title>
-    <div class=""></div>
+    <div class="roles">
+      <el-tag type="success" style="margin-right: 10px; margin-bottom: 5px" v-for="item in $store.getters.roles" :key="item">{{ transRole(item) }}</el-tag>
+    </div>
+    <Pass :show="showPassChange" @cancle="showPassChange = false"></Pass>
+    <Contact :show="showContactChange" @cancle="showContactChange = false"></Contact>
   </div>
 </template>
 
 <script>
 import Title from './components/title.vue'
+import Pass from './components/pass.vue'
+import Contact from './components/contact.vue'
+import { asyncRoutes } from "@/router";
 export default {
   components: {
     Title,
+    Pass,
+    Contact
   },
+  data(){
+    return{
+      permissionTrans: [], // 用来转换权限中英文的数组
+      showPassChange: false,
+      showContactChange: false
+    }
+  },
+  async created() {
+    // 循环异步路由获取权限列表
+    asyncRoutes.forEach((item, index) => {
+      if (item.meta) {
+        this.permissionTrans.push({
+          title: item.meta.title,
+          role: item.meta.role,
+        });
+        item.children.forEach((child) => {
+          this.permissionTrans.push({
+            title: child.meta.title,
+            role: child.meta.role,
+          });
+        });
+      }
+    });
+  },
+  methods:{
+    /**
+     * @description: 替换权限英文为中文
+     * @param {String} en 权限的英文名
+     */
+    transRole(en) {
+      if (en == "all") {
+        return "超级管理员";
+      }
+      for (let i = 0; i < this.permissionTrans.length; i++) {
+        if (this.permissionTrans[i].role == en) {
+          return this.permissionTrans[i].title;
+        }
+      }
+    }
+  }
 }
 </script>
 
@@ -138,5 +187,8 @@ export default {
       font-size: 20px;
     }
   }
+}
+.roles{
+  margin-top: 20px;
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-10 17:21:36
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 23:58:41
+ * @LastEditTime: 2021-09-28 15:42:20
  */
 import OSS from 'ali-oss'
 import store from '@/store'
@@ -19,7 +19,6 @@ const uploader = async (e, path) => {
   }
   
   const { region, accessKeyId, accessKeySecret, bucket } = store.getters.getOss.oss
-  console.log(region, accessKeyId, accessKeySecret, bucket)
   const client = new OSS({
     region,
     accessKeyId,

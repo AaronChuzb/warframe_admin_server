@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-24 15:45:34
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 16:42:43
+ * @LastEditTime: 2021-09-28 15:41:20
  */
 module.exports = app => {
   const express = require('express')
@@ -26,7 +26,6 @@ module.exports = app => {
     if(req.query.type != ''){
       params['type'] = req.query.type
     }
-    console.log(req.query.status)
     if(req.query.status != ''){
       params['handle'] = parseInt(req.query.status)
     }
@@ -50,7 +49,6 @@ module.exports = app => {
     req.body.updater = req.user._id
     next()
   }, async (req, res) => {
-    console.log(req.body)
     await Suggest.findByIdAndUpdate(req.params.id, req.body)
     res.send({
       success: true

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-26 17:38:38
+ * @LastEditTime: 2021-09-28 15:42:33
 -->
 <template>
   <div class="app-container">
@@ -97,9 +97,7 @@ export default {
   },
   async created() {
     this.getData();
-    console.log(this.table)
     const res = await getType();
-    console.log(res);
     if (this.typeOptions.length < 2) {
       this.typeOptions = this.typeOptions.concat(
         res.map((e, index) => {

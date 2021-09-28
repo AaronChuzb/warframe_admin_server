@@ -70,7 +70,6 @@ export default {
       this.show = false
     },
     change(val) {
-      console.log(val)
       this.$router.push(val.path)
       this.search = ''
       this.options = []

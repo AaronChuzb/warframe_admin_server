@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 21:59:57
+ * @LastEditTime: 2021-09-28 15:41:06
  */
 module.exports = app => {
   const express = require('express')
@@ -73,7 +73,6 @@ module.exports = app => {
 
   app.use('/admin/api/part', router)
   app.use(async (err, req, res, next) => {
-    console.log(err.code)
     if(err.code == 11000){
       res.status(403).send({
         message: '已存在条目，请不要重复创建'

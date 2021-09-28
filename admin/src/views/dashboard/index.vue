@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 16:46:17
+ * @LastEditTime: 2021-09-28 15:42:50
 -->
 <template>
   <div class="dashboard-container">
@@ -100,7 +100,6 @@ export default {
   methods: {
     async initChart() {
       const res = await total()
-      console.log(res)
       let keys = ['category', 'part', 'remain']
       keys.forEach((item, index) => {
         this.option.series[0].data[index] = res[item]

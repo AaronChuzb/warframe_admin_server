@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-26 17:21:21
+ * @LastEditTime: 2021-09-28 15:41:32
  */
 module.exports = app => {
   const express = require('express')
@@ -33,7 +33,6 @@ module.exports = app => {
 
   // 获取遗物列表
   router.get('/list', async (req, res) => {
-    console.log(req.query)
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
     const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
     const start = page * pageSize // 从什么地方开始查
@@ -168,7 +167,6 @@ module.exports = app => {
     })
   })
   router.get('/info/:id', async (req, res) => {
-    console.log(req.params)
     const model = await Remain.findById(req.params.id, {
       _id: 0,
       __v: 0,

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-10 17:23:37
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-10 18:05:11
+ * @LastEditTime: 2021-09-28 15:42:15
  */
 /*
  * @Date: 2021-09-01 22:15:06
@@ -29,7 +29,6 @@ const mutations = {
 const actions = {
   async getOss({ commit }){
     const res = await getOssInfo()
-    console.log('OSS秘钥1',res)
     let oss = res
     commit('CHANGE_OSS', oss)
   },

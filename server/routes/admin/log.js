@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-24 16:49:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-24 20:10:35
+ * @LastEditTime: 2021-09-28 15:40:57
  */
 module.exports = app => {
   const express = require('express')
@@ -60,7 +60,6 @@ module.exports = app => {
       params['type'] = req.query.type
     }
     // 查出某个参数总条数
-    console.log(params)
     const counts = await Log.countDocuments(params).exec()
     // 查出内容
     const models = await Log.find(params, {
@@ -107,7 +106,6 @@ module.exports = app => {
 
   // 修改日志
   router.put('/change/:id', auth(), actions(), async (req, res) => {
-    console.log(req.body)
     await Log.findByIdAndUpdate(req.params.id, req.body)
     res.send({
       success: true
