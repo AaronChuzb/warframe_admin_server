@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-25 17:54:49
+ * @LastEditTime: 2021-09-29 10:47:18
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle" fullscreen>
@@ -147,7 +147,7 @@ export default {
     async getInfoAndEdit(id) {
       this.id = id;
       this.isEdit = true;
-      this.getPreData();
+      await this.getPreData();
       const res = await getInfo(id);
       // 处理部件
       let keys = [ 'copper_1', 'copper_2', 'copper_3', 'silver_1', 'silver_2', 'gold' ]
