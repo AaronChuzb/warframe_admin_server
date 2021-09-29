@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-28 17:17:10
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-29 14:33:40
+ * @LastEditTime: 2021-09-29 15:42:45
 -->
 <template>
   <div class="app-container">
@@ -151,6 +151,7 @@ export default {
       if (newAlias) {
         row.alias.push(newAlias)
       }
+      console.log(row.showInputAlias)
       row.showInputAlias = false
       this.newAlias = ''
     },
@@ -174,16 +175,17 @@ export default {
      * @param {Object} row
      */
     async confirmEdit(row) {
-      this.saveNewAlias()
+      this.saveNewAlias(row)
       row.edit = false
       row.tempName = row.name
       row.tempAlias = row.alias
       // 深拷贝一下,如果是浅拷贝会删去原来列表中的值,导致不能二次更改
-      let data = JSON.parse(JSON.stringify(row))
+      let data = this.$lodash.cloneDeep(row)
       // 删除对象多余元素
       delete data.edit
       delete data.tempName
       delete data.tempAlias
+      delete data.showInputAlias
       // 将数据中的数组转换成,连接的字符串
       data.alias = data.alias.join(',')
       await change(row._id, data)

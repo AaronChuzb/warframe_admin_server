@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-29 14:05:09
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-29 14:42:55
+ * @LastEditTime: 2021-09-29 15:41:02
 -->
 <template>
   <el-dialog title="新增别名转换" :visible.sync="show" :before-close="cancle">
@@ -92,7 +92,7 @@ export default {
       this.$refs[formName].validate(async valid => {
         if (valid) {
           // 深拷贝并转换成字符串
-          var data = this.$_.cloneDeep(this.form)
+          var data = this.$lodash.cloneDeep(this.form)
           data.alias = data.alias.join(',')
           await create(data)
           this.$message({
