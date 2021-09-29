@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:41:32
+ * @LastEditTime: 2021-09-29 15:29:23
  */
 module.exports = app => {
   const express = require('express')
@@ -9,7 +9,8 @@ module.exports = app => {
   const Remain = require('../../models/Remain')
   const Category = require('../../models/Category')
   const Part = require('../../models/Part')
-  const User = require('../../models/User')
+  // 别名转换中间件
+  const trans = require('../../middleware/trans')
   const router = express.Router({
     mergeParams: true
   })
@@ -32,21 +33,40 @@ module.exports = app => {
   })
 
   // 获取遗物列表
-  router.get('/list', async (req, res) => {
+  router.get('/list', trans(), async (req, res) => {
     const page = (parseInt(req.query.page) - 1 || 0) // 查询第几页，默认第一页
     const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
     const start = page * pageSize // 从什么地方开始查
-    const reg = new RegExp(req.query.search, 'i'); // 查询通配符
+    const reg = new RegExp(req.query.search, 'i') // 查询通配符
     let params = {
       $and: []
     }
-    // 最后根据部件来
-    if (req.query.search != '') {
-      const parts = await Part.find({
+    let aliasParams = {
+      $or: [{
         name: {
           $regex: reg
         }
-      }, {
+      }]
+    }
+    // 存在别名先处理别名参数
+    if (req.realName != '') {
+      const aliasReg = new RegExp(req.realName, 'i')
+      aliasParams = {
+        $or: [{
+          name: {
+            $regex: reg
+          }
+        }, {
+          name: {
+            $regex: aliasReg
+          }
+        }]
+      }
+    }
+    // 根据部件来
+    if (req.query.search != '') {
+      // 别名参数只作用于部件，不作用与遗物名称
+      const parts = await Part.find(aliasParams, {
         _id: 1
       })
       let arr = parts.map(e => {
@@ -82,9 +102,9 @@ module.exports = app => {
       obj['type'] = req.query.type
       params.$and.push(obj)
     }
-    if (req.query.stock != ''){
+    if (req.query.stock != '') {
       let stock
-      if(req.query.stock == '1'){
+      if (req.query.stock == '1') {
         stock = true
       } else {
         stock = false
@@ -168,61 +188,61 @@ module.exports = app => {
   })
   router.get('/info/:id', async (req, res) => {
     const model = await Remain.findById(req.params.id, {
-      _id: 0,
-      __v: 0,
-      creator: 0,
-      updater: 0
-    })
-    .populate({
-      path: 'type',
-      select: {
-        name: 1,
-        _id: 0
-      }
-    })
-    .populate({
-      path: 'copper_1',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    }).populate({
-      path: 'copper_2',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    }).populate({
-      path: 'copper_3',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    }).populate({
-      path: 'silver_1',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    }).populate({
-      path: 'silver_2',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    }).populate({
-      path: 'gold',
-      select: {
-        name: 1,
-        price: 1,
-        _id: 0
-      }
-    })
+        _id: 0,
+        __v: 0,
+        creator: 0,
+        updater: 0
+      })
+      .populate({
+        path: 'type',
+        select: {
+          name: 1,
+          _id: 0
+        }
+      })
+      .populate({
+        path: 'copper_1',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      }).populate({
+        path: 'copper_2',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      }).populate({
+        path: 'copper_3',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      }).populate({
+        path: 'silver_1',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      }).populate({
+        path: 'silver_2',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      }).populate({
+        path: 'gold',
+        select: {
+          name: 1,
+          price: 1,
+          _id: 0
+        }
+      })
     res.send(model)
   })
   app.use('/app/api/index', router)
