@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-25 00:10:55
+ * @LastEditTime: 2021-09-29 11:01:36
  */
 const express = require('express')
 const app = express()
@@ -17,6 +17,8 @@ require('./routes/admin/user')(app)
 require('./routes/admin/part')(app)
 // 基础分类模块
 require('./routes/admin/category')(app)
+// 别名转换模块
+require('./routes/admin/alias')(app)
 // 遗物模块
 require('./routes/admin/remain')(app)
 // 鸣谢人员

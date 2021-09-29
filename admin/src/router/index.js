@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-27 17:26:04
+ * @LastEditTime: 2021-09-29 11:30:41
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -115,6 +115,16 @@ export const asyncRoutes = [{
           title: '遗物部件',
           icon: 'part',
           role: 'part'
+        }
+      },
+      {
+        path: 'alias',
+        name: 'alias',
+        component: () => import('@/views/basic/alias/index'),
+        meta: {
+          title: '别名转换',
+          icon: 'alias',
+          role: 'alias'
         }
       }
     ]
