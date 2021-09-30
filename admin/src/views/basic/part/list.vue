@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-02 12:27:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-20 21:57:18
+ * @LastEditTime: 2021-09-30 17:21:29
 -->
 <template>
   <div class="app-container">
@@ -112,7 +112,8 @@ export default {
         { price: 15, index: 0 },
         { price: 25, index: 1 },
         { price: 45, index: 2 },
-        { price: 100, index: 3 },
+        { price: 65, index: 3 },
+        { price: 100, index: 4 },
       ],
       user: 0,
       sort: 0,
