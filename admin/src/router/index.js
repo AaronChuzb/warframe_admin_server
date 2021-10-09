@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-29 11:30:41
+ * @LastEditTime: 2021-10-09 15:05:24
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -146,7 +146,16 @@ export const asyncRoutes = [{
       meta: {
         title: '遗物',
         icon: 'remain',
-        role: 'advanced'
+        role: 'remain'
+      }
+    }, {
+      path: 'rotation',
+      name: 'rotation',
+      component: () => import('@/views/advanced/rotation/index'),
+      meta: {
+        title: '钢铁奖励轮换',
+        icon: 'rotation',
+        role: 'rotation'
       }
     }]
   },

@@ -1,12 +1,12 @@
 <!--
  * @Date: 2021-09-17 15:00:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-17 15:02:29
+ * @LastEditTime: 2021-10-08 11:25:02
 -->
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="search" placeholder="按名称搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
+      <el-input v-model="search" placeholder="按节点名称搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
       <el-tooltip class="item" effect="dark" content="排序方式" placement="top-start">
         <el-select v-model="sort" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
           <el-option v-for="item in sortOptions" :key="item.id" :label="item.label" :value="item.id" />
@@ -21,7 +21,7 @@
         搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">
-        新增部件
+        新增节点
       </el-button>
     </div>
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
