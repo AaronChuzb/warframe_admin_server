@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-16 14:50:20
+ * @LastEditTime: 2021-10-09 16:54:18
  */
 import Vue from 'vue'
 
@@ -17,6 +17,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import { parseTime } from "@/utils/index"
 import uploader from "@/utils/upload"
+import deleteImg from "@/utils/deleteImg"
 import _ from 'lodash'
 
 Vue.use(ElementUI)
@@ -24,6 +25,7 @@ Vue.use(ElementUI)
 Vue.prototype.$parseTime = parseTime
 
 Vue.prototype.$uploader = uploader
+Vue.prototype.$deleteImg = deleteImg
 Vue.prototype.$lodash = _
 
 Vue.config.productionTip = false
