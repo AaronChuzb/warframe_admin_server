@@ -1,17 +1,20 @@
 <!--
  * @Date: 2021-10-09 15:10:32
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-09 15:38:02
+ * @LastEditTime: 2021-10-10 17:26:40
 -->
 <template>
-  <div class="item">
-    <div class="price-box">
-      <el-image style="width: 18px; height: 18px" :src="require('@/assets/gj.png')" fit="cover"></el-image>
-      <div class="price">{{ itemData.price }}</div>
+  <el-card :body-style="{ padding: '0px' }">
+    <img :src="itemData.img" class="image" />
+    <div style="padding: 6px; font-size: 12px">
+      <div>{{ itemData.name }}</div>
+      <div style="display: flex">{{ itemData.price }}<el-image style="width: 12px; height: 12px" :src="require('@/assets/gj.png')" fit="fill"></el-image></div>
+      <div class="bottom clearfix">
+        <el-button type="text" class="button" @click="edit(itemData._id)">编辑</el-button>
+        <el-button type="text" class="button danger" @click="deleteItem(itemData._id, itemData.name)">删除</el-button>
+      </div>
     </div>
-    <el-image style="width: 100%; height: 100%" :src="itemData.img" fit="fill"></el-image>
-    <view class="name">{{ itemData.name }}</view>
-  </div>
+  </el-card>
 </template>
 
 <script>
@@ -31,6 +34,14 @@ export default {
   data() {
     return {}
   },
+  methods: {
+    edit(id) {
+      this.$emit('edit', id)
+    },
+    deleteItem(id, name) {
+      this.$emit('deleted', id, name)
+    },
+  },
 }
 </script>
 
@@ -39,6 +50,12 @@ export default {
   position: relative;
   width: 100%;
 }
+.image {
+  width: 100%;
+  // min-height: 200px;
+  display: block;
+  background: #273337;
+}
 .price-box {
   position: absolute;
   display: flex;
@@ -46,5 +63,9 @@ export default {
   z-index: 999;
   .price {
   }
+}
+.danger {
+  color: #f56c6c;
+  margin-right: 10px;
 }
 </style>

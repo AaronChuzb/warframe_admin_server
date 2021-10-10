@@ -1,16 +1,27 @@
 <!--
  * @Date: 2021-10-09 15:38:37
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-09 17:11:25
+ * @LastEditTime: 2021-10-10 17:27:52
 -->
 <template>
   <div>
-    <div @click="show = true">打开表单</div>
+    <el-card :body-style="{ padding: '0px' }" >
+    <img @click="show = true" :src="require('@/assets/plus.png')" class="image" />
+    <div style="padding: 10px; font-size: 12px">
+      <div @click="show = true">新增</div>
+      <div style="display: flex;opacity: 0;">新增<el-image style="width: 12px; height: 12px" :src="require('@/assets/gj.png')" fit="fill"></el-image></div>
+      <div></div>
+      <div class="bottom clearfix">
+        <el-button type="text" class="button" style="opacity: 0;">1</el-button>
+        <el-button type="text" class="button danger" style="opacity: 0;">1</el-button>
+      </div>
+    </div>
+  </el-card>
     <el-dialog :title="isEdit ? '编辑奖励' : '新增奖励'" :visible.sync="show" @close="cancle" :before-close="cancle">
       <el-form :model="rotation" :rules="rules" ref="rotation" label-position="top">
         <el-row :gutter="10">
           <el-col :span="8">
-            <el-form-item label="奖励图片">
+            <el-form-item label="奖励图片" prop="img">
               <el-upload class="avatar-uploader" action="" :http-request="uploadImg" :show-file-list="false">
                 <img v-if="rotation.img" :src="rotation.img" class="avatar" />
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -22,7 +33,7 @@
               <el-input v-model="rotation.name" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="钢精数量" prop="price">
-              <el-input v-model="rotation.name" autocomplete="off"></el-input>
+              <el-input v-model="rotation.price" autocomplete="off"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -36,7 +47,7 @@
 </template>
 
 <script>
-// import { create, getInfo, change } from "@/api/rotation";
+import { create, getInfo, change } from "@/api/rotation";
 export default {
   props: {
     data: {
@@ -51,9 +62,12 @@ export default {
         img: '',
         name: '',
         price: '',
+        is_ratation: false,
+        rank: null
       },
       isEdit: false,
       rules: {
+        img: [{ required: true, message: '请上传奖励图片', trigger: 'blur' }],
         name: [{ required: true, message: '请输入奖励名称', trigger: 'blur' }],
         price: [{ required: true, message: '请输入兑换奖励钢精数量', trigger: 'blur' }],
       },
@@ -69,7 +83,6 @@ export default {
     async uploadImg(e) {
       // 存在链接代表已经上传过图片，要重新上传先删除旧图片
       if(this.rotation.img != ''){
-        console.log(this.rotation.img.split('com/')[1])
         await this.$deleteImg(this.rotation.img.split('com/')[1])
       }
       const res = await this.$uploader(e.file, '/rotation');
@@ -78,10 +91,11 @@ export default {
     async getInfoAndEdit(id) {
       this.id = id
       this.isEdit = true
-      // const res = await getInfo(id)
+      const res = await getInfo(id)
+      console.log(res)
       let data = JSON.parse(JSON.stringify(res))
-
       this.rotation = res
+      this.show = true
     },
     restForm() {
       this.isEdit = false
@@ -90,12 +104,17 @@ export default {
         img: '',
         name: '',
         price: '',
+        is_ratation: false,
+        rank: null
       }
     },
     /**
      * @description: 关闭表单
      */
-    cancle() {
+    async cancle() {
+      if(this.rotation.img != ''){
+        await this.$deleteImg(this.rotation.img.split('com/')[1])
+      }
       this.restForm()
       this.show = false
     },
@@ -108,21 +127,21 @@ export default {
         if (valid) {
           if (!this.isEdit) {
             // 新建
-            // await create(this.rotation);
-            await this.$refs.upload.submit();
+            await create(this.rotation);
             this.$message({
               type: 'success',
               message: '添加成功!',
             })
           } else {
             // 编辑
-            // await change(this.id, this.rotation)
+            await change(this.id, this.rotation)
             this.$message({
               type: 'success',
               message: '编辑成功!',
             })
           }
           this.restForm()
+          this.show = false
           this.$emit('done')
         } else {
           return false
@@ -159,4 +178,10 @@ export default {
   height: 150px;
   display: block;
 }
+.image {
+  width: 100%;
+  display: block;
+  background: #999;
+}
+
 </style>
