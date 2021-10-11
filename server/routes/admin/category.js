@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-02 14:12:56
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:40:52
+ * @LastEditTime: 2021-10-11 15:38:24
  */
 module.exports = app => {
   const express = require('express')
@@ -11,6 +11,8 @@ module.exports = app => {
   const auth = require('../../middleware/auth')
   // 添加用户记录中间件(一定要放在auth之后)
   const actions = require('../../middleware/actionsRecord')
+
+  const permission = require('../../middleware/permission')
   const router = express.Router({
     mergeParams: true
   })
@@ -97,7 +99,7 @@ module.exports = app => {
   })
 
   // 删除分类
-  router.delete('/delete/:id', auth(), async (req, res) => {
+  router.delete('/delete/:id', auth(), permission(), async (req, res) => {
     await Category.findByIdAndDelete(req.params.id)
     res.send({
       success: true
