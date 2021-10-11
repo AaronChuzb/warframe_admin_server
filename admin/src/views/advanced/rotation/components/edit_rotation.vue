@@ -1,7 +1,7 @@
 <!--
- * @Date: 2021-10-09 15:38:37
+ * @Date: 2021-10-11 10:24:45
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-11 13:58:32
+ * @LastEditTime: 2021-10-11 13:58:37
 -->
 <template>
   <div>
@@ -17,7 +17,7 @@
       </div>
     </div>
   </el-card>
-    <el-dialog :title="isEdit ? '编辑常驻奖励' : '新增常驻奖励'" :visible.sync="show" @close="cancle" :before-close="cancle">
+    <el-dialog :title="isEdit ? '编辑轮换奖励' : '新增轮换奖励'" :visible.sync="show" @close="cancle" :before-close="cancle">
       <el-form :model="rotation" :rules="rules" ref="rotation" label-position="top">
         <el-row :gutter="10">
           <el-col :span="8">
@@ -37,6 +37,9 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="顺序位置" prop="rank" v-if="isEdit">
+          <el-input type="number" v-model="rotation.rank" autocomplete="off"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancle">取 消</el-button>
@@ -47,12 +50,13 @@
 </template>
 
 <script>
-import { create, getInfo, change } from "@/api/rotation";
+import { create, getInfo, change_rotation } from "@/api/rotation";
 export default {
   props: {
-    data: {
-      type: Object,
-    },
+    rankCounts: {
+      type: Number,
+      default: 0
+    }
   },
   data() {
     return {
@@ -62,7 +66,7 @@ export default {
         img: '',
         name: '',
         price: '',
-        is_rotation: false,
+        is_rotation: true,
         rank: null
       },
       isEdit: false,
@@ -92,10 +96,9 @@ export default {
       this.id = id
       this.isEdit = true
       const res = await getInfo(id)
-      console.log(res)
-      let data = JSON.parse(JSON.stringify(res))
       this.rotation = res
       this.show = true
+      this.rules.rank = [{ required: true, message: '排序位置不能为空，不懂改就不要动这里的数据', trigger: 'blur' }]
     },
     restForm() {
       this.isEdit = false
@@ -104,7 +107,7 @@ export default {
         img: '',
         name: '',
         price: '',
-        is_rotation: false,
+        is_rotation: true,
         rank: null
       }
     },
@@ -124,6 +127,7 @@ export default {
         if (valid) {
           if (!this.isEdit) {
             // 新建
+            this.rotation.rank = this.rankCounts
             await create(this.rotation);
             this.$message({
               type: 'success',
@@ -131,7 +135,7 @@ export default {
             })
           } else {
             // 编辑
-            await change(this.id, this.rotation)
+            await change_rotation(this.id, this.rotation)
             this.$message({
               type: 'success',
               message: '编辑成功!',

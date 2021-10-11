@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-10 15:51:31
+ * @LastEditTime: 2021-10-11 13:55:10
  */
 const express = require('express')
 const app = express()
@@ -22,7 +22,7 @@ require('./routes/admin/alias')(app)
 // 遗物模块
 require('./routes/admin/remain')(app)
 // 钢铁奖励模块
-require('./routes/admin/ratation')(app)
+require('./routes/admin/rotation')(app)
 // 鸣谢人员
 require('./routes/admin/people')(app)
 // 意见反馈
