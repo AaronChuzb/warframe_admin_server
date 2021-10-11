@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:42:50
+ * @LastEditTime: 2021-10-11 15:25:45
 -->
 <template>
   <div class="dashboard-container">
@@ -17,9 +17,16 @@
             <h3>{{ child.title }}</h3>
             <el-empty></el-empty>
           </div>
-          <div v-if="child.title === '用户反馈'" style="height: 300px">
+          <div v-if="child.title === '最新用户反馈'" style="height: 300px;">
             <h3>{{ child.title }}</h3>
-            <el-empty></el-empty>
+            <div class="suggest-list" style="height: 250px;overflow: auto;margin-top:20px">
+              <el-collapse v-model="activeName" accordion>
+                <el-collapse-item v-for="suggest in suggestList" :key="suggest._id" :title="suggest.type" :name="suggest._id">
+                  <div>{{ suggest.text }}</div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+            <el-empty v-if="suggestList.length == 0"></el-empty>
           </div>
           <div v-if="child.title === '留言区'" style="height: 300px">
             <h3>{{ child.title }}</h3>
@@ -42,15 +49,14 @@ export default {
   },
   data() {
     return {
+      activeName: '',
       layout: [
         [
           { span: 10, title: '词条统计', xs: 24, sm: 24, md: 24, lg: 12, xl: 10 },
-          { span: 7, title: '用户反馈', xs: 24, sm: 12, md: 12, lg: 6, xl: 7 },
+          { span: 7, title: '最新用户反馈', xs: 24, sm: 12, md: 12, lg: 6, xl: 7, data: [] },
           { span: 7, title: '访问统计', xs: 24, sm: 12, md: 12, lg: 6, xl: 7 },
         ],
-        [
-          { span: 10, title: '留言区', xs: 24, sm: 24, md: 24, lg: 24, xl: 24 },
-        ],
+        [{ span: 10, title: '留言区', xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }],
       ],
       option: {
         title: {
@@ -94,12 +100,15 @@ export default {
         },
       },
       date: new Date(),
+      suggestList: [],
     }
   },
   created() {},
   methods: {
     async initChart() {
       const res = await total()
+      this.suggestList = res.suggest
+      this.activeName = res.suggest[0]._id
       let keys = ['category', 'part', 'remain']
       keys.forEach((item, index) => {
         this.option.series[0].data[index] = res[item]
@@ -151,5 +160,8 @@ export default {
 h3 {
   margin: 0;
   line-height: 1;
+}
+.suggest-list::-webkit-scrollbar {
+  width: 0;
 }
 </style>
