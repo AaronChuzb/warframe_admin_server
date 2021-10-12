@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-10-09 15:10:32
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-11 15:00:10
+ * @LastEditTime: 2021-10-12 10:19:19
 -->
 <template>
   <el-card :body-style="{ padding: '0px' }">
@@ -37,7 +37,11 @@ export default {
   methods: {
     edit(id) {
       let type
-      this.itemData.is_rotation?(type = true):(type = false)
+      if(this.itemData.is_rotation){
+        type = true
+      } else {
+        type = false
+      }
       this.$emit('edit', id, type)
     },
     deleteItem(id, name) {

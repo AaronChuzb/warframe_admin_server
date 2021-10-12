@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-10-09 14:59:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-11 14:29:55
+ * @LastEditTime: 2021-10-12 10:22:51
 -->
 <template>
   <div class="app-container">
@@ -50,15 +50,6 @@ export default {
   },
   async created() {
     this.getData()
-    // 获取下周一的时间戳
-    let today = new Date()
-    //设置时间为早上08:00:00
-    today.setHours(8, 0, 0, 0)
-    //获得今天与下星期一相隔几天
-    let days = 7 - (today.getDay() ? today.getDay() : 7) + 1
-    //今天早上08:00:00的时间戳 加上今天与下周一的日差秒数得到结果时间戳
-    let result = today.getTime() + days * 86400000
-    console.log(result)
   },
   methods: {
     /**
@@ -71,7 +62,8 @@ export default {
       this.rotationCounts = res.rotationCounts
     },
     editItem(id, type) {
-      if (type) {
+      console.log(type)
+      if (!type) {
         this.$refs.edit.getInfoAndEdit(id)
       } else {
         this.$refs.edit_rotation.getInfoAndEdit(id)

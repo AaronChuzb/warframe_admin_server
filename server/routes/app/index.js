@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-29 15:29:23
+ * @LastEditTime: 2021-10-12 15:12:55
  */
 module.exports = app => {
   const express = require('express')
@@ -38,6 +38,7 @@ module.exports = app => {
     const pageSize = (parseInt(req.query.pageSize) || 10) // 查询页大小，默认10
     const start = page * pageSize // 从什么地方开始查
     const reg = new RegExp(req.query.search, 'i') // 查询通配符
+    let searchRealName = req.query.search
     let params = {
       $and: []
     }
@@ -50,6 +51,7 @@ module.exports = app => {
     }
     // 存在别名先处理别名参数
     if (req.realName != '') {
+      searchRealName = req.realName
       const aliasReg = new RegExp(req.realName, 'i')
       aliasParams = {
         $or: [{
@@ -183,7 +185,8 @@ module.exports = app => {
     res.send({
       data: models,
       counts: counts,
-      pageLen: models.length
+      pageLen: models.length,
+      realName: searchRealName
     })
   })
   router.get('/info/:id', async (req, res) => {

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-10 15:47:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-11 14:20:34
+ * @LastEditTime: 2021-10-12 11:45:45
  */
 module.exports = app => {
   const express = require('express')
@@ -112,23 +112,30 @@ module.exports = app => {
       minute: 0,
       dayOfWeek: 1
     }, async function () {
-      // 1.从第一个开始完后顺延rank+1
+      // 1.将所有的位置往前移一位 rank-1
       await Rotation.updateMany({
         is_rotation: true
       }, {
         $inc: {
-          rank: 1
+          rank: -1
         }
       })
-      // 2.找到最大的哪一个将它提到第一个，形成闭环
+      // 2.找到最大的那一个
       const max = await Rotation.findOne({
         is_rotation: true
       }).sort({
         rank: -1
       })
+      // 3.找到最小的哪一个也就是0
+      const min = await Rotation.findOne({
+        is_rotation: true
+      }).sort({
+        rank: 1
+      })
+      // 4.将其放到最后一位
       await Rotation.findByIdAndUpdate(max._id, {
         $set: {
-          rank: 1
+          rank: max.rank + 1
         }
       })
     });
