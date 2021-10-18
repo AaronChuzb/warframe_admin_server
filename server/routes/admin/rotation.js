@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-10-10 15:47:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-12 11:45:45
+ * @LastEditTime: 2021-10-18 09:31:20
  */
 module.exports = app => {
   const express = require('express')
@@ -133,7 +133,7 @@ module.exports = app => {
         rank: 1
       })
       // 4.将其放到最后一位
-      await Rotation.findByIdAndUpdate(max._id, {
+      await Rotation.findByIdAndUpdate(min._id, {
         $set: {
           rank: max.rank + 1
         }
