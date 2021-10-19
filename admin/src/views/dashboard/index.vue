@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-11 15:25:45
+ * @LastEditTime: 2021-10-18 18:01:17
 -->
 <template>
   <div class="dashboard-container">
@@ -15,7 +15,18 @@
           </div>
           <div v-if="child.title === '访问统计'" style="height: 300px">
             <h3>{{ child.title }}</h3>
-            <el-empty></el-empty>
+            <el-card style="margin-bottom: 10px;margin-top:15px">
+              <div>新增用户：<countTo :startVal='0' :endVal='parseInt(access.num_new_visitor)' :duration='3000'></countTo></div>
+            </el-card>
+            <el-card style="margin-bottom: 10px">
+              <div>活跃用户：<countTo :startVal='0' :endVal='parseInt(access.num_visitor)' :duration='3000'></countTo></div>
+            </el-card>
+            <el-card style="margin-bottom: 10px">
+              <div>访问次数：<countTo :startVal='0' :endVal='parseInt(access.num_page_views)' :duration='3000'></countTo></div>
+            </el-card>
+            <el-card style="margin-bottom: 10px">
+              <div>总用户数：<countTo :startVal='0' separator="," :endVal='parseInt(access.num_total_visitor)' :duration='3000'></countTo></div>
+            </el-card>
           </div>
           <div v-if="child.title === '最新用户反馈'" style="height: 300px;">
             <h3>{{ child.title }}</h3>
@@ -41,11 +52,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as echarts from 'echarts'
-import { total } from '@/api/index'
+import { total, statistics } from '@/api/index'
+import countTo from 'vue-count-to';
 export default {
   name: 'dashboard',
   computed: {
     ...mapGetters(['name']),
+  },
+  components:{
+    countTo
   },
   data() {
     return {
@@ -101,6 +116,12 @@ export default {
       },
       date: new Date(),
       suggestList: [],
+      access: {
+        num_new_visitor: 0,
+        num_page_views: 0,
+        num_total_visitor: 0,
+        num_visitor: 0,
+      },
     }
   },
   created() {},
@@ -116,8 +137,16 @@ export default {
       echarts.init(document.getElementById('total')).setOption(this.option)
     },
   },
-  mounted() {
+  async mounted() {
     this.initChart()
+    const res = await statistics()
+    console.log(res.data.data)
+    let temp = res.data.data.today
+    let keys = Object.keys(res.data.data.today)
+    keys.forEach(item=>{
+      temp[item] = temp[item].replace(/,/g, "")
+    })
+    this.access = temp
   },
 }
 </script>
