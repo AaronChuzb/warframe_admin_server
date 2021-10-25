@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-09 15:05:24
+ * @LastEditTime: 2021-10-25 15:56:38
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -60,29 +60,6 @@ export const constantRoutes = [{
       hidden: true
     }]
   },
-
-  // {
-  //   path: '/setting',
-  //   component: Layout,
-  //   redirect: '/setting/user/list',
-  //   name: 'Content',
-  //   meta: { title: '设置管理', icon: 'el-icon-set-up' },
-  //   children: [
-  //     {
-  //       path: 'user',
-  //       name: 'user',
-  //       component: () => import('@/views/setting/user/list'),
-  //       meta: { title: '管理员管理', icon: 'admin' }
-  //     },
-  //     {
-  //       path: 'oss',
-  //       name: 'oss',
-  //       component: () => import('@/views/setting/oss/index'),
-  //       meta: { title: 'oss配置', icon: 'oss' }
-  //     }
-  //   ]
-  // },
-  // 404 page must be placed at the end !!!
 
 ]
 
@@ -156,6 +133,21 @@ export const asyncRoutes = [{
         title: '钢铁奖励轮换',
         icon: 'rotation',
         role: 'rotation'
+      }
+    }]
+  },
+  {
+    path: '/users',
+    component: Layout,
+    redirect: '/users',
+    children: [{
+      path: 'users',
+      name: 'users',
+      component: () => import('@/views/users/index'),
+      meta: {
+        title: '用户列表',
+        icon: 'users',
+        role: 'users'
       }
     }]
   },
