@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-14 14:40:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:41:15
+ * @LastEditTime: 2021-10-26 11:35:51
  */
 module.exports = app => {
   const express = require('express')
@@ -131,7 +131,7 @@ module.exports = app => {
     // 查出某个参数总条数
     const counts = await Remain.countDocuments(params).exec()
     // 查出内容
-    const models = await Remain.find(params, { _id: 1, name: 1, createdAt: 1, updatedAt: 1 }).populate({ path: 'type',  select: 'name'}).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).sort(JSON.parse(req.query.sort)).skip(start).limit(pageSize).exec() // 一页的内容
+    const models = await Remain.find(params, { _id: 1, name: 1, createdAt: 1, updatedAt: 1,version: 1, remark: 1, status: 1, }).populate({ path: 'type',  select: 'name'}).populate({ path: 'creator', select: 'nickname' }).populate({ path: 'updater', select: 'nickname' }).sort(JSON.parse(req.query.sort)).skip(start).limit(pageSize).exec() // 一页的内容
     res.send({
       data: models,
       counts: counts,
@@ -150,7 +150,10 @@ module.exports = app => {
       type: 1,
       stock: 1,
       getways: 1,
-      contribute: 1
+      contribute: 1,
+      version: 1,
+      remark: 1,
+      status: 1,
     }).populate({
       path: 'copper_1',
       select: 'name'

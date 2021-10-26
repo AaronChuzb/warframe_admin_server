@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-10-09 14:59:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-12 10:22:51
+ * @LastEditTime: 2021-10-26 13:26:21
 -->
 <template>
   <div class="app-container">
@@ -11,10 +11,14 @@
           <h3>常驻奖励</h3>
           <el-row :gutter="10">
             <el-col :md="6" :sm="8" :xs="12" v-for="item in fixedList" :key="item._id" style="margin-bottom: 10px">
-              <Item :item-data="item" @edit="editItem" @deleted="deleteItem"></Item>
+              <transition name="el-fade-in-linear">
+                <Item :item-data="item" @edit="editItem" @deleted="deleteItem"></Item>
+              </transition>
             </el-col>
             <el-col :md="6" :sm="8" :xs="12" style="margin-bottom: 10px">
-              <Edit ref="edit" @done="getData"></Edit>
+              <transition name="el-fade-in-linear">
+                <Edit ref="edit" @done="getData"></Edit>
+              </transition>
             </el-col>
           </el-row>
         </el-col>

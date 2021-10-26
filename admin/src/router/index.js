@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-25 15:56:38
+ * @LastEditTime: 2021-10-26 11:23:30
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -136,7 +136,7 @@ export const asyncRoutes = [{
       }
     }]
   },
-  {
+  /* {
     path: '/users',
     component: Layout,
     redirect: '/users',
@@ -150,7 +150,7 @@ export const asyncRoutes = [{
         role: 'users'
       }
     }]
-  },
+  }, */
   {
     path: '/client',
     component: Layout,

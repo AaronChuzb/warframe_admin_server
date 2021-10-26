@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-25 20:13:22
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-13 17:22:56
+ * @LastEditTime: 2021-10-26 11:34:56
  */
 const mongoose = require('mongoose')
 
@@ -15,6 +15,9 @@ const schema = new mongoose.Schema({
   silver_2: { type: String, ref: 'Part' },
   gold: { type: String, ref: 'Part' },
   stock: { type: Boolean },
+  status: { type: String },
+  remark: { type: String },
+  version: { type: String },
   getways: { type: String },
   contribute: { type: String },
   creator: { type: String, ref: 'User' },

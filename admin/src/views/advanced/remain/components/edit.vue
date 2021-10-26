@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:27
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-29 10:47:18
+ * @LastEditTime: 2021-10-26 12:01:54
 -->
 <template>
   <el-dialog :title="isEdit ? '编辑遗物' : '新增遗物'" :visible.sync="show" @close="cancle" :before-close="cancle" fullscreen>
@@ -65,6 +65,25 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form-item label="遗物状态" prop="status">
+            <el-select v-model="remain.status" placeholder="遗物类型">
+                <el-option :label="item.name" :value="item.name" v-for="item in statusList" :key="item._id"></el-option>
+              </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="版本信息" prop="">
+            <el-input placeholder="请输入内容（非必填）" v-model="remain.version"> </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="备注信息" prop="">
+            <el-input placeholder="请输入内容（非必填）" v-model="remain.remark"> </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="是否入库" prop="parent">
             <el-switch style="display: block" v-model="remain.stock" inactive-color="#13ce66" active-color="#ff4949" active-text="入库" inactive-text="未入库"> </el-switch>
@@ -114,6 +133,9 @@ export default {
         silver_1: "",
         silver_2: "",
         gold: "",
+        status: "已入库",
+        version: "",
+        remark: "",
         stock: false,
         getways: "这个遗物目前正处于圣装宝库",
         contribute: "",
@@ -126,12 +148,20 @@ export default {
         copper_3: [{ required: true, message: "请选择铜三档部件", trigger: "blur" }],
         silver_1: [{ required: true, message: "请选择银一档部件", trigger: "blur" }],
         silver_2: [{ required: true, message: "请选择银二档部件", trigger: "blur" }],
+        status: [{ required: true, message: "请选择遗物状态", trigger: "blur" }],
         gold: [{ required: true, message: "请选择金部件", trigger: "blur" }],
         getways: [{ required: true, message: "请输入获取方式", trigger: "blur" }],
       },
       loading: false,
       options: [],
       types: [],
+      statusList: [
+        { _id: 1, name: "已入库" },
+        { _id: 2, name: "版本出库" },
+        { _id: 3, name: "永久出库" },
+        { _id: 4, name: "限时出库" },
+        { _id: 5, name: "活动出库" },
+      ]
     };
   },
   created(){
@@ -174,6 +204,9 @@ export default {
         silver_1: "",
         silver_2: "",
         gold: "",
+        status: "已入库",
+        version: "",
+        remark: "",
         stock: false,
         getways: "这个遗物目前正处于圣装宝库",
         contribute: this.$store.getters.name,

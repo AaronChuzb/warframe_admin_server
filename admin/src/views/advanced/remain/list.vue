@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-13 17:24:52
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:42:33
+ * @LastEditTime: 2021-10-26 13:44:35
 -->
 <template>
   <div class="app-container">
@@ -37,12 +37,16 @@
     <transition name="el-fade-in-linear">
       <div class="remain-box" v-show="counts > 0">
         <el-row :gutter="20">
-          <el-col :xs="12" :sm="8" :md="6"  :lg="4" :span="4" v-for="(item, index) in table" :key="index" class="item" >
+          <el-col :xs="12" :sm="8" :md="6" :lg="4" :span="4" v-for="(item, index) in table" :key="index" class="item">
             <el-card :body-style="{ padding: '0px' }">
+              <div slot="header">
+                <div>{{ item.name }}</div>
+              </div>
               <img :src="chooseImage(item.type.name)" class="image" />
               <div style="padding: 14px;">
-                <span>{{item.name}}</span>
-                <div class="bottom clearfix">
+                <div class="bottom ">
+                  <div class="status"></div>
+                  <el-button type="text" class="button status">{{ item.status }}</el-button>
                   <el-button type="text" class="button" @click="editRow(item._id)">编辑</el-button>
                   <el-button type="text" class="button danger" @click="deleteItem(item)">删除</el-button>
                 </div>
@@ -57,31 +61,31 @@
       <el-empty description="暂无更多" v-show="counts == 0"></el-empty>
     </transition>
     <!-- 新增 -->
-    <new-item ref="edit" :show="showNewItem" @done="(showNewItem = false), getData()" @cancle="showNewItem = false" />
+    <new-item ref="edit" :show="showNewItem" @done=";(showNewItem = false), getData()" @cancle="showNewItem = false" />
   </div>
 </template>
 <script>
-import { list, deleted, getType } from "@/api/remain";
-import Pagination from "@/components/Pagination";
-import newItem from "./components/edit.vue";
+import { list, deleted, getType } from '@/api/remain'
+import Pagination from '@/components/Pagination'
+import newItem from './components/edit.vue'
 export default {
-  name: "remain",
+  name: 'remain',
   components: { Pagination, newItem },
   data() {
     return {
       table: [],
       sortOptions: [
-        { key: { updatedAt: -1 }, label: "更新时间倒序", id: 0 },
-        { key: { updatedAt: 1 }, label: "更新时间正序", id: 1 },
-        { key: { createdAt: 1 }, label: "创建时间正序", id: 2 },
-        { key: { createdAt: -1 }, label: "创建时间倒叙", id: 3 },
+        { key: { updatedAt: -1 }, label: '更新时间倒序', id: 0 },
+        { key: { updatedAt: 1 }, label: '更新时间正序', id: 1 },
+        { key: { createdAt: 1 }, label: '创建时间正序', id: 2 },
+        { key: { createdAt: -1 }, label: '创建时间倒叙', id: 3 },
       ],
-      userOptions: [{ _id: "", index: 0, nickname: "所有人" }],
-      typeOptions: [{ _id: "", index: 0, name: "所有分类" }],
+      userOptions: [{ _id: '', index: 0, nickname: '所有人' }],
+      typeOptions: [{ _id: '', index: 0, name: '所有分类' }],
       stockOption: [
-        { label: "全部", id: 0, stock: '' },
-        { label: "已入库", id: 1, stock: '1' },
-        { label: "未入库", id: 2, stock: '2' },
+        { label: '全部', id: 0, stock: '' },
+        { label: '已入库', id: 1, stock: '1' },
+        { label: '未入库', id: 2, stock: '2' },
       ],
       stock: 0,
       type: 0,
@@ -89,22 +93,22 @@ export default {
       sort: 0,
       page: 1,
       pageSize: 12,
-      search: "",
+      search: '',
       counts: 0,
       listLoading: false,
       showNewItem: false,
-    };
+    }
   },
   async created() {
-    this.getData();
-    const res = await getType();
+    this.getData()
+    const res = await getType()
     if (this.typeOptions.length < 2) {
       this.typeOptions = this.typeOptions.concat(
         res.map((e, index) => {
-          e.index = index + 1;
-          return e;
+          e.index = index + 1
+          return e
         })
-      );
+      )
     }
   },
   methods: {
@@ -112,33 +116,33 @@ export default {
      * @description: 打开新增
      */
     openEdit() {
-      this.showNewItem = true;
-      this.$refs.edit.getPreData();
+      this.showNewItem = true
+      this.$refs.edit.getPreData()
     },
     /**
      * @description: 打开编辑
      * @param {String} id 改遗物的_id
      */
     editRow(id) {
-      this.showNewItem = true;
-      this.$refs.edit.getInfoAndEdit(id);
+      this.showNewItem = true
+      this.$refs.edit.getInfoAndEdit(id)
     },
     /**
      * @description: 获取对应类型的图片
      * @param {String} name 类型名
      * @return {*} 图片路径
      */
-    chooseImage(name){
+    chooseImage(name) {
       let img
-      if(name == '丽斯'){
+      if (name == '丽斯') {
         img = 'ls'
-      } else if (name == '美索'){
+      } else if (name == '美索') {
         img = 'ms'
-      } else if (name == '尼奥'){
+      } else if (name == '尼奥') {
         img = 'na'
-      } else if (name == '亚希'){
+      } else if (name == '亚希') {
         img = 'yx'
-      } else if (name == '安魂'){
+      } else if (name == '安魂') {
         img = 'ah'
       }
       return require(`@/assets/${img}.png`)
@@ -148,18 +152,18 @@ export default {
      * @param {Object} row 表格行数据
      */
     deleteItem(row) {
-      this.$confirm(`确定删除“${row.name}”`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定删除“${row.name}”`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(async () => {
-        await deleted(row._id);
+        await deleted(row._id)
         this.$message({
-          type: "success",
-          message: "删除成功!",
-        });
-        this.getData();
-      });
+          type: 'success',
+          message: '删除成功!',
+        })
+        this.getData()
+      })
     },
 
     /**
@@ -167,30 +171,30 @@ export default {
      * @param {*} e
      */
     searchList(e) {
-      this.page = 1;
-      this.getData();
+      this.page = 1
+      this.getData()
     },
 
     /**
      * @description: 获取页面数据
      */
     async getData() {
-      this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id, this.typeOptions[this.type]._id, this.stockOption[this.stock].stock);
+      this.listLoading = true
+      const res = await list(this.page, this.pageSize, this.search, this.sortOptions[this.sort].key, this.userOptions[this.user]._id, this.typeOptions[this.type]._id, this.stockOption[this.stock].stock)
       this.table = res.data
       if (this.userOptions.length < 2) {
         this.userOptions = this.userOptions.concat(
           res.userOptions.map((e, index) => {
-            e.index = index + 1;
-            return e;
+            e.index = index + 1
+            return e
           })
-        );
+        )
       }
-      this.counts = res.counts;
-      this.listLoading = false;
+      this.counts = res.counts
+      this.listLoading = false
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -207,6 +211,9 @@ export default {
 .bottom {
   margin-top: 13px;
   line-height: 12px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .button {
@@ -223,14 +230,11 @@ export default {
   display: block;
   background: #999;
 }
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
+.status{
+  flex: 1;
+  width: 100%;
+  // margin-right: 10px;
+  text-align: left;
+  color: #999;
 }
 </style>
