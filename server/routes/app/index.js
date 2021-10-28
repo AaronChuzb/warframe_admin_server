@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-20 20:15:42
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-12 15:12:55
+ * @LastEditTime: 2021-10-28 17:50:38
  */
 module.exports = app => {
   const express = require('express')
@@ -104,6 +104,8 @@ module.exports = app => {
       obj['type'] = req.query.type
       params.$and.push(obj)
     }
+    
+    // 兼容旧接口
     if (req.query.stock != '') {
       let stock
       if (req.query.stock == '1') {
@@ -113,6 +115,12 @@ module.exports = app => {
       }
       let obj = {}
       obj['stock'] = stock
+      params.$and.push(obj)
+    }
+    // 兼容旧接口
+    if (req.query.status != undefined && req.query.status != '') {
+      let obj = {}
+      obj['status'] = req.query.status
       params.$and.push(obj)
     }
     // 查出某个参数总条数
