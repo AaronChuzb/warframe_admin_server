@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-30 23:37:55
+ * @LastEditTime: 2021-10-30 23:43:06
 -->
 <template>
   <div class="dashboard-container">
@@ -100,12 +100,6 @@ export default {
       },
       date: new Date(),
       suggestList: [],
-      access: {
-        num_new_visitor: 0,
-        num_page_views: 0,
-        num_total_visitor: 0,
-        num_visitor: 0,
-      },
     }
   },
   created() {},
@@ -123,14 +117,6 @@ export default {
   },
   async mounted() {
     this.initChart()
-    const res = await statistics()
-    console.log(res.data.data)
-    let temp = res.data.data.today
-    let keys = Object.keys(res.data.data.today)
-    keys.forEach(item=>{
-      temp[item] = temp[item].replace(/,/g, "")
-    })
-    this.access = temp
   },
 }
 </script>
