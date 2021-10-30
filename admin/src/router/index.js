@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-26 11:23:30
+ * @LastEditTime: 2021-10-30 23:23:30
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -64,7 +64,23 @@ export const constantRoutes = [{
 ]
 
 // 动态路由
-export const asyncRoutes = [{
+export const asyncRoutes = [
+  {
+    path: '/feed',
+    component: Layout,
+    redirect: '/feed',
+    children: [{
+      path: 'feed',
+      name: 'feed',
+      component: () => import('@/views/feed/index'),
+      meta: {
+        title: '内容反馈',
+        icon: 'feed',
+        role: 'feed'
+      }
+    }]
+  },
+  {
     path: '/content',
     component: Layout,
     redirect: '/content/category',

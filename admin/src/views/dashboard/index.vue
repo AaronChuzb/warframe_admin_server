@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-09-16 16:07:01
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-18 18:01:17
+ * @LastEditTime: 2021-10-30 23:37:55
 -->
 <template>
   <div class="dashboard-container">
@@ -12,21 +12,6 @@
           <!-- 图表 -->
           <div v-if="child.title === '词条统计'" style="height: 300px">
             <div id="total" style="width: 100%;height: 100%;"></div>
-          </div>
-          <div v-if="child.title === '访问统计'" style="height: 300px">
-            <h3>{{ child.title }}</h3>
-            <el-card style="margin-bottom: 10px;margin-top:15px">
-              <div>新增用户：<countTo :startVal='0' :endVal='parseInt(access.num_new_visitor)' :duration='3000'></countTo></div>
-            </el-card>
-            <el-card style="margin-bottom: 10px">
-              <div>活跃用户：<countTo :startVal='0' :endVal='parseInt(access.num_visitor)' :duration='3000'></countTo></div>
-            </el-card>
-            <el-card style="margin-bottom: 10px">
-              <div>访问次数：<countTo :startVal='0' :endVal='parseInt(access.num_page_views)' :duration='3000'></countTo></div>
-            </el-card>
-            <el-card style="margin-bottom: 10px">
-              <div>总用户数：<countTo :startVal='0' separator="," :endVal='parseInt(access.num_total_visitor)' :duration='3000'></countTo></div>
-            </el-card>
           </div>
           <div v-if="child.title === '最新用户反馈'" style="height: 300px;">
             <h3>{{ child.title }}</h3>
@@ -67,9 +52,8 @@ export default {
       activeName: '',
       layout: [
         [
-          { span: 10, title: '词条统计', xs: 24, sm: 24, md: 24, lg: 12, xl: 10 },
-          { span: 7, title: '最新用户反馈', xs: 24, sm: 12, md: 12, lg: 6, xl: 7, data: [] },
-          { span: 7, title: '访问统计', xs: 24, sm: 12, md: 12, lg: 6, xl: 7 },
+          { span: 12, title: '词条统计', xs: 24, sm: 24, md: 24, lg: 12, xl: 12 },
+          { span: 12, title: '最新用户反馈', xs: 24, sm: 24, md: 24, lg: 12, xl: 12, data: [] },
         ],
         [{ span: 10, title: '留言区', xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }],
       ],
