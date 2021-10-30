@@ -1,53 +1,19 @@
 /*
  * @Date: 2021-09-24 10:15:20
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-25 17:46:40
+ * @LastEditTime: 2021-10-30 22:43:24
  */
 module.exports = app => {
   const express = require('express')
-  const assert = require('http-assert')
   const Remain = require('../../models/Remain')
   const Suggest = require('../../models/Suggest')
   const People = require('../../models/People')
   const Log = require('../../models/Log')
   const About = require('../../models/About')
   const Part = require('../../models/Part')
+  const Feed = require('../../models/Feed')
   const router = express.Router({
     mergeParams: true
-  })
-  const http = require('../../http/request')
-  // 用户登录
-  router.post('/login', async (req, res) => {
-    // req.body.code
-    // req.body.provider
-    // req.body.userInfo
-    var openidData
-    var openid
-    // 1. 根据平台获取openid
-    if(req.body.provider == 'weixin'){
-      openidData = await http('get',`https://api.weixin.qq.com/sns/jscode2session?appid=wx037741a002c55aa3&secret=3c6b68b9109b85f88e63409496957cdc&js_code=${req.body.code}&grant_type=authorization_code`)
-    } else if(req.body.provider == 'qq') {
-      openidData = await http('get', `https://api.q.qq.com/sns/jscode2session?appid=1110486685&secret=LAQx9Fn78CogByg6&js_code=${req.body.code}&grant_type=authorization_code`)
-    }
-    // 请求数据是成功的
-    if(openidData.errcode == 0){
-      openid = openidData.openid
-    }
-    // 2.获取openid后去数据查询用户
-    const user = ClientUser.findOne({
-      $or: [{
-        wxId: openid
-      },{
-        qqId: openid
-      }]
-    })
-
-    // 3.判断有没有用户，有的话登录，没有的话注册
-
-
-    // 4.生成token返回token和用户ID
-    
-    res.send(userInfo)
   })
 
   // 提交反馈
@@ -141,6 +107,14 @@ module.exports = app => {
     res.send({
       models,
       counts
+    })
+  })
+
+  // 内容问题反馈
+  router.post('/feedback', async (req, res) => {
+    await Feed.create(req.body)
+    res.send({
+      message: '报告问题成功'
     })
   })
 
