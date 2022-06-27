@@ -5,7 +5,7 @@
  */
 module.exports = (app) =>{
   const mongoose = require('mongoose')
-  mongoose.connect('mongodb://aaronchu:19030125cC@119.29.4.214:27017/data?authSource=data',{
+  mongoose.connect('mongodb://username:password@127.0.0.1:27017/database?authSource=data',{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
