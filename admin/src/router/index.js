@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-01 22:15:06
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-30 23:23:30
+ * @LastEditTime: 2022-08-16 16:48:00
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -69,6 +69,11 @@ export const asyncRoutes = [
     path: '/feed',
     component: Layout,
     redirect: '/feed',
+    meta: {
+      title: '内容反馈',
+      icon: 'feed',
+      role: 'feed'
+    },
     children: [{
       path: 'feed',
       name: 'feed',

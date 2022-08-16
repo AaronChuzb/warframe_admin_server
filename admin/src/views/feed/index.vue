@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-10-30 23:21:18
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-30 23:35:36
+ * @LastEditTime: 2022-08-16 17:04:07
 -->
 <template>
   <div class="app-container">
@@ -32,11 +32,17 @@
           <span>{{ row.content }}</span>
         </template>
       </el-table-column>
+      <el-table-column width="150" align="center" label="反馈时间">
+        <template slot-scope="{ row }">
+          <span>{{ $parseTime(row.createdAt) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column width="150" align="center" label="状态">
         <template slot-scope="{ row }">
           <span>{{ row.status == 1 ? '已处理' : row.status == 2 ? '已搁置' : '未处理' }}</span>
         </template>
       </el-table-column>
+      
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="{ row }">
           <el-button type="success" size="small" icon="el-icon-document-checked" @click="doneItem(row, 1)">完成</el-button>
