@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-09-14 14:40:38
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-26 11:35:51
+ * @LastEditTime: 2022-08-17 13:49:11
  */
 module.exports = app => {
   const express = require('express')
@@ -128,6 +128,7 @@ module.exports = app => {
       obj['stock'] = stock
       params.$and.push(obj)
     }
+    console.log(params)
     // 查出某个参数总条数
     const counts = await Remain.countDocuments(params).exec()
     // 查出内容

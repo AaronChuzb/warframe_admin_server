@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-08-20 20:15:53
  * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-30 23:17:04
+ * @LastEditTime: 2022-08-17 13:57:11
  */
 const express = require('express')
 const app = express()
@@ -33,11 +33,14 @@ require('./routes/admin/log')(app)
 require('./routes/admin/feed')(app)
 // 关于管理
 require('./routes/admin/about')(app)
+// 客户端用户模块
+require('./routes/admin/client_user')(app)
 
 // app端路由
 require('./routes/app/index')(app)
 require('./routes/app/mine')(app)
 require('./routes/app/rotation')(app)
+require('./routes/app/user')(app)
 
 
 

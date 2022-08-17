@@ -1,42 +1,42 @@
-<!--
- * @Date: 2021-10-25 15:49:31
- * @LastEditors: AaronChu
- * @LastEditTime: 2021-10-25 16:00:09
--->
-<!--
- * @Date: 2021-09-02 12:27:52
- * @LastEditors: AaronChu
- * @LastEditTime: 2021-09-28 15:42:56
--->
 <template>
   <div class="app-container">
     <!-- 功能区 -->
-    <!-- <div class="filter-container">
-      <el-input v-model="search" placeholder="按昵称或账号搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
+    <div class="filter-container">
+      <el-input v-model="search" placeholder="按昵称或游戏ID搜索" style="width: 250px; margin-right: 10px" class="filter-item" />
+      <el-tooltip class="item" effect="dark" content="登录平台" placement="top-start">
+        <el-select v-model="platform" style="width: 140px; margin-right: 10px" class="filter-item" @change="searchList">
+          <el-option v-for="item in platforms" :key="item.name" :label="item.name" :value="item.value" />
+        </el-select>
+      </el-tooltip>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchList">搜索</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="showNewItem = true">新增管理员</el-button>
-    </div> -->
+    </div>
     <!-- 列表 -->
     <el-table v-loading="listLoading" :data="table" border fit highlight-current-row style="width: 100%">
+     <el-table-column width="150px" label="头像" align="center">
+        <template slot-scope="{ row }">
+          <el-avatar shape="square" size="large" fit="contain" :src="row.avatarUrl"></el-avatar>
+        </template>
+      </el-table-column>
       <el-table-column width="150px" label="昵称" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.nickname }}</span>
+          <span>{{ row.nickName }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="150px" label="管理员头像" align="center">
+      <el-table-column width="150px" label="游戏ID" align="center">
         <template slot-scope="{ row }">
-          <el-avatar shape="square" size="large" fit="contain" :src="row.avatar"></el-avatar>
+          <span>{{ row.gameId }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="权限">
+      <el-table-column width="150px" label="登录平台" align="center">
         <template slot-scope="{ row }">
-          <el-tag type="success" style="margin-right: 10px; margin-bottom: 5px" v-for="item in row.roles" :key="item">{{ transRole(item) }}</el-tag>
+          <span>{{ row.platForm == 'weixin'?'微信小程序':'QQ小程序' }}</span>
         </template>
       </el-table-column>
+
       <el-table-column align="center" label="操作">
         <template slot-scope="{ row }">
-          <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="getInfo(row)">编辑</el-button>
-          <el-button type="warning" size="small" icon="el-icon-edit-outline" v-if="row.status" @click="changeUserStatus(1, row)">停用</el-button>
+          <!-- <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="getInfo(row)">编辑</el-button> -->
+          <el-button type="warning" size="small" icon="el-icon-edit-outline" v-if="row.canLogin" @click="changeUserStatus(1, row)">停用</el-button>
           <el-button type="success" size="small" icon="el-icon-edit-outline" v-else @click="changeUserStatus(2, row)">启用</el-button>
           <el-button type="danger" size="small" icon="el-icon-document-delete" @click="deleteItem(row)">删除</el-button>
         </template>
@@ -47,49 +47,67 @@
   </div>
 </template>
 <script>
-import { list, changeStatus, creatUser, getUserInfo, deleteUser, changeUser } from "@/api/user";
+import { list, changeStatus } from "@/api/client_user";
 import Pagination from "@/components/Pagination";
+import { asyncRoutes } from "@/router";
 export default {
-  name: "users",
+  name: "user",
   components: { Pagination },
   data() {
     return {
-      isEdit: false, // 是否是编辑
-      editId: "", // 编辑的用户的id
-      user: { // 用户的表单
-        nickname: "",
-        username: "",
-        password: "",
-        avatar: "",
-        roles: [],
-        status: true,
-        remark: "",
-        game_id: "",
-        contact: ""
-      },
-      permissions: [[]], // 存放权限的二维数组
-      permissionTrans: [], // 用来转换权限中英文的数组
+      platforms: [
+        {
+          name: '全部平台',
+          value: ''
+        },
+        {
+          name: '微信小程序',
+          value: 'weixin'
+        },
+        {
+          name: 'QQ小程序',
+          value: 'qq'
+        }
+      ],
+
+      
       table: [], // 存放列表的数据
       page: 1, // 获取的数据的页数
       pageSize: 10, // 一页的数据长度,默认10条
       search: "", // 搜索的关键字
+      platform: "",
       counts: 0, // 获取的数据总条数
       listLoading: false, // 列表加载状态
-      showNewItem: false, // 显示表单
-      rules: { // 表单校验规则
-        nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
-        username: [{ required: true, message: "请输入账户", trigger: "blur" }],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-        roles: [{ required: true, message: "请选择用户权限", trigger: "blur" }],
-      },
+      
+      
     };
   },
   async created() {
     this.getData();
-    
   },
   methods: {
-   
+    
+    /**
+     * @description: 变更用户是否可以登录
+     * @param {Number} type 类型，是启用还是停用
+     * @param {Object} row 一行的数据
+     */
+    async changeUserStatus(type, row) {
+      let status = true;
+      let notice = "启用";
+      if (type == 1) {
+        status = false;
+        notice = "停用";
+      }
+      await changeStatus(row._id, status);
+      this.$message({
+        type: "success",
+        message: `${notice}”${row.nickname}“成功!`,
+      });
+      await this.getData();
+    },
+    
+    
     /**
      * @description: 搜索列表
      * @param {*} e
@@ -100,26 +118,11 @@ export default {
     },
     async getData() {
       this.listLoading = true;
-      const res = await list(this.page, this.pageSize, this.search);
+      const res = await list(this.page, this.pageSize, this.search, this.platform);
       this.table = res.data;
       this.counts = res.counts;
       this.listLoading = false;
-    },
-    
-    /**
-     * @description: 替换权限英文为中文
-     * @param {String} en 权限的英文名
-     */
-    transRole(en) {
-      if (en == "all") {
-        return "超级管理员";
-      }
-      for (let i = 0; i < this.permissionTrans.length; i++) {
-        if (this.permissionTrans[i].role == en) {
-          return this.permissionTrans[i].title;
-        }
-      }
-    },
+    }
   },
 };
 </script>
